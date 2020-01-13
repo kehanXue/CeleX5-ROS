@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(celex_ros)
+project(celex5_ros)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+## Compile as C++14, supported in ROS Kinetic and newer
+add_compile_options(-std=c++14)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -105,7 +105,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
         #  INCLUDE_DIRS include
-        #  LIBRARIES celex_ros
+        #  LIBRARIES celex5_ros
         CATKIN_DEPENDS cv_bridge geometry_msgs roscpp std_msgs
         #  DEPENDS system_lib
 )
@@ -124,7 +124,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/celex_ros.cpp
+#   src/${PROJECT_NAME}/celex5_ros.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -138,16 +138,16 @@ include_directories(
 link_directories(
         src/sdk/lib
 )
-add_executable(celex_ros_node
+add_executable(celex5_ros_node
         src/sdk/include/celextypes.h
         src/sdk/include/celex5/celex5datamanager.h
         src/sdk/include/celex5/celex5.h
         src/sdk/include/celex5/celex5processeddata.h
         src/celex_ros_node.cpp
         )
-target_link_libraries(celex_ros_node
+target_link_libraries(celex5_ros_node
         ${catkin_LIBRARIES}
-        -lCeleX
+        -lCeleX5
         )
 
 ## Rename C++ executable without prefix

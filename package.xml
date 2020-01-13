@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>celex_ros</name>
+  <name>celex5_ros</name>
   <version>0.0.0</version>
-  <description>The celex_ros package</description>
+  <description>The celex5_ros package for CeleX5-MIPI Event Camera</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="kehan@todo.todo">kehan</maintainer>
+  <maintainer email="kehan.xue@gmail.com">kehan</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
