@@ -2,17 +2,17 @@ cmake_minimum_required(VERSION 2.8.3)
 project(celex_ros)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  cv_bridge
-  geometry_msgs
-  roscpp
-  std_msgs
-)
+        cv_bridge
+        geometry_msgs
+        roscpp
+        std_msgs
+        )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -104,10 +104,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES celex_ros
-#  CATKIN_DEPENDS cv_bridge geometry_msgs roscpp std_msgs
-#  DEPENDS system_lib
+        #  INCLUDE_DIRS include
+        #  LIBRARIES celex_ros
+        CATKIN_DEPENDS cv_bridge geometry_msgs roscpp std_msgs
+        #  DEPENDS system_lib
 )
 
 ###########
@@ -117,8 +117,9 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-  ${catkin_INCLUDE_DIRS}
+        # include
+        ${catkin_INCLUDE_DIRS}
+        src/sdk/include
 )
 
 ## Declare a C++ library
@@ -134,7 +135,20 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/celex_ros_node.cpp)
+link_directories(
+        src/sdk/lib
+)
+add_executable(celex_ros_node
+        src/sdk/include/celextypes.h
+        src/sdk/include/celex5/celex5datamanager.h
+        src/sdk/include/celex5/celex5.h
+        src/sdk/include/celex5/celex5processeddata.h
+        src/celex_ros_node.cpp
+        )
+target_link_libraries(celex_ros_node
+        ${catkin_LIBRARIES}
+        -lCeleX
+        )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
