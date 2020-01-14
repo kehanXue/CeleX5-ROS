@@ -121,6 +121,7 @@ include_directories(
         # include
         ${catkin_INCLUDE_DIRS}
         src/sdk/include
+        src
 )
 
 ## Declare a C++ library
@@ -145,7 +146,7 @@ add_executable(celex5_ros_node
         src/sdk/include/celex5/celex5.h
         src/sdk/include/celex5/celex5processeddata.h
         src/celex5_ros_node.cpp
-        src/bean/CeleX5ROS.cpp src/bean/CeleX5ROS.h src/interface/CeleX5Configure.cpp src/interface/CeleX5Configure.h src/bean/CeleX5Options.cpp src/bean/CeleX5Options.h)
+        src/bean/celex5_ros.cpp src/bean/celex5_ros.h src/interface/celex5_configure.cpp src/interface/celex5_configure.h src/bean/celex5_options.cpp src/bean/celex5_options.h)
 target_link_libraries(celex5_ros_node
         ${catkin_LIBRARIES}
         -lCeleX5
