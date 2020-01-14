@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
         geometry_msgs
         roscpp
         std_msgs
+        ddynamic_reconfigure
         )
 
 ## System dependencies are found with CMake's conventions
@@ -106,7 +107,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
         #  INCLUDE_DIRS include
         #  LIBRARIES celex5_ros
-        CATKIN_DEPENDS cv_bridge geometry_msgs roscpp std_msgs
+        CATKIN_DEPENDS cv_bridge geometry_msgs roscpp std_msgs ddynamic_reconfigure
         #  DEPENDS system_lib
 )
 
@@ -143,8 +144,8 @@ add_executable(celex5_ros_node
         src/sdk/include/celex5/celex5datamanager.h
         src/sdk/include/celex5/celex5.h
         src/sdk/include/celex5/celex5processeddata.h
-        src/celex_ros_node.cpp
-        )
+        src/celex5_ros_node.cpp
+        src/bean/CeleX5ROS.cpp src/bean/CeleX5ROS.h src/interface/CeleX5Configure.cpp src/interface/CeleX5Configure.h src/bean/CeleX5Options.cpp src/bean/CeleX5Options.h)
 target_link_libraries(celex5_ros_node
         ${catkin_LIBRARIES}
         -lCeleX5

@@ -83,7 +83,7 @@ class CX5SensorDataServer : public CX5Subject {
   inline void setCX5SensorData(CeleX5ProcessedData *data) { m_pCX5ProcessedData = data; }
 
  private:
-  std::list <CeleX5DataManager::emDataType> m_listDataType;
+  std::list<CeleX5DataManager::emDataType> m_listDataType;
   CeleX5DataManager *m_pObserver;
   CeleX5ProcessedData *m_pCX5ProcessedData;
 };
