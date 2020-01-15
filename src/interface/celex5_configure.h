@@ -18,13 +18,16 @@ namespace celex5_ros {
 class CeleX5Configure {
 
  public:
-  explicit CeleX5Configure(std::shared_ptr<CeleX5Options> p_celex_5_options,
+  explicit CeleX5Configure(std::shared_ptr<CeleX5Options> p_celex5_options,
+                           std::shared_ptr<CeleX5> p_celex5_sensor,
                            const ros::NodeHandle &nh = ros::NodeHandle("~"));
   virtual ~CeleX5Configure();
+  void setCeleX5Options();
 
  private:
   ros::NodeHandle nh_;
   ddynamic_reconfigure::DDynamicReconfigure ddynamic_reconfigure_;
+  std::shared_ptr<CeleX5> p_celex5_sensor_;
   std::shared_ptr<CeleX5Options> p_celex5_options_;
 
   /*
@@ -40,7 +43,7 @@ class CeleX5Configure {
 
   void ParamThresholdCb(int new_threshold);
   void ParamBrightnessCb(int new_brightness);
-  void ParamContrastCb(int new_contrast);
+//  void ParamContrastCb(int new_contrast);
   void ParamClockRateCb(int new_clock_rate);
   void ParamIsLoopModeEnabled(bool new_loop_mode_status);
   void ParamEventDurationInLoopCb(int new_event_duration_in_loop);

@@ -24,7 +24,7 @@ class CeleX5Options {
                          uint32_t optical_flow_frame_time_ = 20,
                          uint32_t threshold = 185,
                          uint32_t brightness = 150,
-                         uint32_t contrast = 1,
+//                         uint32_t contrast = 1,
                          uint32_t clock_rate = 100,
                          std::string event_fpn_file_path = "",
                          std::string frame_fpn_file_path = "");
@@ -39,6 +39,9 @@ class CeleX5Options {
 
   const std::vector<CeleX5::CeleX5Mode> &GetLoopModes() const;
   void SetLoopModes(const std::vector<CeleX5::CeleX5Mode> &loop_modes);
+  void SetLoopMode1(CeleX5::CeleX5Mode loop_mode1);
+  void SetLoopMode2(CeleX5::CeleX5Mode loop_mode2);
+  void SetLoopMode3(CeleX5::CeleX5Mode loop_mode3);
 
   uint32_t GetEventFrameTime() const;
   void SetEventFrameTime(uint32_t event_frame_time);
@@ -52,8 +55,8 @@ class CeleX5Options {
   uint32_t GetBrightness() const;
   void SetBrightness(uint32_t brightness);
 
-  uint32_t GetContrast() const;
-  void SetContrast(uint32_t contrast);
+//  uint32_t GetContrast() const;
+//  void SetContrast(uint32_t contrast);
 
   uint32_t GetClockRate() const;
   void SetClockRate(uint32_t clock_rate);
@@ -70,7 +73,7 @@ class CeleX5Options {
   const std::string &GetFrameFpnFilePath() const;
   void SetFrameFpnFilePath(const std::string &frame_fpn_file_path);
 
- private:
+// private:
   CeleX5::CeleX5Mode fixed_mode_;
   std::vector<CeleX5::CeleX5Mode> loop_modes_;
 
@@ -79,7 +82,7 @@ class CeleX5Options {
 
   uint32_t threshold_;
   uint32_t brightness_;
-  uint32_t contrast_;
+//  uint32_t contrast_;
   uint32_t clock_rate_;
 
   bool is_loop_mode_enabled_;

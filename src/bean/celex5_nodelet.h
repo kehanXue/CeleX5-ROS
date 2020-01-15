@@ -2,22 +2,26 @@
 // Created by kehan on 2020/1/13.
 //
 
-#ifndef CELEX5_ROS_SRC_BEAN_CELEX5_ROS_H_
-#define CELEX5_ROS_SRC_BEAN_CELEX5_ROS_H_
+#ifndef CELEX5_ROS_SRC_BEAN_CELEX5_NODELET_H_
+#define CELEX5_ROS_SRC_BEAN_CELEX5_NODELET_H_
 
 #include <memory>
+#include <string>
 
 #include <ros/ros.h>
+#include <nodelet/nodelet.h>
+#include <pluginlib/class_list_macros.h>
+
 #include "celex5/celex5datamanager.h"
 #include "celex5_options.h"
 #include "interface/celex5_configure.h"
 
 namespace celex5_ros {
-class CeleX5ROS : public CeleX5DataManager {
+class CeleX5Nodelet : public CeleX5DataManager, public nodelet::Nodelet {
 
  public:
-  CeleX5ROS();
-  virtual ~CeleX5ROS();
+  CeleX5Nodelet();
+  virtual ~CeleX5Nodelet();
 
  private:
 
@@ -44,4 +48,4 @@ class CeleX5ROS : public CeleX5DataManager {
 };
 }
 
-#endif //CELEX5_ROS_SRC_BEAN_CELEX5_ROS_H_
+#endif //CELEX5_ROS_SRC_BEAN_CELEX5_NODELET_H_

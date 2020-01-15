@@ -1,0 +1,7 @@
+<library path="lib/libcelex5_ros">
+    <class name="celex5_ros/CeleX5Nodelet" type="celex5_ros::CeleX5Nodelet" base_class_type="nodelet::Nodelet">
+        <description>
+            This is CeleX5-MIPI nodelet.
+        </description>
+    </class>
+</library>

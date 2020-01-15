@@ -15,7 +15,7 @@ CeleX5Options::CeleX5Options(CeleX5::CeleX5Mode fixed_mode,
                              uint32_t optical_flow_frame_time,
                              uint32_t threshold,
                              uint32_t brightness,
-                             uint32_t contrast,
+//                             uint32_t contrast,
                              uint32_t clock_rate,
                              std::string event_fpn_file_path,
                              std::string frame_fpn_file_path)
@@ -28,7 +28,7 @@ CeleX5Options::CeleX5Options(CeleX5::CeleX5Mode fixed_mode,
       optical_flow_frame_time_(optical_flow_frame_time),
       threshold_(threshold),
       brightness_(brightness),
-      contrast_(contrast),
+//      contrast_(contrast),
       clock_rate_(clock_rate),
       event_FPN_file_path_(std::move(event_fpn_file_path)),
       frame_FPN_file_path_(std::move(frame_fpn_file_path)) {
@@ -59,6 +59,18 @@ const std::vector<CeleX5::CeleX5Mode> &CeleX5Options::GetLoopModes() const {
 
 void CeleX5Options::SetLoopModes(const std::vector<CeleX5::CeleX5Mode> &loop_modes) {
   loop_modes_ = loop_modes;
+}
+
+void CeleX5Options::SetLoopMode1(CeleX5::CeleX5Mode loop_mode1) {
+  loop_modes_.at(0) = loop_mode1;
+}
+
+void CeleX5Options::SetLoopMode2(CeleX5::CeleX5Mode loop_mode2) {
+  loop_modes_.at(1) = loop_mode2;
+}
+
+void CeleX5Options::SetLoopMode3(CeleX5::CeleX5Mode loop_mode3) {
+  loop_modes_.at(2) = loop_mode3;
 }
 
 uint32_t CeleX5Options::GetEventDurationInLoop() const {
@@ -101,13 +113,13 @@ void CeleX5Options::SetBrightness(uint32_t brightness) {
   brightness_ = brightness;
 }
 
-uint32_t CeleX5Options::GetContrast() const {
-  return contrast_;
-}
-
-void CeleX5Options::SetContrast(uint32_t contrast) {
-  contrast_ = contrast;
-}
+//uint32_t CeleX5Options::GetContrast() const {
+//  return contrast_;
+//}
+//
+//void CeleX5Options::SetContrast(uint32_t contrast) {
+//  contrast_ = contrast;
+//}
 
 uint32_t CeleX5Options::GetClockRate() const {
   return clock_rate_;
@@ -140,5 +152,6 @@ uint32_t CeleX5Options::GetPictureNumberInLoop() const {
 void CeleX5Options::SetPictureNumberInLoop(uint32_t picture_number_in_loop) {
   picture_number_in_loop_ = picture_number_in_loop;
 }
+
 
 

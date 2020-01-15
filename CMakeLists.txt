@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
         roscpp
         std_msgs
         ddynamic_reconfigure
+        nodelet
         )
 
 ## System dependencies are found with CMake's conventions
@@ -106,8 +107,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
         #  INCLUDE_DIRS include
-        #  LIBRARIES celex5_ros
-        CATKIN_DEPENDS cv_bridge geometry_msgs roscpp std_msgs ddynamic_reconfigure
+        LIBRARIES celex5_ros
+        CATKIN_DEPENDS cv_bridge geometry_msgs roscpp std_msgs ddynamic_reconfigure nodelet
         #  DEPENDS system_lib
 )
 
@@ -140,14 +141,17 @@ include_directories(
 link_directories(
         src/sdk/lib
 )
-add_executable(celex5_ros_node
+add_library(celex5_ros
         src/sdk/include/celextypes.h
         src/sdk/include/celex5/celex5datamanager.h
         src/sdk/include/celex5/celex5.h
         src/sdk/include/celex5/celex5processeddata.h
         src/celex5_ros_node.cpp
-        src/bean/celex5_ros.cpp src/bean/celex5_ros.h src/interface/celex5_configure.cpp src/interface/celex5_configure.h src/bean/celex5_options.cpp src/bean/celex5_options.h)
-target_link_libraries(celex5_ros_node
+        src/bean/celex5_nodelet.cpp src/bean/celex5_nodelet.h src/interface/celex5_configure.cpp src/interface/celex5_configure.h src/bean/celex5_options.cpp src/bean/celex5_options.h)
+
+add_dependencies(celex5_ros ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(celex5_ros
         ${catkin_LIBRARIES}
         -lCeleX5
         )

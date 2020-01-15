@@ -8,8 +8,10 @@ using namespace celex5_ros;
 
 CeleX5Configure::CeleX5Configure(
     std::shared_ptr<CeleX5Options> p_celex5_options,
+    std::shared_ptr<CeleX5> p_celex5_sensor,
     const ros::NodeHandle &nh)
     : nh_(nh),
+      p_celex5_sensor_(std::move(p_celex5_sensor)),
       p_celex5_options_(std::move(p_celex5_options)) {
 
   // Associate with enum CeleX5::CeleX5Mode
@@ -29,6 +31,7 @@ CeleX5Configure::CeleX5Configure(
        "Fixed mode of the CeleX5 event camera.",
        map_enum_celex5_mode);
 
+  // Loop Mode limit
   ddynamic_reconfigure_.registerEnumVariable<int>
       ("loop_mode1", static_cast<int>(p_celex5_options_->GetLoopModes().at(0)),
        boost::bind(&CeleX5Configure::ParamLoopMode1Cb, this, _1),
@@ -80,12 +83,12 @@ CeleX5Configure::CeleX5Configure(
        0,
        1023);
 
-  ddynamic_reconfigure_.registerVariable<int>
-      ("contrast", p_celex5_options_->GetContrast(),
-       boost::bind(&CeleX5Configure::ParamContrastCb, this, _1),
-       "Controls the contrast of the image CeleX-5 sensor generated.",
-       1,
-       3);
+//  ddynamic_reconfigure_.registerVariable<int>
+//      ("contrast", p_celex5_options_->GetContrast(),
+//       boost::bind(&CeleX5Configure::ParamContrastCb, this, _1),
+//       "Controls the contrast of the image CeleX-5 sensor generated.",
+//       1,
+//       3);
 
   ddynamic_reconfigure_.registerVariable<int>
       ("clock_rate", p_celex5_options_->GetClockRate(),
@@ -130,22 +133,44 @@ CeleX5Configure::CeleX5Configure(
 
 CeleX5Configure::~CeleX5Configure() = default;
 
+void CeleX5Configure::setCeleX5Options() {
+
+  p_celex5_sensor_->setSensorFixedMode(p_celex5_options_->GetFixedMode());
+  p_celex5_sensor_->setSensorLoopMode(p_celex5_options_->GetLoopModes().at(0), 1);
+  p_celex5_sensor_->setSensorLoopMode(p_celex5_options_->GetLoopModes().at(1), 2);
+  p_celex5_sensor_->setSensorLoopMode(p_celex5_options_->GetLoopModes().at(2), 3);
+
+  p_celex5_sensor_->setEventFrameTime(p_celex5_options_->GetEventFrameTime());
+  p_celex5_sensor_->setOpticalFlowFrameTime(p_celex5_options_->GetOpticalFlowFrameTime());
+  p_celex5_sensor_->setThreshold(p_celex5_options_->GetThreshold());
+  p_celex5_sensor_->setBrightness(p_celex5_options_->GetBrightness());
+  // p_celex5_sensor_->setContrast(p_celex5_options_->GetContrast());
+  p_celex5_sensor_->setClockRate(p_celex5_options_->GetClockRate());
+
+  p_celex5_sensor_->setLoopModeEnabled(p_celex5_options_->IsLoopModeEnabled());
+  p_celex5_sensor_->setEventDuration(p_celex5_options_->GetEventDurationInLoop());
+  p_celex5_sensor_->setPictureNumber(p_celex5_options_->GetPictureNumberInLoop(),
+                                     p_celex5_options_->GetLoopModes().at(1));
+}
+
 void CeleX5Configure::ParamFixedModeCb(int fixed_mode) {
-  // TODO
   p_celex5_options_->
       SetFixedMode(static_cast<CeleX5::CeleX5Mode>(fixed_mode));
 }
 
 void CeleX5Configure::ParamLoopMode1Cb(int loop_mode1) {
-
+  p_celex5_options_->
+      SetLoopMode1(static_cast<CeleX5::CeleX5Mode>(loop_mode1));
 }
 
 void CeleX5Configure::ParamLoopMode2Cb(int loop_mode2) {
-
+  p_celex5_options_->
+      SetLoopMode2(static_cast<CeleX5::CeleX5Mode>(loop_mode2));
 }
 
 void CeleX5Configure::ParamLoopMode3Cb(int loop_mode3) {
-
+  p_celex5_options_->
+      SetLoopMode3(static_cast<CeleX5::CeleX5Mode>(loop_mode3));
 }
 
 void CeleX5Configure::ParamEventFrameTimeCb(int new_event_frame_time) {
@@ -168,10 +193,10 @@ void CeleX5Configure::ParamBrightnessCb(int new_brightness) {
       SetBrightness(static_cast<uint32_t>(new_brightness));
 }
 
-void CeleX5Configure::ParamContrastCb(int new_contrast) {
-  p_celex5_options_->
-      SetContrast(static_cast<uint32_t>(new_contrast));
-}
+//void CeleX5Configure::ParamContrastCb(int new_contrast) {
+//  p_celex5_options_->
+//      SetContrast(static_cast<uint32_t>(new_contrast));
+//}
 
 void CeleX5Configure::ParamClockRateCb(int new_clock_rate) {
   p_celex5_options_->
@@ -202,5 +227,6 @@ void CeleX5Configure::ParamFrameFpnFilePathCb(const std::string &new_fpn_file_pa
   p_celex5_options_->
       SetFrameFpnFilePath(new_fpn_file_path);
 }
+
 
 
