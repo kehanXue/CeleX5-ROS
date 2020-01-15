@@ -35,6 +35,8 @@ class CeleX5Configure {
   void ParamLoopMode3Cb(int loop_mode3);
 
   void ParamEventFrameTimeCb(int new_event_frame_time);
+  void ParamOpticalFlowFrameTimeCb(int new_optical_flow_frame_time);
+
   void ParamThresholdCb(int new_threshold);
   void ParamBrightnessCb(int new_brightness);
   void ParamContrastCb(int new_contrast);

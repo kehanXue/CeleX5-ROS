@@ -13,10 +13,14 @@ class CeleX5Options {
 
  public:
 
+  // TODO default value
   explicit CeleX5Options(CeleX5::CeleX5Mode fixed_mode = CeleX5::CeleX5Mode::Event_Off_Pixel_Timestamp_Mode,
                          bool is_loop_mode_enabled = false,
                          std::vector<CeleX5::CeleX5Mode> loop_modes = std::vector<CeleX5::CeleX5Mode>(3),
-                         uint32_t event_duration = 100,
+                         uint32_t event_duration_in_loop = 100,
+                         uint32_t picture_number_in_loop = 30,
+                         uint32_t event_frame_time_ = 1000,
+                         uint32_t optical_flow_frame_time_ = 20,
                          uint32_t threshold = 185,
                          uint32_t brightness = 150,
                          uint32_t contrast = 1,
@@ -37,6 +41,9 @@ class CeleX5Options {
 
   uint32_t GetEventFrameTime() const;
   void SetEventFrameTime(uint32_t event_frame_time);
+
+  uint32_t GetOpticalFlowFrameTime() const;
+  void SetOpticalFlowFrameTime(uint32_t optical_flow_frame_time);
 
   uint32_t GetThreshold() const;
   void SetThreshold(uint32_t threshold);
@@ -67,6 +74,7 @@ class CeleX5Options {
   std::vector<CeleX5::CeleX5Mode> loop_modes_;
 
   uint32_t event_frame_time_;
+  uint32_t optical_flow_frame_time_;
 
   uint32_t threshold_;
   uint32_t brightness_;

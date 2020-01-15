@@ -7,7 +7,10 @@
 CeleX5Options::CeleX5Options(CeleX5::CeleX5Mode fixed_mode,
                              bool is_loop_mode_enabled,
                              std::vector<CeleX5::CeleX5Mode> loop_modes,
-                             uint32_t event_duration,
+                             uint32_t event_duration_in_loop,
+                             uint32_t picture_number_in_loop,
+                             uint32_t event_frame_time,
+                             uint32_t optical_flow_frame_time,
                              uint32_t threshold,
                              uint32_t brightness,
                              uint32_t contrast,
@@ -17,7 +20,10 @@ CeleX5Options::CeleX5Options(CeleX5::CeleX5Mode fixed_mode,
     : fixed_mode_(fixed_mode),
       is_loop_mode_enabled_(is_loop_mode_enabled),
       loop_modes_(std::move(loop_modes)),
-      event_duration_in_loop_(event_duration),
+      event_duration_in_loop_(event_duration_in_loop),
+      picture_number_in_loop_(picture_number_in_loop),
+      event_frame_time_(event_frame_time),
+      optical_flow_frame_time_(optical_flow_frame_time),
       threshold_(threshold),
       brightness_(brightness),
       contrast_(contrast),
@@ -59,6 +65,22 @@ uint32_t CeleX5Options::GetEventDurationInLoop() const {
 
 void CeleX5Options::SetEventDurationInLoop(uint32_t event_duration) {
   event_duration_in_loop_ = event_duration;
+}
+
+uint32_t CeleX5Options::GetEventFrameTime() const {
+  return event_frame_time_;
+}
+
+void CeleX5Options::SetEventFrameTime(uint32_t event_frame_time) {
+  event_frame_time_ = event_frame_time;
+}
+
+uint32_t CeleX5Options::GetOpticalFlowFrameTime() const {
+  return optical_flow_frame_time_;
+}
+
+void CeleX5Options::SetOpticalFlowFrameTime(uint32_t optical_flow_frame_time) {
+  optical_flow_frame_time_ = optical_flow_frame_time;
 }
 
 uint32_t CeleX5Options::GetThreshold() const {
@@ -109,14 +131,6 @@ void CeleX5Options::SetFrameFpnFilePath(const std::string &frame_fpn_file_path) 
   frame_FPN_file_path_ = frame_fpn_file_path;
 }
 
-uint32_t CeleX5Options::GetEventFrameTime() const {
-  return event_frame_time_;
-}
-
-void CeleX5Options::SetEventFrameTime(uint32_t event_frame_time) {
-  event_frame_time_ = event_frame_time;
-}
-
 uint32_t CeleX5Options::GetPictureNumberInLoop() const {
   return picture_number_in_loop_;
 }
@@ -124,4 +138,5 @@ uint32_t CeleX5Options::GetPictureNumberInLoop() const {
 void CeleX5Options::SetPictureNumberInLoop(uint32_t picture_number_in_loop) {
   picture_number_in_loop_ = picture_number_in_loop;
 }
+
 

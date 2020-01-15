@@ -56,6 +56,14 @@ CeleX5Configure::CeleX5Configure(
        1,
        10000);
 
+  // TODO range
+  ddynamic_reconfigure_.registerVariable<int>
+      ("optical_flow_frame_time", p_celex5_options_->GetOpticalFlowFrameTime(),
+       boost::bind(&CeleX5Configure::ParamOpticalFlowFrameTimeCb, this, _1),
+       "The time of generating a full-frame optical-flow picture, unit is ms.",
+       1,
+       10000);
+
   ddynamic_reconfigure_.registerVariable<int>
       ("threshold", p_celex5_options_->GetThreshold(),
        boost::bind(&CeleX5Configure::ParamThresholdCb, this, _1),
@@ -118,13 +126,12 @@ CeleX5Configure::CeleX5Configure(
   ddynamic_reconfigure_.publishServicesTopics();
 }
 
-CeleX5Configure::~CeleX5Configure() {
-
-}
+CeleX5Configure::~CeleX5Configure() = default;
 
 void CeleX5Configure::ParamFixedModeCb(int fixed_mode) {
   // TODO
-  p_celex5_options_->SetFixedMode(static_cast<CeleX5::CeleX5Mode>(fixed_mode));
+  p_celex5_options_->
+      SetFixedMode(static_cast<CeleX5::CeleX5Mode>(fixed_mode));
 }
 
 void CeleX5Configure::ParamLoopMode1Cb(int loop_mode1) {
@@ -140,43 +147,58 @@ void CeleX5Configure::ParamLoopMode3Cb(int loop_mode3) {
 }
 
 void CeleX5Configure::ParamEventFrameTimeCb(int new_event_frame_time) {
-  p_celex5_options_->SetEventFrameTime(new_event_frame_time);
+  p_celex5_options_->
+      SetEventFrameTime(static_cast<uint32_t>(new_event_frame_time));
+}
+
+void CeleX5Configure::ParamOpticalFlowFrameTimeCb(int new_optical_flow_frame_time) {
+  p_celex5_options_->
+      SetOpticalFlowFrameTime(static_cast<uint32_t>(new_optical_flow_frame_time));
 }
 
 void CeleX5Configure::ParamThresholdCb(int new_threshold) {
-  p_celex5_options_->SetThreshold(new_threshold);
+  p_celex5_options_->
+      SetThreshold(static_cast<uint32_t>(new_threshold));
 }
 
 void CeleX5Configure::ParamBrightnessCb(int new_brightness) {
-  p_celex5_options_->SetBrightness(new_brightness);
+  p_celex5_options_->
+      SetBrightness(static_cast<uint32_t>(new_brightness));
 }
 
 void CeleX5Configure::ParamContrastCb(int new_contrast) {
-  p_celex5_options_->SetContrast(new_contrast);
+  p_celex5_options_->
+      SetContrast(static_cast<uint32_t>(new_contrast));
 }
 
 void CeleX5Configure::ParamClockRateCb(int new_clock_rate) {
-  p_celex5_options_->SetClockRate(new_clock_rate);
+  p_celex5_options_->
+      SetClockRate(static_cast<uint32_t>(new_clock_rate));
 }
 
 void CeleX5Configure::ParamIsLoopModeEnabled(bool new_loop_mode_status) {
-  p_celex5_options_->SetIsLoopModeEnabled(new_loop_mode_status);
+  p_celex5_options_->
+      SetIsLoopModeEnabled(new_loop_mode_status);
 }
 
 void CeleX5Configure::ParamEventDurationInLoopCb(int new_event_duration_in_loop) {
-  p_celex5_options_->SetEventDurationInLoop(new_event_duration_in_loop);
+  p_celex5_options_->
+      SetEventDurationInLoop(static_cast<uint32_t>(new_event_duration_in_loop));
 }
 
 void CeleX5Configure::ParamPictureNumberInLoopCb(int new_picture_number_in_loop) {
-  p_celex5_options_->SetPictureNumberInLoop(new_picture_number_in_loop);
+  p_celex5_options_->
+      SetPictureNumberInLoop(static_cast<uint32_t>(new_picture_number_in_loop));
 }
 
 void CeleX5Configure::ParamEventFpnFilePathCb(const std::string &new_fpn_file_path) {
-  p_celex5_options_->SetEventFpnFilePath(new_fpn_file_path);
+  p_celex5_options_->
+      SetEventFpnFilePath(new_fpn_file_path);
 }
 
 void CeleX5Configure::ParamFrameFpnFilePathCb(const std::string &new_fpn_file_path) {
-  p_celex5_options_->SetFrameFpnFilePath(new_fpn_file_path);
+  p_celex5_options_->
+      SetFrameFpnFilePath(new_fpn_file_path);
 }
 
 
