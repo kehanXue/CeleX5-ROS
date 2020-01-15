@@ -4,6 +4,8 @@
 
 #include "celex5_options.h"
 
+using namespace celex5_ros;
+
 CeleX5Options::CeleX5Options(CeleX5::CeleX5Mode fixed_mode,
                              bool is_loop_mode_enabled,
                              std::vector<CeleX5::CeleX5Mode> loop_modes,

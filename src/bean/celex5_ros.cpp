@@ -4,7 +4,15 @@
 
 #include "celex5_ros.h"
 
-CeleX5ROS::CeleX5ROS() {
+using namespace celex5_ros;
+
+CeleX5ROS::CeleX5ROS()
+    : nh_("~") {
+
+  p_celex5_options_ = std::make_shared<CeleX5Options>();
+  p_celex5_sensor_ = std::make_shared<CeleX5>();
+  p_celex5_configure_ = std::make_shared<CeleX5Configure>(p_celex5_options_, nh_);
+
 
 }
 

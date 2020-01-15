@@ -14,6 +14,7 @@
 
 #include "bean/celex5_options.h"
 
+namespace celex5_ros {
 class CeleX5Configure {
 
  public:
@@ -48,5 +49,6 @@ class CeleX5Configure {
   void ParamEventFpnFilePathCb(const std::string &new_fpn_file_path);
   void ParamFrameFpnFilePathCb(const std::string &new_fpn_file_path);
 };
+}
 
 #endif //CELEX5_ROS_SRC_INTERFACE_CELEX5_CONFIGURE_H_

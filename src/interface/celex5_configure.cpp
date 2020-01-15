@@ -4,6 +4,8 @@
 
 #include "celex5_configure.h"
 
+using namespace celex5_ros;
+
 CeleX5Configure::CeleX5Configure(
     std::shared_ptr<CeleX5Options> p_celex5_options,
     const ros::NodeHandle &nh)

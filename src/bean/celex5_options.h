@@ -9,6 +9,7 @@
 #include <vector>
 #include "celex5/celex5.h"
 
+namespace celex5_ros {
 class CeleX5Options {
 
  public:
@@ -88,5 +89,6 @@ class CeleX5Options {
   std::string event_FPN_file_path_;
   std::string frame_FPN_file_path_;
 };
+}
 
 #endif //CELEX5_ROS_SRC_BEAN_CELEX5_OPTIONS_H_
