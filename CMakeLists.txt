@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
         std_msgs
         ddynamic_reconfigure
         nodelet
+        celex5_msgs
+        sensor_msgs
         )
 
 ## System dependencies are found with CMake's conventions
@@ -146,8 +148,7 @@ add_library(celex5_ros
         src/sdk/include/celex5/celex5datamanager.h
         src/sdk/include/celex5/celex5.h
         src/sdk/include/celex5/celex5processeddata.h
-        src/celex5_ros_node.cpp
-        src/bean/celex5_nodelet.cpp src/bean/celex5_nodelet.h src/interface/celex5_configure.cpp src/interface/celex5_configure.h src/bean/celex5_options.cpp src/bean/celex5_options.h)
+        src/bean/celex5_nodelet.cpp src/bean/celex5_nodelet.h src/interface/celex5_configure.cpp src/interface/celex5_configure.h src/bean/celex5_options.cpp src/bean/celex5_options.h src/bean/celex5_data_forwarder.cpp src/bean/celex5_data_forwarder.h)
 
 add_dependencies(celex5_ros ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 

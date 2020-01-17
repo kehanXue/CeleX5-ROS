@@ -1,0 +1,10 @@
+<launch>
+
+    <arg name="camera" default="celex5_mipi"/>
+
+    <group ns="$(arg camera)">
+        <include file="$(find celex5_ros)/launch/includes/nodelet.launch.xml">
+
+        </include>
+    </group>
+</launch>

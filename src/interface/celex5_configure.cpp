@@ -133,7 +133,7 @@ CeleX5Configure::CeleX5Configure(
 
 CeleX5Configure::~CeleX5Configure() = default;
 
-void CeleX5Configure::setCeleX5Options() {
+void CeleX5Configure::updateCeleX5Options() {
 
   p_celex5_sensor_->setSensorFixedMode(p_celex5_options_->GetFixedMode());
   p_celex5_sensor_->setSensorLoopMode(p_celex5_options_->GetLoopModes().at(0), 1);

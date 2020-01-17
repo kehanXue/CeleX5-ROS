@@ -6,14 +6,27 @@
 
 using namespace celex5_ros;
 
-CeleX5Nodelet::CeleX5Nodelet()
-    : nh_("~") {
+CeleX5Nodelet::CeleX5Nodelet() {
 
   p_celex5_options_ = std::make_shared<CeleX5Options>();
   p_celex5_sensor_ = std::make_shared<CeleX5>();
+}
+
+CeleX5Nodelet::~CeleX5Nodelet() = default;
+
+void CeleX5Nodelet::onInit() {
+
+  nh_ = this->getPrivateNodeHandle();
+
   p_celex5_configure_ =
       std::make_shared<CeleX5Configure>(p_celex5_options_, p_celex5_sensor_, nh_);
+  p_celex5_sensor_->openSensor(CeleX5::CeleX5_MIPI);
 
+  ReadParams();
+  p_celex5_data_forwarder_ = std::make_shared<CeleX5DataForwarder>(nh_, p_celex5_sensor_);
+}
+
+void CeleX5Nodelet::ReadParams() {
   /*
    * Read parameters from ROS param server
    */
@@ -86,9 +99,9 @@ CeleX5Nodelet::CeleX5Nodelet()
   readStringParam("event_FPN_file_path", p_celex5_options_->event_FPN_file_path_);
   readStringParam("frame_FPN_file_path", p_celex5_options_->frame_FPN_file_path_);
 
-
+  p_celex5_configure_->updateCeleX5Options();
 }
 
-CeleX5Nodelet::~CeleX5Nodelet() = default;
 
-PLUGINLIB_EXPORT_CLASS(celex5_ros::CeleX5Nodelet, nodelet::Nodelet)
+
+//PLUGINLIB_EXPORT_CLASS(celex5_ros::CeleX5Nodelet, nodelet::Nodelet)
