@@ -23,7 +23,7 @@ class CeleX5Nodelet : public nodelet::Nodelet {
 
  public:
   CeleX5Nodelet();
-  virtual ~CeleX5Nodelet();
+  ~CeleX5Nodelet() override;
 
  private:
 

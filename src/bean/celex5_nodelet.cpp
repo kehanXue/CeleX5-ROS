@@ -20,7 +20,11 @@ void CeleX5Nodelet::onInit() {
 
   p_celex5_configure_ =
       std::make_shared<CeleX5Configure>(p_celex5_options_, p_celex5_sensor_, nh_);
+  ROS_WARN("!!!!!!!");
   p_celex5_sensor_->openSensor(CeleX5::CeleX5_MIPI);
+//  ROS_WARN("?????????????");
+
+  ROS_INFO("Sensor status: %d", p_celex5_sensor_->isSensorReady());
 
   ReadParams();
   p_celex5_data_forwarder_ = std::make_shared<CeleX5DataForwarder>(nh_, p_celex5_sensor_);
