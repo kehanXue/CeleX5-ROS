@@ -22,70 +22,80 @@
 /*
 *  This is an abstract observer class.
 */
-class CeleX5DataManager {
- public:
-  enum emDataType {
-    Default = 0,
-    CeleX_Frame_Data = 1
-  };
+class CeleX5DataManager
+{
+public:
+	enum emDataType {
+		Default = 0,
+		CeleX_Frame_Data = 1
+	};
 
-  CeleX5DataManager() {}
-  ~CeleX5DataManager() {}
+	CeleX5DataManager() { }
+	~CeleX5DataManager() { }
 
-  virtual void onFrameDataUpdated(CeleX5ProcessedData *data) = 0;
+	virtual void onFrameDataUpdated(CeleX5ProcessedData* data) = 0;
 };
 
 /*
 *  This is an abstract subject class. 
 */
-class CX5Subject {
- public:
-  virtual void registerData(CeleX5DataManager *observer, CeleX5DataManager::emDataType type) = 0;
-  virtual void unregisterData(CeleX5DataManager *observer, CeleX5DataManager::emDataType type) = 0;
-  virtual void notify(CeleX5DataManager::emDataType dataType) = 0;
+class CX5Subject
+{
+public:
+	virtual void registerData(CeleX5DataManager* observer, CeleX5DataManager::emDataType type) = 0;
+	virtual void unregisterData(CeleX5DataManager* observer, CeleX5DataManager::emDataType type) = 0;
+	virtual void notify(CeleX5DataManager::emDataType dataType) = 0;
 };
 
 /*
 *  This is a concrete subject class(be observed by observer).
 */
-class CX5SensorDataServer : public CX5Subject {
- public:
-  CX5SensorDataServer() : m_pObserver(NULL), m_pCX5ProcessedData(NULL) {
-  }
-  virtual ~CX5SensorDataServer() {
-  }
-  /*
-  *  add observer
-  */
-  void registerData(CeleX5DataManager *observer, CeleX5DataManager::emDataType type) {
-    m_pObserver = observer;
-    m_listDataType.push_back(type);
-  }
+class CX5SensorDataServer : public CX5Subject
+{
+public:
+	CX5SensorDataServer() : m_pObserver(NULL), m_pCX5ProcessedData(NULL)
+	{
+	}
+	virtual ~CX5SensorDataServer()
+	{
+	}
+	/*
+	*  add observer
+	*/
+	void registerData(CeleX5DataManager* observer, CeleX5DataManager::emDataType type)
+	{
+		m_pObserver = observer;
+		m_listDataType.push_back(type);
+	}
 
-  /*
-  *  delete observer
-  */
-  void unregisterData(CeleX5DataManager *observer, CeleX5DataManager::emDataType type) {
-    if (observer==m_pObserver) {
-      m_listDataType.remove(type);
-    }
-  }
+	/*
+	*  delete observer
+	*/
+	void unregisterData(CeleX5DataManager* observer, CeleX5DataManager::emDataType type)
+	{
+		if (observer == m_pObserver)
+		{
+			m_listDataType.remove(type);
+		}
+	}
 
-  /*
-  *  notify the observers to update
-  */
-  void notify(CeleX5DataManager::emDataType dataType) {
-    if (m_pObserver) {
-      if (CeleX5DataManager::CeleX_Frame_Data==dataType)
-        m_pObserver->onFrameDataUpdated(m_pCX5ProcessedData);
-    }
-  }
-  inline void setCX5SensorData(CeleX5ProcessedData *data) { m_pCX5ProcessedData = data; }
+	/*
+	*  notify the observers to update
+	*/
+	void notify(CeleX5DataManager::emDataType dataType)
+	{
+		if (m_pObserver)
+		{
+			if (CeleX5DataManager::CeleX_Frame_Data == dataType)
+				m_pObserver->onFrameDataUpdated(m_pCX5ProcessedData);
+		}
+	}
+	inline void setCX5SensorData(CeleX5ProcessedData* data) { m_pCX5ProcessedData = data; }
 
- private:
-  std::list<CeleX5DataManager::emDataType> m_listDataType;
-  CeleX5DataManager *m_pObserver;
-  CeleX5ProcessedData *m_pCX5ProcessedData;
+private:
+	std::list<CeleX5DataManager::emDataType> m_listDataType;
+	CeleX5DataManager*      m_pObserver;
+	CeleX5ProcessedData*    m_pCX5ProcessedData;
 };
 
 #endif // CELEX5_DATA_MANAGER_H

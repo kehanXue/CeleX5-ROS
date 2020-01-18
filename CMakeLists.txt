@@ -19,8 +19,10 @@ find_package(catkin REQUIRED COMPONENTS
         )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system)
 
+find_package(OpenCV 3 REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -118,6 +120,7 @@ catkin_package(
 ## Build ##
 ###########
 
+add_subdirectory(src/sdk/)
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
@@ -140,9 +143,11 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-link_directories(
-        src/sdk/lib
-)
+
+# link_directories(
+#         src/sdk/lib
+# )
+
 add_library(celex5_ros
         src/sdk/include/celextypes.h
         src/sdk/include/celex5/celex5datamanager.h
@@ -154,7 +159,7 @@ add_dependencies(celex5_ros ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTE
 
 target_link_libraries(celex5_ros
         ${catkin_LIBRARIES}
-        -lCeleX5
+        CeleX5
         )
 
 ## Rename C++ executable without prefix

@@ -139,48 +139,50 @@
 
 #define VIRTUAL_USB_ADDR            254
 
-typedef struct EventData {
-  uint16_t col;
-  uint16_t row;
-  uint16_t
-      adc; //Event_Off_Pixel_Timestamp_Mode: adc is 0; Event Intensity Mode: adc is "Intensity"; Event_In_Pixel_Timestamp_Mode: adc is "Optical-flow T"
-  int16_t polarity; //-1: intensity weakened; 1: intensity is increased; 0 intensity unchanged
-  uint32_t tInPixelIncreasing;
-  uint32_t tOffPixelIncreasing; //it won't be reset, it's a monotonically increasing value
+typedef struct EventData
+{
+	uint16_t    col;
+	uint16_t    row;
+	uint16_t    adc; //Event_Off_Pixel_Timestamp_Mode: adc is 0; Event Intensity Mode: adc is "Intensity"; Event_In_Pixel_Timestamp_Mode: adc is "Optical-flow T"
+	int16_t     polarity; //-1: intensity weakened; 1: intensity is increased; 0 intensity unchanged
+	uint32_t    tInPixelIncreasing;
+	uint32_t    tOffPixelIncreasing; //it won't be reset, it's a monotonically increasing value
 } EventData;
 
-typedef enum EventShowType {
-  EventShowByTime = 0,
-  EventShowByCount = 1,
-  EventShowByRowCycle = 2,
+typedef enum EventShowType
+{
+	EventShowByTime = 0,
+	EventShowByCount = 1,
+	EventShowByRowCycle = 2,
 } EventShowType;
 
 typedef enum PlaybackState {
-  NoBinPlaying = 0,
-  Playing,
-  BinReadFinished,
-  PlayFinished,
-  Replay
+	NoBinPlaying = 0,
+	Playing,
+	BinReadFinished,
+	PlayFinished,
+	Replay
 } PlaybackState;
 
 typedef struct IMUData {
-  double xGYROS;
-  double yGYROS;
-  double zGYROS;
-  double xACC;
-  double yACC;
-  double zACC;
-  double xMAG;
-  double yMAG;
-  double zMAG;
-  double xTEMP;
-  uint64_t frameNo;
-  std::time_t timestamp;
+	double			xGYROS;
+	double			yGYROS;
+	double			zGYROS;
+	double			xACC;
+	double			yACC;
+	double			zACC;
+	double			xMAG;
+	double			yMAG;
+	double			zMAG;
+	double			xTEMP;
+	uint64_t        frameNo;
+	std::time_t     timestamp;
 } IMUData;
 
-typedef struct IMURawData {
-  uint8_t imuData[20];
-  std::time_t timestamp;
+typedef struct IMURawData
+{
+	uint8_t       imuData[20];
+	std::time_t   timestamp;
 } IMURawData;
 
 #endif // CELEXTYPES_H
