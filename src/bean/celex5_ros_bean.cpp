@@ -1,33 +1,31 @@
 //
-// Created by kehan on 2020/1/13.
+// Created by kehan on 2020/1/18.
 //
 
-#include "celex5_nodelet.h"
+#include "celex5_ros_bean.h"
 
 using namespace celex5_ros;
 
-CeleX5Nodelet::CeleX5Nodelet() {
-
+celex5_ros::CeleX5ROSBean::CeleX5ROSBean() {
   p_celex5_options_ = std::make_shared<CeleX5Options>();
   p_celex5_sensor_ = std::make_shared<CeleX5>();
 }
 
-CeleX5Nodelet::~CeleX5Nodelet() = default;
+celex5_ros::CeleX5ROSBean::~CeleX5ROSBean() = default;
 
-void CeleX5Nodelet::onInit() {
-
-  nh_ = this->getPrivateNodeHandle();
+void celex5_ros::CeleX5ROSBean::Run() {
+  nh_ = ros::NodeHandle("~");
 
   p_celex5_configure_ =
       std::make_shared<CeleX5Configure>(p_celex5_options_, p_celex5_sensor_, nh_);
   p_celex5_sensor_->openSensor(CeleX5::CeleX5_MIPI);
-
   ROS_INFO("Sensor status: %d", p_celex5_sensor_->isSensorReady());
+
   ReadParams();
   p_celex5_data_forwarder_ = std::make_shared<CeleX5DataForwarder>(nh_, p_celex5_sensor_);
 }
 
-void CeleX5Nodelet::ReadParams() {
+void celex5_ros::CeleX5ROSBean::ReadParams() {
   /*
    * Read parameters from ROS param server
    */
@@ -102,7 +100,3 @@ void CeleX5Nodelet::ReadParams() {
 
   p_celex5_configure_->updateCeleX5Options();
 }
-
-
-
-//PLUGINLIB_EXPORT_CLASS(celex5_ros::CeleX5Nodelet, nodelet::Nodelet)
