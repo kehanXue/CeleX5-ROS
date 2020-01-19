@@ -22,7 +22,7 @@ class CeleX5Configure {
                            std::shared_ptr<CeleX5> p_celex5_sensor,
                            const ros::NodeHandle &nh = ros::NodeHandle("~"));
   virtual ~CeleX5Configure();
-  void updateCeleX5Options();
+  void UpdateCeleX5Options();
 
  private:
   ros::NodeHandle nh_;
