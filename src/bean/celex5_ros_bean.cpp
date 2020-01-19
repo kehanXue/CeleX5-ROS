@@ -76,7 +76,7 @@ void celex5_ros::CeleX5ROSBean::ReadParams() {
     }
   };
 
-  uint32_t tmp_celex5_mode_param = -1;
+  uint32_t tmp_celex5_mode_param = p_celex5_options_->GetFixedMode();
   readIntParam("fixed_mode", tmp_celex5_mode_param);
   p_celex5_options_->SetFixedMode(static_cast<CeleX5::CeleX5Mode>(tmp_celex5_mode_param));
   readIntParam("loop_mode1", tmp_celex5_mode_param);
