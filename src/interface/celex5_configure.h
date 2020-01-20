@@ -12,6 +12,7 @@
 #include <ros/ros.h>
 #include <ddynamic_reconfigure/ddynamic_reconfigure.h>
 
+#include "bean/celex5_display_controller.h"
 #include "bean/celex5_options.h"
 
 namespace celex5_ros {
@@ -23,10 +24,11 @@ class CeleX5Configure {
                            const ros::NodeHandle &nh = ros::NodeHandle("~"));
   virtual ~CeleX5Configure();
   void UpdateCeleX5Options();
-
+  void PublishReconfigureServices();
+  const std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> &GetPtrDDynRec() const;
  private:
   ros::NodeHandle nh_;
-  ddynamic_reconfigure::DDynamicReconfigure ddynamic_reconfigure_;
+  std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec_;
   std::shared_ptr<CeleX5> p_celex5_sensor_;
   std::shared_ptr<CeleX5Options> p_celex5_options_;
 

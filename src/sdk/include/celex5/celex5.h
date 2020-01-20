@@ -48,13 +48,15 @@ class DataRecorder;
 class CELEX_EXPORTS CeleX5
 {
 public:
-	enum DeviceType {
+	enum DeviceType
+	{
 		Unknown_Devive = 0,
 		CeleX5_MIPI = 1,
 		CeleX5_OpalKelly = 2,
 	};
 
-	enum CeleX5Mode {
+	enum CeleX5Mode
+	{
 		Unknown_Mode = -1,
 		Event_Off_Pixel_Timestamp_Mode = 0,	//Using Event_Off_Pixel_Timestamp_Mode, Event_Address_Only_Mode is deprecated.
 		Event_In_Pixel_Timestamp_Mode = 1,	//Using Event_In_Pixel_Timestamp_Mode, Event_Optical_Flow_Mode is deprecated.
@@ -65,8 +67,9 @@ public:
 		Multi_Read_Optical_Flow_Mode = 6,	//Using Multi_Read_Optical_Flow_Mode, Full_Optical_Flow_M_Mode  is deprecated.
 	};
 
-	enum EventPicType {
-      Unknown_Event_Type = -1,
+	enum EventPicType
+	{
+        Unknown_Event_Type = -1,
 		EventBinaryPic = 0,
 		EventAccumulatedPic = 1,
 		EventGrayPic = 2,
@@ -78,11 +81,18 @@ public:
 		EventInPixelTimestampPic = 8
 	};
 
-	enum OpticalFlowPicType {
-      Unknown_Optical_Flow_Type = -1,
+	enum OpticalFlowPicType
+	{
+        Unknown_Optical_Flow_Type = -1,
 		OpticalFlowPic = 0,
 		OpticalFlowSpeedPic = 1,
 		OpticalFlowDirectionPic = 2
+	};
+
+	enum FullFramePicType
+	{
+        Unknown_Full_Frame_Type = -1,
+	    FullFramePic = 0
 	};
 
 	typedef struct CfgInfo

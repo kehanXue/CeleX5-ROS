@@ -13,19 +13,19 @@ celex5_ros::CeleX5DataForwarder::CeleX5DataForwarder(const ros::NodeHandle &nh,
   p_celex5_data_server_->registerData(this, emDataType::CeleX_Frame_Data);
 
   events_pub_ = nh_.advertise<celex5_msgs::eventVector>("events", 10);
-  imu_pub_ = nh_.advertise<sensor_msgs::Imu>("imu", 10);
-  mag_pub_ = nh_.advertise<sensor_msgs::MagneticField>("magnetic", 10);
+//  imu_pub_ = nh_.advertise<sensor_msgs::Imu>("imu", 10);
+//  mag_pub_ = nh_.advertise<sensor_msgs::MagneticField>("magnetic", 10);
 
   event_binary_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_binary_img", 10);
-  event_denoised_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_denoised_img", 10);;
-  event_count_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_count_img", 10);;
-  event_optical_flow_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_optical_flow_img", 10);;
-
-  event_gray_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_gray_img", 10);;
-  event_accumulated_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_accumulated_img", 10);;
-  event_superimposed_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_superimposed_img", 10);;
-  event_optical_flow_direction_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_optical_flow_direction_img", 10);;
-  event_optical_flow_speed_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_optical_flow_speed_img", 10);;
+//  event_denoised_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_denoised_img", 10);;
+//  event_count_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_count_img", 10);;
+//  event_optical_flow_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_optical_flow_img", 10);;
+//
+//  event_gray_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_gray_img", 10);;
+//  event_accumulated_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_accumulated_img", 10);;
+//  event_superimposed_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_superimposed_img", 10);;
+//  event_optical_flow_direction_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_optical_flow_direction_img", 10);;
+//  event_optical_flow_speed_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_optical_flow_speed_img", 10);;
 }
 
 celex5_ros::CeleX5DataForwarder::~CeleX5DataForwarder() {

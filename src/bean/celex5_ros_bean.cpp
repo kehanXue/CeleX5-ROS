@@ -23,6 +23,11 @@ void celex5_ros::CeleX5ROSBean::Run() {
 
   ReadParams();
   p_celex5_data_forwarder_ = std::make_shared<CeleX5DataForwarder>(nh_, p_celex5_sensor_);
+  CeleX5DisplayController::GetInstance(nh_,
+                                       p_celex5_sensor_,
+                                       p_celex5_configure_->GetPtrDDynRec())
+      ->SetCeleX5Mode(p_celex5_sensor_->getSensorFixedMode());
+  p_celex5_configure_->PublishReconfigureServices();
 }
 
 void celex5_ros::CeleX5ROSBean::ReadParams() {

@@ -13,7 +13,7 @@ CeleX5Configure::CeleX5Configure(
     : nh_(nh),
       p_celex5_sensor_(std::move(p_celex5_sensor)),
       p_celex5_options_(std::move(p_celex5_options)) {
-
+  p_ddyn_rec_ = std::make_shared<ddynamic_reconfigure::DDynamicReconfigure>(nh_);
   // Associate with enum CeleX5::CeleX5Mode
   std::map<std::string, int> map_enum_celex5_mode = {
       {"Event_Off_Pixel_Timestamp_Mode", 0},
@@ -25,34 +25,32 @@ CeleX5Configure::CeleX5Configure(
       {"Multi_Read_Optical_Flow_Mode", 6}
   };
 
-  ddynamic_reconfigure_.registerEnumVariable<int>
+  p_ddyn_rec_->registerEnumVariable<int>
       ("fixed_mode", static_cast<int>(p_celex5_options_->GetFixedMode()),
        boost::bind(&CeleX5Configure::ParamFixedModeCb, this, _1),
        "Fixed mode of the CeleX5 event camera.",
        map_enum_celex5_mode);
 
   // Loop Mode limit
-  ddynamic_reconfigure_.registerEnumVariable<int>
+  p_ddyn_rec_->registerEnumVariable<int>
       ("loop_mode1", static_cast<int>(p_celex5_options_->GetLoopModes().at(0)),
        boost::bind(&CeleX5Configure::ParamLoopMode1Cb, this, _1),
        "Loop mode 1 of the CeleX5 event camera.",
        map_enum_celex5_mode);
 
-  ddynamic_reconfigure_.registerEnumVariable<int>
+  p_ddyn_rec_->registerEnumVariable<int>
       ("loop_mode2", static_cast<int>(p_celex5_options_->GetLoopModes().at(1)),
        boost::bind(&CeleX5Configure::ParamLoopMode2Cb, this, _1),
        "Loop mode 2 of the CeleX5 event camera.",
        map_enum_celex5_mode);
 
-  ddynamic_reconfigure_.registerEnumVariable<int>
+  p_ddyn_rec_->registerEnumVariable<int>
       ("loop_mode3", static_cast<int>(p_celex5_options_->GetLoopModes().at(2)),
        boost::bind(&CeleX5Configure::ParamLoopMode3Cb, this, _1),
        "Loop mode 3 of the CeleX5 event camera.",
        map_enum_celex5_mode);
 
-
-  // TODO range
-  ddynamic_reconfigure_.registerVariable<int>
+  p_ddyn_rec_->registerVariable<int>
       ("event_frame_time", p_celex5_options_->GetEventFrameTime(),
        boost::bind(&CeleX5Configure::ParamEventFrameTimeCb, this, _1),
        "The frame time of Event Mode, unit is ms. It modifies\n"
@@ -61,56 +59,55 @@ CeleX5Configure::CeleX5Configure(
        1,
        1000000);
 
-  // TODO range
-  ddynamic_reconfigure_.registerVariable<int>
+  p_ddyn_rec_->registerVariable<int>
       ("optical_flow_frame_time", p_celex5_options_->GetOpticalFlowFrameTime(),
        boost::bind(&CeleX5Configure::ParamOpticalFlowFrameTimeCb, this, _1),
        "The time of generating a full-frame optical-flow picture, unit is ms.",
        1,
        10000);
 
-  ddynamic_reconfigure_.registerVariable<int>
+  p_ddyn_rec_->registerVariable<int>
       ("threshold", p_celex5_options_->GetThreshold(),
        boost::bind(&CeleX5Configure::ParamThresholdCb, this, _1),
        "The threshold value where the event triggers",
        50,
        511);
 
-  ddynamic_reconfigure_.registerVariable<int>
+  p_ddyn_rec_->registerVariable<int>
       ("brightness", p_celex5_options_->GetBrightness(),
        boost::bind(&CeleX5Configure::ParamBrightnessCb, this, _1),
        "Controls the brightness of the image CeleX-5 sensor generated",
        0,
        1023);
 
-//  ddynamic_reconfigure_.registerVariable<int>
+//  p_ddyn_rec_.registerVariable<int>
 //      ("contrast", p_celex5_options_->GetContrast(),
 //       boost::bind(&CeleX5Configure::ParamContrastCb, this, _1),
 //       "Controls the contrast of the image CeleX-5 sensor generated.",
 //       1,
 //       3);
 
-  ddynamic_reconfigure_.registerVariable<int>
+  p_ddyn_rec_->registerVariable<int>
       ("clock_rate", p_celex5_options_->GetClockRate(),
        boost::bind(&CeleX5Configure::ParamClockRateCb, this, _1),
        "The clock rate of the CeleX-5 sensor, unit is MHz, step is 10.",
        20,
        100);
 
-  ddynamic_reconfigure_.registerVariable<bool>
+  p_ddyn_rec_->registerVariable<bool>
       ("is_loop_mode_enabled", p_celex5_options_->IsLoopModeEnabled(),
        boost::bind(&CeleX5Configure::ParamIsLoopModeEnabled, this, _1),
        "Whether enable loop mode.");
 
   // TODO range
-  ddynamic_reconfigure_.registerVariable<int>
+  p_ddyn_rec_->registerVariable<int>
       ("event_duration_in_loop", p_celex5_options_->GetEventDurationInLoop(),
        boost::bind(&CeleX5Configure::ParamEventDurationInLoopCb, this, _1),
        "The time duration of working in the Event Mode when in Loop Mode.",
        1,
        200);
 
-  ddynamic_reconfigure_.registerVariable<int>
+  p_ddyn_rec_->registerVariable<int>
       ("picture_number_in_loop", p_celex5_options_->GetPictureNumberInLoop(),
        boost::bind(&CeleX5Configure::ParamPictureNumberInLoopCb, this, _1),
        "The picture number of working in the Full-frame Mode when the CeleX-5\n"
@@ -118,17 +115,16 @@ CeleX5Configure::CeleX5Configure(
        1,
        200);
 
-  ddynamic_reconfigure_.registerVariable<std::string>
+  p_ddyn_rec_->registerVariable<std::string>
       ("event_FPN_file_path", p_celex5_options_->GetEventFpnFilePath(),
        boost::bind(&CeleX5Configure::ParamEventFpnFilePathCb, this, _1),
        "The path of FPN file of Event Mode.");
 
-  ddynamic_reconfigure_.registerVariable<std::string>
+  p_ddyn_rec_->registerVariable<std::string>
       ("frame_FPN_file_path", p_celex5_options_->GetFrameFpnFilePath(),
        boost::bind(&CeleX5Configure::ParamFrameFpnFilePathCb, this, _1),
        "The path of FPN file of Frame Mode.");
 
-  ddynamic_reconfigure_.publishServicesTopics();
 }
 
 CeleX5Configure::~CeleX5Configure() = default;
@@ -157,6 +153,11 @@ void CeleX5Configure::ParamFixedModeCb(int fixed_mode) {
   p_celex5_options_->
       SetFixedMode(static_cast<CeleX5::CeleX5Mode>(fixed_mode));
   this->UpdateCeleX5Options();
+  // TODO
+  CeleX5DisplayController::GetInstance(nh_,
+                                       p_celex5_sensor_,
+                                       this->GetPtrDDynRec())
+      ->SetCeleX5Mode(static_cast<CeleX5::CeleX5Mode>(fixed_mode));
 }
 
 void CeleX5Configure::ParamLoopMode1Cb(int loop_mode1) {
@@ -240,6 +241,14 @@ void CeleX5Configure::ParamFrameFpnFilePathCb(const std::string &new_fpn_file_pa
   p_celex5_options_->
       SetFrameFpnFilePath(new_fpn_file_path);
   this->UpdateCeleX5Options();
+}
+
+void CeleX5Configure::PublishReconfigureServices() {
+  p_ddyn_rec_->publishServicesTopics();
+}
+
+const std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> &CeleX5Configure::GetPtrDDynRec() const {
+  return p_ddyn_rec_;
 }
 
 
