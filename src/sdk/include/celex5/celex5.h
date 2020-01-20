@@ -66,6 +66,7 @@ public:
 	};
 
 	enum EventPicType {
+      Unknown_Event_Type = -1,
 		EventBinaryPic = 0,
 		EventAccumulatedPic = 1,
 		EventGrayPic = 2,
@@ -78,6 +79,7 @@ public:
 	};
 
 	enum OpticalFlowPicType {
+      Unknown_Optical_Flow_Type = -1,
 		OpticalFlowPic = 0,
 		OpticalFlowSpeedPic = 1,
 		OpticalFlowDirectionPic = 2
