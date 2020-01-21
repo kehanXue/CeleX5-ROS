@@ -73,6 +73,7 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
     publisher_ = nh_.advertise<sensor_msgs::Image>("display_" + topic_name, 10);
+    ros::Publisher colored_publisher = nh_.advertise<sensor_msgs::Image>("display_colored_" + topic_name, 10);
     int fps = 30;
     ros::Rate loop_rate(fps);
     bool is_display = true;
@@ -86,12 +87,20 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                                         }, "Whether display this image");
     while (ros::ok()) {
       if (publish_enable_ && is_display) {
+
         cv::Mat optical_flow_img = p_celex5_sensor_->getOpticalFlowPicMat(optical_flow_pic_type_);
         sensor_msgs::ImagePtr image_ptr_msg =
             cv_bridge::CvImage(std_msgs::Header(), "mono8", optical_flow_img).toImageMsg();
         image_ptr_msg->header.stamp = ros::Time::now();
         image_ptr_msg->header.frame_id = this->frame_id_;
         publisher_.publish(image_ptr_msg);
+
+        ToColorOpticalMat(optical_flow_img);
+        sensor_msgs::ImagePtr colored_image_ptr_msg =
+            cv_bridge::CvImage(std_msgs::Header(), "bgr8", optical_flow_img).toImageMsg();
+        image_ptr_msg->header.stamp = ros::Time::now();
+        image_ptr_msg->header.frame_id = this->frame_id_;
+        colored_publisher.publish(colored_image_ptr_msg);
       }
       loop_rate.sleep();
     }
@@ -163,5 +172,44 @@ void CeleX5DisplayPubFactory::Open() {
 
 void CeleX5DisplayPubFactory::Close() {
   publish_enable_ = false;
+}
+
+void CeleX5DisplayPubFactory::ToColorOpticalMat(cv::Mat &optical_mat) {
+  cv::Mat color_optical_mat(800, 1280, CV_8UC3);
+  for (int i = 0; i < color_optical_mat.rows; ++i) {
+    auto *p = color_optical_mat.ptr<cv::Vec3b>(i);
+    for (int j = 0; j < color_optical_mat.cols; ++j) {
+      int value = optical_mat.at<uchar>(i, j);
+      if (value==0) {
+        p[j][0] = 0;
+        p[j][1] = 0;
+        p[j][2] = 0;
+      } else if (value < 50) {
+        //blue
+        p[j][0] = 255;
+        p[j][1] = 0;
+        p[j][2] = 0;
+      } else if (value < 100) {
+        p[j][0] = 255;
+        p[j][1] = 255;
+        p[j][2] = 0;
+      } else if (value < 150) {
+        //green
+        p[j][0] = 0;
+        p[j][1] = 255;
+        p[j][2] = 0;
+      } else if (value < 200) {
+        p[j][0] = 0;
+        p[j][1] = 255;
+        p[j][2] = 255;
+      } else {
+        //red
+        p[j][0] = 0;
+        p[j][1] = 0;
+        p[j][2] = 255;
+      }
+    }
+  }
+  optical_mat = color_optical_mat.clone();
 }
 

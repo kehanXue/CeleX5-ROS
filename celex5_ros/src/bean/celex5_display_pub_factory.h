@@ -48,6 +48,8 @@ class CeleX5DisplayPubFactory {
 
  private:
 
+  static void ToColorOpticalMat(cv::Mat &optical_mat);
+
   std::shared_ptr<CeleX5> p_celex5_sensor_;
   std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec_;
 
