@@ -185,7 +185,11 @@ add_executable(celex5_ros_node
         src/bean/celex5_data_forwarder.cpp
         src/bean/celex5_data_forwarder.h
         src/bean/celex5_ros_bean.h
-        src/bean/celex5_ros_bean.cpp src/bean/celex5_display_pub_factory.cpp src/bean/celex5_display_pub_factory.h src/bean/celex5_display_controller.cpp src/bean/celex5_display_controller.h)
+        src/bean/celex5_ros_bean.cpp
+        src/bean/celex5_display_pub_factory.cpp
+        src/bean/celex5_display_pub_factory.h
+        src/bean/celex5_display_controller.cpp
+        src/bean/celex5_display_controller.h)
 
 target_link_libraries(celex5_ros_node
         ${catkin_LIBRARIES}

@@ -298,8 +298,8 @@ void CeleX5Configure::ReadROSParam(const ros::NodeHandle &nh, const std::string 
 }
 
 void CeleX5Configure::ReadROSParam(const ros::NodeHandle &nh, const std::string &param_name, bool &param) {
-  if (nh_.hasParam(param_name)) {
-    nh_.getParam(param_name, param);
+  if (nh.hasParam(param_name)) {
+    nh.getParam(param_name, param);
     ROS_INFO("%s: Use the param %s: %d",
              ros::this_node::getName().c_str(),
              param_name.c_str(),

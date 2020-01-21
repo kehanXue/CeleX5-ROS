@@ -15,8 +15,6 @@
 #include <sensor_msgs/Imu.h>
 #include <ddynamic_reconfigure/ddynamic_reconfigure.h>
 
-#include "celex5_msgs/event.h"
-#include "celex5_msgs/eventVector.h"
 #include "celex5/celex5.h"
 
 namespace celex5_ros {
@@ -54,6 +52,7 @@ class CeleX5DisplayPubFactory {
   std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec_;
 
   ros::NodeHandle nh_;
+  std::string frame_id_;
   ros::Publisher publisher_;
 
   bool publish_enable_;
