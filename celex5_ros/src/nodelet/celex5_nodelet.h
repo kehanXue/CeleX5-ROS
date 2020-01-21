@@ -13,10 +13,10 @@
 #include <pluginlib/class_list_macros.h>
 
 #include "celex5/celex5datamanager.h"
-#include "celex5_options.h"
-#include "interface/celex5_configure.h"
+#include "bean/celex5_options.h"
+#include "interactive/celex5_configure.h"
 
-#include "celex5_data_forwarder.h"
+#include "bean/celex5_data_forwarder.h"
 
 namespace celex5_ros {
 class CeleX5Nodelet : public nodelet::Nodelet {

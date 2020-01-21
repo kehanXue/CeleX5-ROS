@@ -12,7 +12,7 @@
 #include <ros/ros.h>
 #include <ddynamic_reconfigure/ddynamic_reconfigure.h>
 
-#include "bean/celex5_display_controller.h"
+#include "celex5_display_controller.h"
 #include "bean/celex5_options.h"
 
 namespace celex5_ros {

@@ -12,8 +12,8 @@
 
 #include "celex5/celex5datamanager.h"
 #include "celex5_options.h"
-#include "interface/celex5_configure.h"
-#include "celex5_display_controller.h"
+#include "interactive/celex5_configure.h"
+#include "interactive/celex5_display_controller.h"
 #include "celex5_data_forwarder.h"
 
 namespace celex5_ros {

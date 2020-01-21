@@ -13,7 +13,9 @@ CeleX5Configure::CeleX5Configure(
     : nh_(nh),
       p_celex5_sensor_(std::move(p_celex5_sensor)),
       p_celex5_options_(std::move(p_celex5_options)) {
+
   p_ddyn_rec_ = std::make_shared<ddynamic_reconfigure::DDynamicReconfigure>(nh_);
+
   // Associate with enum CeleX5::CeleX5Mode
   std::map<std::string, int> map_enum_celex5_mode = {
       {"Event_Off_Pixel_Timestamp_Mode", 0},
@@ -21,8 +23,9 @@ CeleX5Configure::CeleX5Configure(
       {"Event_Intensity_Mode", 2},
       {"Full_Picture_Mode", 3},
       {"Optical_Flow_Mode", 4},
-      {"Optical_Flow_FPN_Mode", 5},
-      {"Multi_Read_Optical_Flow_Mode", 6}
+      // TODO
+      // {"Optical_Flow_FPN_Mode", 5},
+      // {"Multi_Read_Optical_Flow_Mode", 6}
   };
 
   p_ddyn_rec_->registerEnumVariable<int>

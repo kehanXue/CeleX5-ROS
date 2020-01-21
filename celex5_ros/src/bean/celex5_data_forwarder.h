@@ -22,7 +22,7 @@
 #include "celex5_msgs/Imu.h"
 #include "celex5_msgs/ImuVector.h"
 
-#include "interface/celex5_configure.h"
+#include "interactive/celex5_configure.h"
 #include "celex5/celex5datamanager.h"
 
 namespace celex5_ros {
@@ -48,16 +48,17 @@ class CeleX5DataForwarder : public CeleX5DataManager {
   ros::Publisher events_pub_;
   ros::Publisher imu_pub_;
 
-  ros::Publisher binary_img_pub_;
-  ros::Publisher denoised_img_pub_;
-  ros::Publisher count_img_pub_;
-  ros::Publisher optical_flow_img_pub_;
-
-  ros::Publisher gray_img_pub_;
-  ros::Publisher accumulated_img_pub_;
-  ros::Publisher superimposed_img_pub_;
-  ros::Publisher optical_flow_direction_img_pub_;
-  ros::Publisher optical_flow_speed_img_pub_;
+  ros::Publisher
+  // ros::Publisher binary_img_pub_;
+  // ros::Publisher denoised_img_pub_;
+  // ros::Publisher count_img_pub_;
+  // ros::Publisher optical_flow_img_pub_;
+  //
+  // ros::Publisher gray_img_pub_;
+  // ros::Publisher accumulated_img_pub_;
+  // ros::Publisher superimposed_img_pub_;
+  // ros::Publisher optical_flow_direction_img_pub_;
+  // ros::Publisher optical_flow_speed_img_pub_;
 };
 }
 

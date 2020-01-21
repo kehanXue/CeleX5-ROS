@@ -73,6 +73,30 @@ void celex5_ros::CeleX5DataForwarder::onFrameDataUpdated(CeleX5ProcessedData *p_
         event_vector_ptr_msg->events.emplace_back(tmp_event);
       }
       events_pub_.publish(event_vector_ptr_msg);
+
+      /*
+       * Publish polarity image in Event Intensity Mode
+       */
+      if (current_mode==CeleX5::Event_Intensity_Mode) {
+        cv::Mat matPolarity(800, 1280, CV_8UC1, cv::Scalar::all(128));
+        int dataSize = vec_events.size();
+        int row = 0, col = 0;
+        for (int i = 0; i < dataSize; i++) {
+          row = 799 - vec_events[i].row;
+          col = 1279 - vec_events[i].col;
+          if (vec_events[i].polarity==1) {
+            matPolarity.at<uchar>(row, col) = 255;
+          } else if (vec_events[i].polarity==-1) {
+            matPolarity.at<uchar>(row, col) = 0;
+          } else {
+            matPolarity.at<uchar>(row, col) = 128;
+          }
+        }
+        // if (dataSize > 0) {
+        //   cv::imshow("Event Polarity Pic", matPolarity);
+        //   cv::waitKey(1);
+        // }
+      }
     }
   }
 

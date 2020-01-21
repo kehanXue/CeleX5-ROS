@@ -154,10 +154,10 @@ add_library(celex5_ros
         src/sdk/include/celex5/celex5datamanager.h
         src/sdk/include/celex5/celex5.h
         src/sdk/include/celex5/celex5processeddata.h
-        src/bean/celex5_nodelet.cpp
-        src/bean/celex5_nodelet.h
-        src/interface/celex5_configure.cpp
-        src/interface/celex5_configure.h
+        src/nodelet/celex5_nodelet.cpp
+        src/nodelet/celex5_nodelet.h
+        src/interactive/celex5_configure.cpp
+        src/interactive/celex5_configure.h
         src/bean/celex5_options.cpp
         src/bean/celex5_options.h
         src/bean/celex5_data_forwarder.cpp
@@ -176,20 +176,20 @@ add_executable(celex5_ros_node
         src/sdk/include/celex5/celex5datamanager.h
         src/sdk/include/celex5/celex5.h
         src/sdk/include/celex5/celex5processeddata.h
-        src/bean/celex5_nodelet.cpp
-        src/bean/celex5_nodelet.h
-        src/interface/celex5_configure.cpp
-        src/interface/celex5_configure.h
+        src/nodelet/celex5_nodelet.cpp
+        src/nodelet/celex5_nodelet.h
+        src/interactive/celex5_configure.cpp
+        src/interactive/celex5_configure.h
         src/bean/celex5_options.cpp
         src/bean/celex5_options.h
         src/bean/celex5_data_forwarder.cpp
         src/bean/celex5_data_forwarder.h
         src/bean/celex5_ros_bean.h
         src/bean/celex5_ros_bean.cpp
-        src/bean/celex5_display_pub_factory.cpp
-        src/bean/celex5_display_pub_factory.h
-        src/bean/celex5_display_controller.cpp
-        src/bean/celex5_display_controller.h)
+        src/interactive/celex5_display_pub_factory.cpp
+        src/interactive/celex5_display_pub_factory.h
+        src/interactive/celex5_display_controller.cpp
+        src/interactive/celex5_display_controller.h)
 
 target_link_libraries(celex5_ros_node
         ${catkin_LIBRARIES}
