@@ -160,6 +160,9 @@ CeleX5DataProcessor::CeleX5DataProcessor()
 
 	m_pOFFPNEventLatestValue = new uint16_t[CELEX5_PIXELS_NUMBER];
 	memset(m_pOFFPNEventLatestValue, 0, CELEX5_PIXELS_NUMBER*2);
+
+    FileDirectory base;
+    m_fpnFileDir = base.getApplicationDirPath();
 }
 
 CeleX5DataProcessor::~CeleX5DataProcessor()
@@ -197,6 +200,11 @@ CeleX5DataProcessor::~CeleX5DataProcessor()
 		if (m_pOpticalFlowDirectionPic[i]) delete[] m_pOpticalFlowDirectionPic[i];
 	}
 	if (m_pEventAccumulatedPic) delete[] m_pEventAccumulatedPic;
+}
+
+void CeleX5DataProcessor::setFpnFileDir(const std::string new_fpn_file_dir)
+{
+    m_fpnFileDir = new_fpn_file_dir;
 }
 
 /*
@@ -1413,8 +1421,8 @@ void CeleX5DataProcessor::checkIfShowImage()
 			if (pixelCount >= CELEX5_PIXELS_NUMBER-10)
 			{
 				m_bStartGenerateOFFPN = false;
-				FileDirectory base;
-				std::string filePath = base.getApplicationDirPath();
+				// FileDirectory base;
+				std::string filePath = m_fpnFileDir;
 #ifdef _WIN32
 				filePath += "/FPN_OpticalFlow.txt";
 #else
@@ -1875,8 +1883,8 @@ void CeleX5DataProcessor::generateFPNimpl()
 	{
 		m_bIsGeneratingFPN = false;
 		std::ofstream ff;
-		FileDirectory base;
-		std::string filePath = base.getApplicationDirPath();
+		// FileDirectory base;
+		std::string filePath = m_fpnFileDir;
 		if (m_emCurrentSensorMode == CeleX5::Optical_Flow_FPN_Mode)
 		{	
 #ifdef _WIN32
@@ -1935,8 +1943,8 @@ void CeleX5DataProcessor::generateFPNimpl()
 
 void CeleX5DataProcessor::loadOpticalFlowFPN()
 {
-	FileDirectory fileDir;
-	std::string filePath = fileDir.getApplicationDirPath();
+	// FileDirectory fileDir;
+	std::string filePath = m_fpnFileDir;
 #ifdef _WIN32
 	filePath += "/FPN_OpticalFlow.txt";
 #else
@@ -2110,8 +2118,8 @@ void CeleX5DataProcessor::setISOLevel(uint32_t value)
 {
 	m_uiISOLevel = value;
 	//--- load default fpn file ---
-	FileDirectory base;
-	std::string filePath = base.getApplicationDirPath();
+	// FileDirectory base;
+	std::string filePath = m_fpnFileDir;
 #ifdef _WIN32
 	filePath += "/FPN_";
 #else
@@ -2732,7 +2740,7 @@ void CeleX5DataProcessor::saveOpticalFlowEvent(int col, int adc12bit, int adc8bi
 	else
 		tRampNo = m_uiEOTrampNo;
 
-	uint32_t tInPixelIncreasing =  adcFPN*7550/3310 + tRampNo*7550; //(adcFPN+tRampNo*3310)*7750/3310, 3310*2.281=7750¦Ìs
+	uint32_t tInPixelIncreasing =  adcFPN*7550/3310 + tRampNo*7550; //(adcFPN+tRampNo*3310)*7750/3310, 3310*2.281=7750ï¿½ï¿½s
 	if (tInPixelIncreasing > m_uiMaxInPixelTimestamp)
 		m_uiMaxInPixelTimestamp = tInPixelIncreasing;
 	if (tInPixelIncreasing < m_uiMinInPixelTimestamp)

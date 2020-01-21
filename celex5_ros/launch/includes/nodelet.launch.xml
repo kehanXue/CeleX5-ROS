@@ -9,6 +9,9 @@
     <arg name="frame_id" default="celex5_mipi"/>
 
 
+    <arg name="sensor_cfg_file_dir" default="$(find celex5_ros)/config/"/>
+    <arg name="fpn_file_dir" default="$(find celex5_ros)/config/"/>
+
     <!--           CeleX5-MIPI Mode             -->
     <!--  Event_Off_Pixel_Timestamp_Mode    0   -->
     <!--  Event_In_Pixel_Timestamp_Mode     1   -->
@@ -41,6 +44,8 @@
           output="screen" required="$(arg required)"/>
     <node pkg="nodelet" type="nodelet" name="celex5_mipi" args="load celex5_ros/CeleX5Nodelet $(arg manager_name)"
           required="$(arg required)">
+        <param name="sensor_cfg_file_dir" type="str" value="$(arg sensor_cfg_file_dir)"/>
+        <param name="fpn_file_dir" type="str" value="$(arg fpn_file_dir)"/>
         <param name="frame_id" type="str" value="$(arg frame_id)"/>
         <param name="fixed_mode" type="int" value="$(arg fixed_mode)"/>
         <param name="loop_mode1" type="int" value="$(arg loop_mode1)"/>

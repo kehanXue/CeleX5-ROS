@@ -70,6 +70,9 @@ CeleX5::CeleX5()
 	, m_bShowImagesEnabled(true)
 	, m_bAutoISPFrofileLoaded(false)
 {
+    FileDirectory base;
+    m_cfg_file_dir = base.getApplicationDirPath();
+
 	m_pCeleX5CfgMgr = new CeleX5CfgMgr;
 	//create data process thread
 	m_pDataProcessThread = new DataProcessThread("CeleX5Thread");
@@ -130,26 +133,26 @@ bool CeleX5::openSensor(DeviceType type)
 	m_emDeviceType = type;
 	if (CeleX5::CeleX5_MIPI == type)
 	{
+        FileDirectory base;
+      // std::string filePath = base.getApplicationDirPath();
+#ifdef _WIN32
+      filePath += "\\";
+#endif
+        // m_cfg_file_dir ;
 		if (NULL == m_pCeleDriver)
 		{
 			m_pCeleDriver = new CeleDriver;
 			if (!m_pCeleDriver->openUSB())
 			{
-				m_pCeleX5CfgMgr->parseCeleX5Cfg(FILE_CELEX5_CFG_MIPI);
+				m_pCeleX5CfgMgr->parseCeleX5Cfg(m_cfg_file_dir + FILE_CELEX5_CFG_MIPI);
 				m_mapCfgModified = m_mapCfgDefaults = getCeleX5Cfg();
 				return false;
 			}
 		}
-		FileDirectory base;
-		std::string filePath = base.getApplicationDirPath();
-#ifdef _WIN32
-		filePath += "\\";
-#endif
-		filePath += FILE_CELEX5_CFG;
-		if (base.isFileExists(filePath))
+		if (base.isFileExists(m_cfg_file_dir + FILE_CELEX5_CFG))
 		{
 			std::string serialNumber = getSerialNumber();
-			m_pCeleX5CfgMgr->parseCeleX5Cfg(FILE_CELEX5_CFG);
+			m_pCeleX5CfgMgr->parseCeleX5Cfg(m_cfg_file_dir + FILE_CELEX5_CFG);
 			if (serialNumber.size() > 4 && serialNumber.at(4) == 'M') //no wire version
 			{
 				m_uiISOLevel = 2;
@@ -166,21 +169,21 @@ bool CeleX5::openSensor(DeviceType type)
 		}
 		else
 		{
-			std::ofstream out(filePath);
+			std::ofstream out(m_cfg_file_dir + + FILE_CELEX5_CFG);
 			out.close();
 			std::string serialNumber = getSerialNumber();
 			if (serialNumber.size() > 4 && serialNumber.at(4) == 'M') //no wire version
 			{
-				m_pCeleX5CfgMgr->parseCeleX5Cfg(FILE_CELEX5_CFG_MIPI);
-				m_pCeleX5CfgMgr->saveCeleX5XML(FILE_CELEX5_CFG_MIPI);
+				m_pCeleX5CfgMgr->parseCeleX5Cfg(m_cfg_file_dir + FILE_CELEX5_CFG_MIPI);
+				m_pCeleX5CfgMgr->saveCeleX5XML(m_cfg_file_dir + FILE_CELEX5_CFG_MIPI);
 				m_uiISOLevel = 2;
 				m_uiISOLevelCount = 4;
 				m_uiBrightness = 130;
 			}
 			else //wire version
 			{
-				m_pCeleX5CfgMgr->parseCeleX5Cfg(FILE_CELEX5_CFG_MIPI_WRIE);
-				m_pCeleX5CfgMgr->saveCeleX5XML(FILE_CELEX5_CFG_MIPI_WRIE);
+				m_pCeleX5CfgMgr->parseCeleX5Cfg(m_cfg_file_dir + FILE_CELEX5_CFG_MIPI_WRIE);
+				m_pCeleX5CfgMgr->saveCeleX5XML(m_cfg_file_dir + FILE_CELEX5_CFG_MIPI_WRIE);
 				m_uiISOLevel = 3;
 				m_uiISOLevelCount = 6;
 				m_uiBrightness = 100;
@@ -200,6 +203,16 @@ bool CeleX5::openSensor(DeviceType type)
 	}
 	m_bSensorReady = true;
 	return true;
+}
+
+void CeleX5::setSensorCfgFileDir(const std::string &new_cfg_file_dir)
+{
+    m_cfg_file_dir = new_cfg_file_dir;
+}
+
+void CeleX5::setFpnFileDir(const std::string &new_fpn_file_dir)
+{
+    m_pDataProcessor->setFpnFileDir(new_fpn_file_dir);
 }
 
 /*

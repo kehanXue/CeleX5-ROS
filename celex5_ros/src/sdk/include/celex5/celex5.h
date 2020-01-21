@@ -125,8 +125,10 @@ public:
 
 	bool openSensor(DeviceType type);
 	bool isSensorReady();
+    void setSensorCfgFileDir(const std::string &new_cfg_file_dir);
+    void setFpnFileDir(const std::string &new_fpn_file_dir);
 
-	/*
+  /*
 	* Get Sensor raw data interfaces
 	* If you don't care about IMU data, you can use the first getMIPIData interface, 
 	* otherwise you need to use the second getMIPIData interface.
@@ -453,6 +455,8 @@ private:
 	void clearData();
 
 private:
+    std::string                    m_cfg_file_dir;
+
 	CeleDriver*                    m_pCeleDriver;
 	CeleX5DataProcessor*           m_pDataProcessor;
 	CeleX5CfgMgr*                  m_pCeleX5CfgMgr;

@@ -21,6 +21,12 @@ void celex5_ros::CeleX5ROSBean::Run() {
   /*
    * Open CeleX5 Sensor
    */
+  std::string sensor_cfg_file_dir;
+  CeleX5Configure::ReadROSParam(nh_, "sensor_cfg_file_dir", sensor_cfg_file_dir);
+  p_celex5_sensor_->setSensorCfgFileDir(sensor_cfg_file_dir);
+  std::string fpn_file_dir;
+  CeleX5Configure::ReadROSParam(nh_, "fpn_file_dir", fpn_file_dir);
+  p_celex5_sensor_->setFpnFileDir(fpn_file_dir);
   p_celex5_sensor_->openSensor(CeleX5::CeleX5_MIPI);
   ROS_INFO("Sensor status: %d", p_celex5_sensor_->isSensorReady());
 

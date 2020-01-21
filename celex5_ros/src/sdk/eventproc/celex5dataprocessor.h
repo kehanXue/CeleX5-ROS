@@ -29,6 +29,7 @@ public:
 	CeleX5DataProcessor();
 	~CeleX5DataProcessor();
 
+    void setFpnFileDir(const std::string new_fpn_file_dir);
 	void getFullPicBuffer(uint8_t* buffer);
 	void getFullPicBuffer(uint8_t* buffer, std::time_t& timestamp);
 	//
@@ -141,7 +142,9 @@ private:
 	void calEventCountSlice(uint8_t* pEventCountSliceBuffer);
 
 private:
-	CeleX5ProcessedData*     m_pCX5ProcessedData;
+    std::string              m_fpnFileDir;
+
+    CeleX5ProcessedData*     m_pCX5ProcessedData;
 	CX5SensorDataServer*     m_pCX5Server;
 	//
 	uint8_t*                 m_pEventCountBuffer;

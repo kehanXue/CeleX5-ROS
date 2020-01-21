@@ -46,11 +46,12 @@ bool XmlReader::parse(const std::string &filename, TiXmlDocument *pDom)
         return false;
     }
     FileDirectory dir;
-    std::string filePath = dir.getApplicationDirPath();
+    // std::string filePath = dir.getApplicationDirPath();
 #ifdef _WIN32
     filePath += "\\";
 #endif
-    filePath += filename;
+    const std::string& filePath = filename;
+    std::cout << "????????????????????????" << filePath << std::endl;
     bool loadOk = pDom->LoadFile(filePath.c_str());
     if (!loadOk)
     {
@@ -72,12 +73,12 @@ bool XmlReader::save(const std::string& filename, TiXmlDocument* pDom)
 	{
 		return false;
 	}
-	FileDirectory dir;
-	std::string filePath = dir.getApplicationDirPath();
+	// FileDirectory dir;
+	const std::string& filePath = filename;
 #ifdef _WIN32
 	filePath += "\\";
 #endif
-	filePath += filename;
+	// filePath += filename;
 	
 	pDom->SaveFile(filePath.c_str());
 	return true;
@@ -95,6 +96,7 @@ bool XmlReader::importCeleX5Commands(std::map<std::string, std::vector<WireinCom
 {
 	std::cout << std::endl << "********** HHXmlReader::importCommands_CeleX5 Begin **********" << std::endl;
 	TiXmlElement *pRootEle = pDom->RootElement();
+	std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!" << std::string(pRootEle->Value()) << std::endl;
 	if (std::string(pRootEle->Value()) != "commands")
 	{
 		std::cout << "Can't find commands in xml." << std::endl;
@@ -276,7 +278,7 @@ bool XmlReader::saveXML(const std::string& filename)
 	TiXmlDocument*  pDom = new TiXmlDocument;
 	if (parse(filename, pDom))
 	{
-		save(FILE_CELEX5_CFG, pDom);
+		save(filename, pDom);
 	}
 	return true;
 }
