@@ -1,5 +1,4 @@
 <launch>
-    <!-- About nodelet manager                  -->
     <arg name="required" default="false"/>
 
     <arg name="tf_prefix" default=""/>

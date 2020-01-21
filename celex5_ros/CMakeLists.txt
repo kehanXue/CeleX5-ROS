@@ -161,7 +161,13 @@ add_library(celex5_ros
         src/bean/celex5_options.cpp
         src/bean/celex5_options.h
         src/bean/celex5_data_forwarder.cpp
-        src/bean/celex5_data_forwarder.h)
+        src/bean/celex5_data_forwarder.h
+        src/bean/celex5_ros_bean.h
+        src/bean/celex5_ros_bean.cpp
+        src/interactive/celex5_display_pub_factory.cpp
+        src/interactive/celex5_display_pub_factory.h
+        src/interactive/celex5_display_controller.cpp
+        src/interactive/celex5_display_controller.h)
 
 add_dependencies(celex5_ros ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 

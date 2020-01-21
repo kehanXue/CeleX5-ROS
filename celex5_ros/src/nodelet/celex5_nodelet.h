@@ -12,11 +12,7 @@
 #include <nodelet/nodelet.h>
 #include <pluginlib/class_list_macros.h>
 
-#include "celex5/celex5datamanager.h"
-#include "bean/celex5_options.h"
-#include "interactive/celex5_configure.h"
-
-#include "bean/celex5_data_forwarder.h"
+#include "bean/celex5_ros_bean.h"
 
 namespace celex5_ros {
 class CeleX5Nodelet : public nodelet::Nodelet {
@@ -26,17 +22,8 @@ class CeleX5Nodelet : public nodelet::Nodelet {
   ~CeleX5Nodelet() override;
 
  private:
-
-  void ReadParams();
-
   void onInit() override;
-
-  std::shared_ptr<CeleX5Options> p_celex5_options_;
-  std::shared_ptr<CeleX5> p_celex5_sensor_;
-  std::shared_ptr<CeleX5Configure> p_celex5_configure_;
-  std::shared_ptr<CeleX5DataForwarder> p_celex5_data_forwarder_;
-
-  ros::NodeHandle nh_;
+  std::shared_ptr<CeleX5ROSBean> p_celex5_ros_bean_;
 };
 }
 PLUGINLIB_EXPORT_CLASS(celex5_ros::CeleX5Nodelet, nodelet::Nodelet)

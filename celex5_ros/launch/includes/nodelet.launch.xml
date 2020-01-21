@@ -6,6 +6,7 @@
     <arg name="required" default="false"/>
 
     <arg name="tf_prefix" default=""/>
+    <arg name="frame_id" default="celex5_mipi"/>
 
 
     <!--           CeleX5-MIPI Mode             -->
@@ -18,28 +19,29 @@
     <!--  Multi_Read_Optical_Flow_Mode      6   -->
 
     <arg name="fixed_mode" default="0"/>
-    <arg name="loop_mode1" default="1"/>
-    <arg name="loop_mode2" default="3"/>
-    <arg name="loop_mode3" default="4"/>
+    <arg name="is_loop_mode_enabled" default="false"/>
+    <arg name="loop_mode1" default="0"/>
+    <arg name="loop_mode2" default="0"/>
+    <arg name="loop_mode3" default="0"/>
 
-    <arg name="event_frame_time" default="1000"/>
+    <arg name="event_frame_time" default="30000"/>
     <arg name="optical_flow_frame_time" default="20"/>
     <arg name="threshold" default="185"/>
     <arg name="brightness" default="150"/>
     <!--    <arg name="contrast" default="1"/>-->
     <arg name="clock_rate" default="100"/>
 
-    <arg name="is_loop_mode_enabled" default="false"/>
     <arg name="event_duration_in_loop" default="100"/>
     <arg name="picture_number_in_loop" default="30"/>
 
-    <arg name="event_FPN_file_path" default="$(find celex5_ros)/config/FPN_3.txt"/>
-    <arg name="frame_FPN_file_path" default="$(find celex5_ros)/config/FPN_Optical.txt"/>
+    <arg name="event_FPN_file_path" default="$(find celex5_ros)/config/FPN_Optical.txt"/>
+    <arg name="frame_FPN_file_path" default="$(find celex5_ros)/config/FPN_2.txt"/>
 
     <node unless="$(arg external_manager)" pkg="nodelet" type="nodelet" name="$(arg manager_name)" args="manager"
           output="screen" required="$(arg required)"/>
     <node pkg="nodelet" type="nodelet" name="celex5_mipi" args="load celex5_ros/CeleX5Nodelet $(arg manager_name)"
           required="$(arg required)">
+        <param name="frame_id" type="str" value="$(arg frame_id)"/>
         <param name="fixed_mode" type="int" value="$(arg fixed_mode)"/>
         <param name="loop_mode1" type="int" value="$(arg loop_mode1)"/>
         <param name="loop_mode2" type="int" value="$(arg loop_mode2)"/>

@@ -19,7 +19,7 @@
 namespace celex5_ros {
 class CeleX5ROSBean {
  public:
-  CeleX5ROSBean();
+  explicit CeleX5ROSBean(const ros::NodeHandle &nh);
   virtual ~CeleX5ROSBean();
   void Run();
 

@@ -6,8 +6,9 @@
 
 using namespace celex5_ros;
 
-celex5_ros::CeleX5ROSBean::CeleX5ROSBean() {
-  nh_ = ros::NodeHandle("~");
+celex5_ros::CeleX5ROSBean::CeleX5ROSBean(const ros::NodeHandle &nh)
+    : nh_(nh) {
+  // nh_ = ros::NodeHandle("~");
   p_celex5_options_ = std::make_shared<CeleX5Options>();
   p_celex5_sensor_ = std::make_shared<CeleX5>();
   p_celex5_configure_ =

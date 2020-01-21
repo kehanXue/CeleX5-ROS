@@ -11,7 +11,7 @@ using namespace celex5_ros;
 int main(int argc, char **argv) {
   ros::init(argc, argv, "celex5_ros_node");
   ros::NodeHandle nh("~");
-  CeleX5ROSBean celex5_ros_bean;
+  CeleX5ROSBean celex5_ros_bean(nh);
   celex5_ros_bean.Run();
 
   // std::shared_ptr<CeleX5> p_celex5_sensor = std::make_shared<CeleX5>();
