@@ -147,9 +147,13 @@ void CeleX5Configure::UpdateCeleX5Options() {
   p_celex5_sensor_->setEventDuration(p_celex5_options_->GetEventDurationInLoop());
   p_celex5_sensor_->setPictureNumber(p_celex5_options_->GetPictureNumberInLoop(),
                                      p_celex5_options_->GetLoopModes().at(1));
+
 }
 
 void CeleX5Configure::ParamFixedModeCb(int fixed_mode) {
+  if (fixed_mode==CeleX5::Full_Picture_Mode) {
+    p_celex5_sensor_->setFpnFile(p_celex5_options_->GetFrameFpnFilePath());
+  }
   p_celex5_options_->
       SetFixedMode(static_cast<CeleX5::CeleX5Mode>(fixed_mode));
   this->UpdateCeleX5Options();

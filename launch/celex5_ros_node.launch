@@ -30,8 +30,8 @@
     <arg name="event_duration_in_loop" default="100"/>
     <arg name="picture_number_in_loop" default="30"/>
 
-    <arg name="event_FPN_file_path" default="$(find celex5_ros)/config/FPN_2.txt"/>
-    <arg name="frame_FPN_file_path" default="$(find celex5_ros)/config/FPN_Optical.txt"/>
+    <arg name="event_FPN_file_path" default="$(find celex5_ros)/config/FPN_Optical.txt"/>
+    <arg name="frame_FPN_file_path" default="$(find celex5_ros)/config/FPN_2.txt"/>
 
     <node pkg="celex5_ros" type="celex5_ros_node" name="celex5_mipi" required="true" output="screen">
         <param name="fixed_mode" type="int" value="$(arg fixed_mode)"/>

@@ -75,7 +75,7 @@ CeleX5DisplayController::CeleX5DisplayController(const ros::NodeHandle &nh,
                                                 CeleX5::OpticalFlowSpeedPic);
   p_full_frame_img_pub_ =
       std::make_shared<CeleX5DisplayPubFactory>(nh_,
-                                                "gray_img",
+                                                "full_frame_img",
                                                 p_celex5_sensor_,
                                                 p_ddyn_rec_,
                                                 CeleX5::FullFramePic);

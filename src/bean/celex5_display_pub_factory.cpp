@@ -18,14 +18,14 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
       p_ddyn_rec_(std::move(p_ddyn_rec)),
       event_pic_type_(event_pic_type),
       publish_enable_(false) {
-  ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
+  // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
   optical_flow_pic_type_ = CeleX5::OpticalFlowPicType::Unknown_Optical_Flow_Type;
   full_frame_pic_type_ = CeleX5::FullFramePicType::Unknown_Full_Frame_Type;
   p_mutex_ = std::make_shared<std::mutex>();
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
-    ROS_WARN("Register display topic name: %s", topic_name.c_str());
-    publisher_ = nh_.advertise<sensor_msgs::Image>(topic_name, 10);
+    ROS_INFO("Register display topic name: %s", topic_name.c_str());
+    publisher_ = nh_.advertise<sensor_msgs::Image>("display_" + topic_name, 10);
     int fps = 30;
     ros::Rate loop_rate(fps);
     bool is_display = true;
@@ -47,9 +47,8 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
       loop_rate.sleep();
     }
   });
-  // TODO
+  publish_thread_->detach();
   usleep(3000);
-//  publish_thread.detach();
 }
 
 CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
@@ -62,14 +61,14 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
       p_ddyn_rec_(std::move(p_ddyn_rec)),
       optical_flow_pic_type_(optical_flow_pic_type),
       publish_enable_(false) {
-  ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
+  // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
   event_pic_type_ = CeleX5::EventPicType::Unknown_Event_Type;
   full_frame_pic_type_ = CeleX5::FullFramePicType::Unknown_Full_Frame_Type;
   p_mutex_ = std::make_shared<std::mutex>();
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
-    ROS_WARN("Register display topic name: %s", topic_name.c_str());
-    publisher_ = nh_.advertise<sensor_msgs::Image>(topic_name, 10);
+    ROS_INFO("Register display topic name: %s", topic_name.c_str());
+    publisher_ = nh_.advertise<sensor_msgs::Image>("display_" + topic_name, 10);
     int fps = 30;
     ros::Rate loop_rate(fps);
     bool is_display = true;
@@ -91,9 +90,8 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
       loop_rate.sleep();
     }
   });
-  // TODO
+  publish_thread_->detach();
   usleep(3000);
-//  publish_thread.detach();
 }
 
 CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
@@ -107,15 +105,14 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
       p_ddyn_rec_(std::move(p_ddyn_rec)),
       full_frame_pic_type_(full_frame_pic_type),
       publish_enable_(false) {
-
-  ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
+  // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
   event_pic_type_ = CeleX5::EventPicType::Unknown_Event_Type;
   optical_flow_pic_type_ = CeleX5::OpticalFlowPicType::Unknown_Optical_Flow_Type;
   p_mutex_ = std::make_shared<std::mutex>();
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
-    ROS_WARN("Register display topic name: %s", topic_name.c_str());
-    publisher_ = nh_.advertise<sensor_msgs::Image>(topic_name, 10);
+    ROS_INFO("Register display topic name: %s", topic_name.c_str());
+    publisher_ = nh_.advertise<sensor_msgs::Image>("display_" + topic_name, 10);
     int fps = 30;
     ros::Rate loop_rate(fps);
     bool is_display = true;
@@ -128,18 +125,23 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                                           is_display = new_is_display;
                                         }, "Whether display this image");
     while (ros::ok()) {
-      if (publish_enable_ && is_display) {
-        cv::Mat full_frame_img = p_celex5_sensor_->getFullPicMat();
-        sensor_msgs::ImagePtr image_ptr_msg =
-            cv_bridge::CvImage(std_msgs::Header(), "mono8", full_frame_img).toImageMsg();
-        publisher_.publish(image_ptr_msg);
+      if (publish_enable_ && is_display &&
+          p_celex5_sensor_->getSensorFixedMode()==CeleX5::Full_Picture_Mode) {
+        if (!p_celex5_sensor_->getFullPicMat().empty()) {
+          cv::Mat full_frame_img = p_celex5_sensor_->getFullPicMat().clone();
+          cv::imshow("FullPic", full_frame_img);
+          cv::waitKey(1);
+          sensor_msgs::ImagePtr image_ptr_msg =
+              cv_bridge::CvImage(std_msgs::Header(), "mono8", full_frame_img).toImageMsg();
+          // ROS_WARN("Get in full image!");
+          publisher_.publish(image_ptr_msg);
+        }
       }
       loop_rate.sleep();
     }
   });
-  // TODO
+  publish_thread_->detach();
   usleep(3000);
-//  publish_thread.detach();
 }
 
 CeleX5DisplayPubFactory::~CeleX5DisplayPubFactory() {
