@@ -103,5 +103,5 @@ void celex5_ros::CeleX5ROSBean::ReadParams() {
   readStringParam("event_FPN_file_path", p_celex5_options_->event_FPN_file_path_);
   readStringParam("frame_FPN_file_path", p_celex5_options_->frame_FPN_file_path_);
 
-  p_celex5_configure_->UpdateCeleX5Options();
+  p_celex5_configure_->UpdateCeleX5AllOptions();
 }

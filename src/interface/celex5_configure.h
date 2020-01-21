@@ -23,7 +23,7 @@ class CeleX5Configure {
                            std::shared_ptr<CeleX5> p_celex5_sensor,
                            const ros::NodeHandle &nh = ros::NodeHandle("~"));
   virtual ~CeleX5Configure();
-  void UpdateCeleX5Options();
+  void UpdateCeleX5AllOptions();
   void PublishReconfigureServices();
   const std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> &GetPtrDDynRec() const;
  private:
