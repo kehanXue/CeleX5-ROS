@@ -265,5 +265,68 @@ const std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> &CeleX5Configur
   return p_ddyn_rec_;
 }
 
+void CeleX5Configure::ReadROSParam(const ros::NodeHandle &nh, const std::string &param_name, uint32_t &param) {
+  if (nh.hasParam(param_name)) {
+    int tmp_param = 0;
+    nh.getParam(param_name, tmp_param);
+    param = static_cast<uint32_t>(tmp_param);
+    ROS_INFO("%s: Use the param %s: %d",
+             ros::this_node::getName().c_str(),
+             param_name.c_str(),
+             param);
+  } else {
+    ROS_WARN("%s: Didn't provide param %s, use the default value: %d",
+             ros::this_node::getName().c_str(),
+             param_name.c_str(),
+             param);
+  }
+}
+
+void CeleX5Configure::ReadROSParam(const ros::NodeHandle &nh, const std::string &param_name, int &param) {
+  if (nh.hasParam(param_name)) {
+    nh.getParam(param_name, param);
+    ROS_INFO("%s: Use the param %s: %d",
+             ros::this_node::getName().c_str(),
+             param_name.c_str(),
+             param);
+  } else {
+    ROS_WARN("%s: Didn't provide param %s, use the default value: %d",
+             ros::this_node::getName().c_str(),
+             param_name.c_str(),
+             param);
+  }
+}
+
+void CeleX5Configure::ReadROSParam(const ros::NodeHandle &nh, const std::string &param_name, bool &param) {
+  if (nh_.hasParam(param_name)) {
+    nh_.getParam(param_name, param);
+    ROS_INFO("%s: Use the param %s: %d",
+             ros::this_node::getName().c_str(),
+             param_name.c_str(),
+             param);
+  } else {
+    ROS_WARN("%s: Didn't provide param %s, use the default value: %d",
+             ros::this_node::getName().c_str(),
+             param_name.c_str(),
+             param);
+  }
+}
+
+void CeleX5Configure::ReadROSParam(const ros::NodeHandle &nh, const std::string &param_name, std::string &param) {
+  if (nh.hasParam(param_name)) {
+    nh.getParam(param_name, param);
+    ROS_INFO("%s: Use the param %s: %s",
+             ros::this_node::getName().c_str(),
+             param_name.c_str(),
+             param.c_str());
+  } else {
+    ROS_WARN("%s: Didn't provide param %s, use the default value: %s",
+             ros::this_node::getName().c_str(),
+             param_name.c_str(),
+             param.c_str());
+  }
+}
+
+
 
 

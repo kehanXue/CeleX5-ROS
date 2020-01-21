@@ -26,6 +26,22 @@ class CeleX5Configure {
   void UpdateCeleX5AllOptions();
   void PublishReconfigureServices();
   const std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> &GetPtrDDynRec() const;
+
+  /*
+   * Function tools to get parameters from ROS Param Server
+   */
+  static void ReadROSParam(const ros::NodeHandle &nh,
+                           const std::string &param_name,
+                           uint32_t &param);
+  static void ReadROSParam(const ros::NodeHandle &nh,
+                           const std::string &param_name,
+                           int &param);
+  static void ReadROSParam(const ros::NodeHandle &nh,
+                           const std::string &param_name,
+                           bool &param);
+  static void ReadROSParam(const ros::NodeHandle &nh,
+                           const std::string &param_name,
+                           std::string &param);
  private:
   ros::NodeHandle nh_;
   std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec_;

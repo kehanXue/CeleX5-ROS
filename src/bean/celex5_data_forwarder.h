@@ -17,9 +17,12 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "celex5_msgs/event.h"
-#include "celex5_msgs/eventVector.h"
+#include "celex5_msgs/Event.h"
+#include "celex5_msgs/EventVector.h"
+#include "celex5_msgs/Imu.h"
+#include "celex5_msgs/ImuVector.h"
 
+#include "interface/celex5_configure.h"
 #include "celex5/celex5datamanager.h"
 
 namespace celex5_ros {
@@ -38,23 +41,23 @@ class CeleX5DataForwarder : public CeleX5DataManager {
   void onFrameDataUpdated(CeleX5ProcessedData *processed_data) override;
 
   ros::NodeHandle nh_;
+  std::string frame_id_;
   std::shared_ptr<CeleX5> p_celex5_sensor_;
   CX5SensorDataServer *p_celex5_data_server_;
 
   ros::Publisher events_pub_;
   ros::Publisher imu_pub_;
-  ros::Publisher mag_pub_;
 
-  ros::Publisher event_binary_img_pub_;
-  ros::Publisher event_denoised_img_pub_;
-  ros::Publisher event_count_img_pub_;
-  ros::Publisher event_optical_flow_img_pub_;
+  ros::Publisher binary_img_pub_;
+  ros::Publisher denoised_img_pub_;
+  ros::Publisher count_img_pub_;
+  ros::Publisher optical_flow_img_pub_;
 
-  ros::Publisher event_gray_img_pub_;
-  ros::Publisher event_accumulated_img_pub_;
-  ros::Publisher event_superimposed_img_pub_;
-  ros::Publisher event_optical_flow_direction_img_pub_;
-  ros::Publisher event_optical_flow_speed_img_pub_;
+  ros::Publisher gray_img_pub_;
+  ros::Publisher accumulated_img_pub_;
+  ros::Publisher superimposed_img_pub_;
+  ros::Publisher optical_flow_direction_img_pub_;
+  ros::Publisher optical_flow_speed_img_pub_;
 };
 }
 
