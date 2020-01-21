@@ -154,9 +154,10 @@ void CeleX5Configure::ParamFixedModeCb(int fixed_mode) {
   if (fixed_mode==CeleX5::Full_Picture_Mode) {
     p_celex5_sensor_->setFpnFile(p_celex5_options_->GetFrameFpnFilePath());
   }
+  p_celex5_sensor_->setSensorFixedMode(static_cast<CeleX5::CeleX5Mode>(fixed_mode));
   p_celex5_options_->
       SetFixedMode(static_cast<CeleX5::CeleX5Mode>(fixed_mode));
-  this->UpdateCeleX5Options();
+  // this->UpdateCeleX5Options();
   // TODO
   CeleX5DisplayController::GetInstance(nh_,
                                        p_celex5_sensor_,

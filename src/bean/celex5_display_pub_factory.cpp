@@ -128,9 +128,9 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
       if (publish_enable_ && is_display &&
           p_celex5_sensor_->getSensorFixedMode()==CeleX5::Full_Picture_Mode) {
         if (!p_celex5_sensor_->getFullPicMat().empty()) {
-          cv::Mat full_frame_img = p_celex5_sensor_->getFullPicMat().clone();
+          cv::Mat full_frame_img = p_celex5_sensor_->getFullPicMat();
           cv::imshow("FullPic", full_frame_img);
-          cv::waitKey(1);
+          cv::waitKey(10);
           sensor_msgs::ImagePtr image_ptr_msg =
               cv_bridge::CvImage(std_msgs::Header(), "mono8", full_frame_img).toImageMsg();
           // ROS_WARN("Get in full image!");
