@@ -48,7 +48,7 @@ class CeleX5DataForwarder : public CeleX5DataManager {
   ros::Publisher events_pub_;
   ros::Publisher imu_pub_;
 
-  ros::Publisher
+  ros::Publisher polarity_img_pub_;
   // ros::Publisher binary_img_pub_;
   // ros::Publisher denoised_img_pub_;
   // ros::Publisher count_img_pub_;

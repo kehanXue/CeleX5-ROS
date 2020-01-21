@@ -16,6 +16,7 @@ celex5_ros::CeleX5DataForwarder::CeleX5DataForwarder(const ros::NodeHandle &nh,
 
   events_pub_ = nh_.advertise<celex5_msgs::EventVector>("events", 10);
   imu_pub_ = nh_.advertise<celex5_msgs::ImuVector>("imu_data", 10);
+  polarity_img_pub_ = nh_.advertise<sensor_msgs::Image>("polarity_img", 10);
 
   // binary_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_binary_img", 10);
   // denoised_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_denoised_img", 10);;
@@ -78,22 +79,35 @@ void celex5_ros::CeleX5DataForwarder::onFrameDataUpdated(CeleX5ProcessedData *p_
        * Publish polarity image in Event Intensity Mode
        */
       if (current_mode==CeleX5::Event_Intensity_Mode) {
-        cv::Mat matPolarity(800, 1280, CV_8UC1, cv::Scalar::all(128));
-        int dataSize = vec_events.size();
+        cv::Mat polarity_mat(800, 1280, CV_8UC3, cv::Scalar::all(0));
+        int data_size = vec_events.size();
         int row = 0, col = 0;
-        for (int i = 0; i < dataSize; i++) {
+        for (int i = 0; i < data_size; i++) {
           row = 799 - vec_events[i].row;
-          col = 1279 - vec_events[i].col;
+          // col = 1279 - vec_events[i].col;
+          col = vec_events[i].col;
+          auto *p = polarity_mat.ptr<cv::Vec3b>(row);
           if (vec_events[i].polarity==1) {
-            matPolarity.at<uchar>(row, col) = 255;
+            p[col][0] = 0;
+            p[col][1] = 0;
+            p[col][2] = 255;
           } else if (vec_events[i].polarity==-1) {
-            matPolarity.at<uchar>(row, col) = 0;
+            p[col][0] = 255;
+            p[col][1] = 0;
+            p[col][2] = 0;
           } else {
-            matPolarity.at<uchar>(row, col) = 128;
+            p[col][0] = 0;
+            p[col][1] = 0;
+            p[col][2] = 0;
           }
         }
-        // if (dataSize > 0) {
-        //   cv::imshow("Event Polarity Pic", matPolarity);
+        sensor_msgs::ImagePtr image_ptr_msg =
+            cv_bridge::CvImage(std_msgs::Header(), "bgr8", polarity_mat).toImageMsg();
+        image_ptr_msg->header.stamp = ros::Time::now();
+        image_ptr_msg->header.frame_id = this->frame_id_;
+        polarity_img_pub_.publish(image_ptr_msg);
+        // if (data_size > 0) {
+        //   cv::imshow("Event Polarity Pic", polarity_mat);
         //   cv::waitKey(1);
         // }
       }
