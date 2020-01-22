@@ -143,6 +143,8 @@ void celex5_ros::CeleX5DataForwarder::onFrameDataUpdated(CeleX5ProcessedData *p_
     imu_vector_ptr_msg->vector_length = vec_imus.size();
     for (auto imu_i : vec_imus) {
       celex5_msgs::Imu tmp_imu_msg;
+      static int seq = 0;
+      tmp_imu_msg.header.seq = seq++;
       tmp_imu_msg.header.stamp = ros::Time::now();
       tmp_imu_msg.header.frame_id = this->frame_id_;
       tmp_imu_msg.gyro_x = imu_i.xGYROS;

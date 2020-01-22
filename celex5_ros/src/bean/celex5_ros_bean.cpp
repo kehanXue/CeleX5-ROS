@@ -42,7 +42,13 @@ void celex5_ros::CeleX5ROSBean::Run() {
   std::string fpn_file_dir;
   CeleX5Configure::ReadROSParam(nh_, "fpn_file_dir", fpn_file_dir);
   p_celex5_sensor_->setFpnFileDir(fpn_file_dir);
-  p_celex5_sensor_->openSensor(CeleX5::CeleX5_MIPI);
+
+  /*
+   * Open sensor
+   */
+  int device_type = CeleX5::DeviceType::Unknown_Devive;
+  CeleX5Configure::ReadROSParam(nh_, "device_type", device_type);
+  p_celex5_sensor_->openSensor(static_cast<CeleX5::DeviceType>(device_type));
   ROS_INFO("Sensor status: %d", p_celex5_sensor_->isSensorReady());
 
   /*
@@ -74,7 +80,7 @@ void celex5_ros::CeleX5ROSBean::ReadParams() {
    * Read parameters from ROS param server
    */
 
-  uint32_t tmp_celex5_mode_param = p_celex5_options_->GetFixedMode();
+  int tmp_celex5_mode_param = p_celex5_options_->GetFixedMode();
   CeleX5Configure::ReadROSParam(nh_, "fixed_mode", tmp_celex5_mode_param);
   p_celex5_options_->SetFixedMode(static_cast<CeleX5::CeleX5Mode>(tmp_celex5_mode_param));
   CeleX5Configure::ReadROSParam(nh_, "loop_mode1", tmp_celex5_mode_param);
@@ -88,6 +94,8 @@ void celex5_ros::CeleX5ROSBean::ReadParams() {
   CeleX5Configure::ReadROSParam(nh_, "optical_flow_frame_time", p_celex5_options_->optical_flow_frame_time_);
   CeleX5Configure::ReadROSParam(nh_, "threshold", p_celex5_options_->threshold_);
   CeleX5Configure::ReadROSParam(nh_, "brightness", p_celex5_options_->brightness_);
+  CeleX5Configure::ReadROSParam(nh_, "imu_enabled", p_celex5_options_->imu_enabled_);
+  CeleX5Configure::ReadROSParam(nh_, "ISO_level", p_celex5_options_->ISO_level_);
   // readIntParam("contrast", p_celex5_options_->contrast_);
   CeleX5Configure::ReadROSParam(nh_, "clock_rate", p_celex5_options_->clock_rate_);
   CeleX5Configure::ReadROSParam(nh_, "is_loop_mode_enabled", p_celex5_options_->is_loop_mode_enabled_);

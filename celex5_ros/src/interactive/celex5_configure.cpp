@@ -116,6 +116,17 @@ CeleX5Configure::CeleX5Configure(
        0,
        1023);
 
+  p_ddyn_rec_->registerVariable<int>
+      ("ISO_level", p_celex5_options_->GetIsoLevel(),
+       boost::bind(&CeleX5Configure::ParamISOLevelCb, this, _1),
+       "Controls the ISO level of the image CeleX-5 sensor generated",
+       1,
+       4);
+
+  p_ddyn_rec_->registerVariable<bool>
+      ("imu_enabled", p_celex5_options_->IsImuEnabled(),
+       boost::bind(&CeleX5Configure::ParamImuEnabledCb, this, _1),
+       "Enable the IMU data output or not");
 //  p_ddyn_rec_.registerVariable<int>
 //      ("contrast", p_celex5_options_->GetContrast(),
 //       boost::bind(&CeleX5Configure::ParamContrastCb, this, _1),
@@ -132,7 +143,7 @@ CeleX5Configure::CeleX5Configure(
 
   p_ddyn_rec_->registerVariable<bool>
       ("is_loop_mode_enabled", p_celex5_options_->IsLoopModeEnabled(),
-       boost::bind(&CeleX5Configure::ParamIsLoopModeEnabled, this, _1),
+       boost::bind(&CeleX5Configure::ParamLoopModeEnabledCb, this, _1),
        "Whether enable loop mode.");
 
   // TODO range
@@ -168,25 +179,43 @@ CeleX5Configure::~CeleX5Configure() = default;
 void CeleX5Configure::UpdateCeleX5AllOptions() {
 
   p_celex5_sensor_->setSensorFixedMode(p_celex5_options_->GetFixedMode());
+  usleep(5000);
 
   p_celex5_sensor_->setLoopModeEnabled(p_celex5_options_->IsLoopModeEnabled());
+  usleep(5000);
   if (p_celex5_options_->IsLoopModeEnabled()) {
     p_celex5_sensor_->setSensorLoopMode(p_celex5_options_->GetLoopModes().at(0), 1);
+    usleep(5000);
     p_celex5_sensor_->setSensorLoopMode(p_celex5_options_->GetLoopModes().at(1), 2);
+    usleep(5000);
     p_celex5_sensor_->setSensorLoopMode(p_celex5_options_->GetLoopModes().at(2), 3);
+    usleep(5000);
   }
 
   p_celex5_sensor_->setEventFrameTime(p_celex5_options_->GetEventFrameTime());
+  usleep(5000);
   p_celex5_sensor_->setOpticalFlowFrameTime(p_celex5_options_->GetOpticalFlowFrameTime());
+  usleep(5000);
   p_celex5_sensor_->setThreshold(p_celex5_options_->GetThreshold());
+  usleep(5000);
   p_celex5_sensor_->setBrightness(p_celex5_options_->GetBrightness());
+  usleep(5000);
+  p_celex5_sensor_->setISOLevel(p_celex5_options_->GetIsoLevel());
+  usleep(5000);
   // p_celex5_sensor_->setContrast(p_celex5_options_->GetContrast());
   p_celex5_sensor_->setClockRate(p_celex5_options_->GetClockRate());
+  usleep(5000);
 
   p_celex5_sensor_->setEventDuration(p_celex5_options_->GetEventDurationInLoop());
+  usleep(5000);
   p_celex5_sensor_->setPictureNumber(p_celex5_options_->GetPictureNumberInLoop(),
                                      p_celex5_options_->GetLoopModes().at(1));
-
+  usleep(5000);
+  if (p_celex5_options_->IsImuEnabled()) {
+    p_celex5_sensor_->enableIMUModule();
+  } else {
+    p_celex5_sensor_->disableIMUModule();
+  }
 }
 
 void CeleX5Configure::ParamFixedModeCb(int fixed_mode) {
@@ -277,7 +306,7 @@ void CeleX5Configure::ParamClockRateCb(int new_clock_rate) {
   p_celex5_options_->SetClockRate(value);
 }
 
-void CeleX5Configure::ParamIsLoopModeEnabled(bool new_loop_mode_status) {
+void CeleX5Configure::ParamLoopModeEnabledCb(bool new_loop_mode_status) {
   p_celex5_sensor_->setLoopModeEnabled(new_loop_mode_status);
   p_celex5_options_->SetIsLoopModeEnabled(new_loop_mode_status);
 
@@ -394,6 +423,19 @@ void CeleX5Configure::ReadROSParam(const ros::NodeHandle &nh, const std::string 
              ros::this_node::getName().c_str(),
              param_name.c_str(),
              param.c_str());
+  }
+}
+
+void CeleX5Configure::ParamISOLevelCb(int new_iso_level) {
+  p_celex5_sensor_->setISOLevel(new_iso_level);
+  p_celex5_options_->SetIsoLevel(new_iso_level);
+}
+
+void CeleX5Configure::ParamImuEnabledCb(bool new_imu_status) {
+  if (new_imu_status) {
+    p_celex5_sensor_->enableIMUModule();
+  } else {
+    p_celex5_sensor_->disableIMUModule();
   }
 }
 

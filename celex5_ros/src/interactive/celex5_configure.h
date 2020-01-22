@@ -76,9 +76,11 @@ class CeleX5Configure {
 
   void ParamThresholdCb(int new_threshold);
   void ParamBrightnessCb(int new_brightness);
+  void ParamISOLevelCb(int new_iso_level);
+  void ParamImuEnabledCb(bool new_imu_status);
 //  void ParamContrastCb(int new_contrast);
   void ParamClockRateCb(int new_clock_rate);
-  void ParamIsLoopModeEnabled(bool new_loop_mode_status);
+  void ParamLoopModeEnabledCb(bool new_loop_mode_status);
   void ParamEventDurationInLoopCb(int new_event_duration_in_loop);
   void ParamPictureNumberInLoopCb(int new_picture_number_in_loop);
 

@@ -39,6 +39,8 @@ class CeleX5Options {
                          uint32_t optical_flow_frame_time_ = 20,
                          uint32_t threshold = 185,
                          uint32_t brightness = 150,
+                         uint32_t ISO_level = 2,
+                         bool imu_enabled = true,
 //                         uint32_t contrast = 1,
                          uint32_t clock_rate = 100,
                          std::string event_fpn_file_path = "",
@@ -88,7 +90,13 @@ class CeleX5Options {
   const std::string &GetFrameFpnFilePath() const;
   void SetFrameFpnFilePath(const std::string &frame_fpn_file_path);
 
+  bool IsImuEnabled() const;
+  void SetImuEnabled(bool imu_enabled);
+  uint32_t GetIsoLevel() const;
+  void SetIsoLevel(uint32_t iso_level);
 // private:
+  bool imu_enabled_;
+
   CeleX5::CeleX5Mode fixed_mode_;
   std::vector<CeleX5::CeleX5Mode> loop_modes_;
 
@@ -97,6 +105,7 @@ class CeleX5Options {
 
   uint32_t threshold_;
   uint32_t brightness_;
+  uint32_t ISO_level_;
 //  uint32_t contrast_;
   uint32_t clock_rate_;
 

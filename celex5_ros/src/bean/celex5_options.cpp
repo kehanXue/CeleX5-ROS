@@ -30,6 +30,8 @@ CeleX5Options::CeleX5Options(CeleX5::CeleX5Mode fixed_mode,
                              uint32_t optical_flow_frame_time,
                              uint32_t threshold,
                              uint32_t brightness,
+                             uint32_t ISO_level,
+                             bool imu_enabled,
 //                             uint32_t contrast,
                              uint32_t clock_rate,
                              std::string event_fpn_file_path,
@@ -43,6 +45,8 @@ CeleX5Options::CeleX5Options(CeleX5::CeleX5Mode fixed_mode,
       optical_flow_frame_time_(optical_flow_frame_time),
       threshold_(threshold),
       brightness_(brightness),
+      ISO_level_(ISO_level),
+      imu_enabled_(imu_enabled),
 //      contrast_(contrast),
       clock_rate_(clock_rate),
       event_FPN_file_path_(std::move(event_fpn_file_path)),
@@ -169,6 +173,22 @@ uint32_t CeleX5Options::GetPictureNumberInLoop() const {
 
 void CeleX5Options::SetPictureNumberInLoop(uint32_t picture_number_in_loop) {
   picture_number_in_loop_ = picture_number_in_loop;
+}
+
+bool CeleX5Options::IsImuEnabled() const {
+  return imu_enabled_;
+}
+
+void CeleX5Options::SetImuEnabled(bool imu_enabled) {
+  CeleX5Options::imu_enabled_ = imu_enabled;
+}
+
+uint32_t CeleX5Options::GetIsoLevel() const {
+  return ISO_level_;
+}
+
+void CeleX5Options::SetIsoLevel(uint32_t iso_level) {
+  ISO_level_ = iso_level;
 }
 
 
