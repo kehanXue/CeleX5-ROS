@@ -27,7 +27,10 @@
     <arg name="tf_prefix" default=""/>
     <arg name="frame_id" default="celex5_mipi"/>
 
-
+    <!--           CeleX5 Sensor Type           -->
+    <!--          CeleX5_MIPI        1          -->
+    <!--          CeleX5_OpalKelly   2          -->
+    <arg name="device_type" default="1"/>
     <arg name="sensor_cfg_file_dir" default="$(find celex5_ros)/config/"/>
     <arg name="fpn_file_dir" default="$(find celex5_ros)/config/"/>
 
@@ -46,10 +49,13 @@
     <arg name="loop_mode2" default="0"/>
     <arg name="loop_mode3" default="0"/>
 
+    <arg name="imu_enabled" default="true"/>
+
     <arg name="event_frame_time" default="30000"/>
     <arg name="optical_flow_frame_time" default="20"/>
     <arg name="threshold" default="185"/>
     <arg name="brightness" default="150"/>
+    <arg name="ISO_level" default="2"/>
     <!--    <arg name="contrast" default="1"/>-->
     <arg name="clock_rate" default="100"/>
 
@@ -63,9 +69,11 @@
           output="screen" required="$(arg required)"/>
     <node pkg="nodelet" type="nodelet" name="celex5_mipi" args="load celex5_ros/CeleX5Nodelet $(arg manager_name)"
           required="$(arg required)">
+        <param name="device_type" type="int" value="$(arg device_type)"/>
         <param name="sensor_cfg_file_dir" type="str" value="$(arg sensor_cfg_file_dir)"/>
         <param name="fpn_file_dir" type="str" value="$(arg fpn_file_dir)"/>
         <param name="frame_id" type="str" value="$(arg frame_id)"/>
+        <param name="imu_enabled" type="bool" value="$(arg imu_enabled)"/>
         <param name="fixed_mode" type="int" value="$(arg fixed_mode)"/>
         <param name="loop_mode1" type="int" value="$(arg loop_mode1)"/>
         <param name="loop_mode2" type="int" value="$(arg loop_mode2)"/>
@@ -74,6 +82,7 @@
         <param name="optical_flow_frame_time" type="int" value="$(arg optical_flow_frame_time)"/>
         <param name="threshold" type="int" value="$(arg threshold)"/>
         <param name="brightness" type="int" value="$(arg brightness)"/>
+        <param name="ISO_level" type="int" value="$(arg ISO_level)"/>
         <param name="clock_rate" type="int" value="$(arg clock_rate)"/>
         <param name="is_loop_mode_enabled" type="bool" value="$(arg is_loop_mode_enabled)"/>
         <param name="event_duration_in_loop" type="int" value="$(arg event_duration_in_loop)"/>

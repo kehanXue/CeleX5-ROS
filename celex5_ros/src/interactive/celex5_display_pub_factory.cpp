@@ -43,14 +43,14 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
     publisher_ = nh_.advertise<sensor_msgs::Image>("display_" + topic_name, 10);
-    int fps = 30;
+    int fps = 60;
     ros::Rate loop_rate(fps);
     bool is_display = true;
     p_ddyn_rec_->registerVariable<int>(topic_name + "_display_fps", fps,
                                        [&loop_rate](int new_fps) {
                                          loop_rate = ros::Rate(new_fps);
                                        }, "FPS of this display image", 0, 144);
-    p_ddyn_rec_->registerVariable<bool>(topic_name, is_display,
+    p_ddyn_rec_->registerVariable<bool>(topic_name + "_enable", is_display,
                                         [&is_display](int new_is_display) {
                                           is_display = new_is_display;
                                         }, "Whether display this image");
@@ -89,14 +89,14 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
     publisher_ = nh_.advertise<sensor_msgs::Image>("display_" + topic_name, 10);
     ros::Publisher colored_publisher = nh_.advertise<sensor_msgs::Image>("display_colored_" + topic_name, 10);
-    int fps = 30;
+    int fps = 60;
     ros::Rate loop_rate(fps);
     bool is_display = true;
     p_ddyn_rec_->registerVariable<int>(topic_name + "_display_fps", fps,
                                        [&loop_rate](int new_fps) {
                                          loop_rate = ros::Rate(new_fps);
                                        }, "FPS of this display image", 0, 144);
-    p_ddyn_rec_->registerVariable<bool>(topic_name, is_display,
+    p_ddyn_rec_->registerVariable<bool>(topic_name + "_enable", is_display,
                                         [&is_display](int new_is_display) {
                                           is_display = new_is_display;
                                         }, "Whether display this image");
@@ -143,14 +143,14 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
     publisher_ = nh_.advertise<sensor_msgs::Image>("display_" + topic_name, 10);
-    int fps = 30;
+    int fps = 60;
     ros::Rate loop_rate(fps);
     bool is_display = true;
     p_ddyn_rec_->registerVariable<int>(topic_name + "_display_fps", fps,
                                        [&loop_rate](int new_fps) {
                                          loop_rate = ros::Rate(new_fps);
                                        }, "FPS of this display image", 0, 144);
-    p_ddyn_rec_->registerVariable<bool>(topic_name, is_display,
+    p_ddyn_rec_->registerVariable<bool>(topic_name + "_enable", is_display,
                                         [&is_display](int new_is_display) {
                                           is_display = new_is_display;
                                         }, "Whether display this image");
