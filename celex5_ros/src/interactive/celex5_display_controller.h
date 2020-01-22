@@ -20,11 +20,16 @@
 #ifndef CELEX5_ROS_SRC_BEAN_CELEX5_DISPLAY_CONTROLLER_H_
 #define CELEX5_ROS_SRC_BEAN_CELEX5_DISPLAY_CONTROLLER_H_
 
+#include <unordered_map>
+
 #include <ros/ros.h>
 #include "celex5_display_pub_factory.h"
 #include <ddynamic_reconfigure/ddynamic_reconfigure.h>
 
 namespace celex5_ros {
+
+typedef std::shared_ptr<CeleX5DisplayPubFactory> CeleX5DisplayPubFactoryPtr;
+
 class CeleX5DisplayController {
  public:
   static std::shared_ptr<CeleX5DisplayController> GetInstance(const ros::NodeHandle &nh,
@@ -45,22 +50,27 @@ class CeleX5DisplayController {
   static std::shared_ptr<std::mutex> mutex_instance;
 
   void CloseAll();
+  void ChangeOptions(uint16_t mask);
 
   std::shared_ptr<CeleX5> p_celex5_sensor_;
   std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec_;
 
   ros::NodeHandle nh_;
-  std::shared_ptr<CeleX5DisplayPubFactory> p_binary_img_pub_;
-  std::shared_ptr<CeleX5DisplayPubFactory> p_in_pixel_img_pub_;
-  std::shared_ptr<CeleX5DisplayPubFactory> p_denoised_binary_img_pub_;
-  std::shared_ptr<CeleX5DisplayPubFactory> p_count_img_pub_;
-  std::shared_ptr<CeleX5DisplayPubFactory> p_optical_flow_img_pub_;
-  std::shared_ptr<CeleX5DisplayPubFactory> p_accumulated_img_pub_;
-  std::shared_ptr<CeleX5DisplayPubFactory> p_gray_img_pub_;
-  std::shared_ptr<CeleX5DisplayPubFactory> p_superimposed_img_pub_;
-  std::shared_ptr<CeleX5DisplayPubFactory> p_optical_flow_direction_img_pub_;
-  std::shared_ptr<CeleX5DisplayPubFactory> p_optical_flow_speed_img_pub_;
-  std::shared_ptr<CeleX5DisplayPubFactory> p_full_frame_img_pub_;
+
+  CeleX5DisplayPubFactoryPtr p_binary_img_pub_;
+  CeleX5DisplayPubFactoryPtr p_denoised_binary_img_pub_;
+  CeleX5DisplayPubFactoryPtr p_count_img_pub_;
+  CeleX5DisplayPubFactoryPtr p_optical_flow_img_pub_;
+  CeleX5DisplayPubFactoryPtr p_accumulated_img_pub_;
+  CeleX5DisplayPubFactoryPtr p_gray_img_pub_;
+  CeleX5DisplayPubFactoryPtr p_superimposed_img_pub_;
+  CeleX5DisplayPubFactoryPtr p_optical_flow_direction_img_pub_;
+  CeleX5DisplayPubFactoryPtr p_optical_flow_speed_img_pub_;
+  CeleX5DisplayPubFactoryPtr p_in_pixel_img_pub_;
+  CeleX5DisplayPubFactoryPtr p_full_frame_img_pub_;
+
+  std::unordered_map<uint8_t, CeleX5DisplayPubFactoryPtr> map_pub_mask;
+  std::unordered_map<int, uint16_t> map_mode_mask;
 };
 }
 

@@ -48,6 +48,9 @@ CeleX5Options::CeleX5Options(CeleX5::CeleX5Mode fixed_mode,
       event_FPN_file_path_(std::move(event_fpn_file_path)),
       frame_FPN_file_path_(std::move(frame_fpn_file_path)) {
 
+  loop_modes_.emplace_back(CeleX5::Full_Picture_Mode);
+  loop_modes_.emplace_back(CeleX5::Event_Off_Pixel_Timestamp_Mode);
+  loop_modes_.emplace_back(CeleX5::Optical_Flow_Mode);
 }
 
 CeleX5Options::~CeleX5Options() = default;

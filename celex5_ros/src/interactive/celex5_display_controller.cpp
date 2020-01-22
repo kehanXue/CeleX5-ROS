@@ -94,6 +94,76 @@ CeleX5DisplayController::CeleX5DisplayController(const ros::NodeHandle &nh,
                                                 p_celex5_sensor_,
                                                 p_ddyn_rec_,
                                                 CeleX5::FullFramePic);
+
+  /*
+   * Create association between mask_id and publisher
+   */
+  map_pub_mask.insert(std::unordered_map
+                          <uint8_t, CeleX5DisplayPubFactoryPtr>::value_type
+                          (0, p_binary_img_pub_));
+  map_pub_mask.insert(std::unordered_map
+                          <uint8_t, CeleX5DisplayPubFactoryPtr>::value_type
+                          (1, p_denoised_binary_img_pub_));
+  map_pub_mask.insert(std::unordered_map
+                          <uint8_t, CeleX5DisplayPubFactoryPtr>::value_type
+                          (2, p_count_img_pub_));
+  map_pub_mask.insert(std::unordered_map
+                          <uint8_t, CeleX5DisplayPubFactoryPtr>::value_type
+                          (3, p_optical_flow_img_pub_));
+  map_pub_mask.insert(std::unordered_map
+                          <uint8_t, CeleX5DisplayPubFactoryPtr>::value_type
+                          (4, p_accumulated_img_pub_));
+  map_pub_mask.insert(std::unordered_map
+                          <uint8_t, CeleX5DisplayPubFactoryPtr>::value_type
+                          (5, p_gray_img_pub_));
+  map_pub_mask.insert(std::unordered_map
+                          <uint8_t, CeleX5DisplayPubFactoryPtr>::value_type
+                          (6, p_superimposed_img_pub_));
+  map_pub_mask.insert(std::unordered_map
+                          <uint8_t, CeleX5DisplayPubFactoryPtr>::value_type
+                          (7, p_optical_flow_direction_img_pub_));
+  map_pub_mask.insert(std::unordered_map
+                          <uint8_t, CeleX5DisplayPubFactoryPtr>::value_type
+                          (8, p_optical_flow_speed_img_pub_));
+  map_pub_mask.insert(std::unordered_map
+                          <uint8_t, CeleX5DisplayPubFactoryPtr>::value_type
+                          (9, p_in_pixel_img_pub_));
+  map_pub_mask.insert(std::unordered_map
+                          <uint8_t, CeleX5DisplayPubFactoryPtr>::value_type
+                          (10, p_full_frame_img_pub_));
+
+  /*
+   * Create association between mask_id and publisher
+   */
+  map_mode_mask.insert(std::unordered_map
+                           <int, uint16_t>::value_type
+                           (CeleX5::Event_Off_Pixel_Timestamp_Mode,
+                            static_cast<uint16_t>(1 << 0 | 1 << 1 | 1 << 2)));
+
+  map_mode_mask.insert(std::unordered_map
+                           <int, uint16_t>::value_type
+                           (CeleX5::Event_In_Pixel_Timestamp_Mode,
+                            static_cast<uint16_t>(1 << 0 | 1 << 3 | 1 << 9)));
+  map_mode_mask.insert(std::unordered_map
+                           <int, uint16_t>::value_type
+                           (CeleX5::Event_Intensity_Mode,
+                            static_cast<uint16_t>(1 << 0 | 1 << 2 | 1 << 4 | 1 << 5 | 1 << 6)));
+  map_mode_mask.insert(std::unordered_map
+                           <int, uint16_t>::value_type
+                           (CeleX5::Optical_Flow_Mode,
+                            static_cast<uint16_t>(1 << 0 | 1 << 3 | 1 << 7 | 1 << 8)));
+  map_mode_mask.insert(std::unordered_map
+                           <int, uint16_t>::value_type
+                           (CeleX5::Full_Picture_Mode,
+                            static_cast<uint16_t>(1 << 10)));
+  // map_mode_mask.insert(std::unordered_map
+  //                          <int, uint16_t>::value_type
+  //                          (CeleX5::Optical_Flow_FPN_Mode,
+  //                           static_cast<uint16_t>(1 << 0 | 1 << 1 | 1 << 2)));
+  // map_mode_mask.insert(std::unordered_map
+  //                          <int, uint16_t>::value_type
+  //                          (CeleX5::Multi_Read_Optical_Flow_Mode,
+  //                           static_cast<uint16_t>(1 << 0 | 1 << 1 | 1 << 2)));
   this->CloseAll();
 }
 
@@ -126,45 +196,36 @@ CeleX5DisplayController::GetInstance(const ros::NodeHandle &nh,
 }
 
 void CeleX5DisplayController::SetCeleX5Mode(CeleX5::CeleX5Mode mode) {
-  this->CloseAll();
-  if (mode==CeleX5::Event_Off_Pixel_Timestamp_Mode) {
-    p_binary_img_pub_->Open();
-    p_denoised_binary_img_pub_->Open();
-    p_count_img_pub_->Open();
-    // TODO Event Vector
-  } else if (mode==CeleX5::Event_In_Pixel_Timestamp_Mode) {
-    p_optical_flow_img_pub_->Open();
-    p_binary_img_pub_->Open();
-    p_in_pixel_img_pub_->Open();
-    // TODO Event Vector
-  } else if (mode==CeleX5::Event_Intensity_Mode) {
-    p_binary_img_pub_->Open();
-    p_gray_img_pub_->Open();
-    p_count_img_pub_->Open();
-    p_accumulated_img_pub_->Open();
-    p_superimposed_img_pub_->Open();
-    // TODO Event Vector
-  } else if (mode==CeleX5::Optical_Flow_Mode) {
-    p_optical_flow_img_pub_->Open();
-    p_optical_flow_speed_img_pub_->Open();
-    p_optical_flow_direction_img_pub_->Open();
-    p_binary_img_pub_->Open();
-  } else if (mode==CeleX5::Full_Picture_Mode) {
-    p_full_frame_img_pub_->Open();
+  if (!p_celex5_sensor_->isLoopModeEnabled()) {
+    ChangeOptions(map_mode_mask.at(static_cast<int>(mode)));
+  } else {
+    // TODO
+    uint16_t enable_mask =
+        map_mode_mask.at(p_celex5_sensor_->getSensorLoopMode(1));
+    enable_mask |= map_mode_mask.at(p_celex5_sensor_->getSensorLoopMode(2));
+    enable_mask |= map_mode_mask.at(p_celex5_sensor_->getSensorLoopMode(3));
+    ChangeOptions(enable_mask);
   }
 }
 
 void CeleX5DisplayController::CloseAll() {
-  p_binary_img_pub_->Close();
-  p_denoised_binary_img_pub_->Close();
-  p_count_img_pub_->Close();
-  p_optical_flow_img_pub_->Close();
-  p_accumulated_img_pub_->Close();
-  p_gray_img_pub_->Close();
-  p_superimposed_img_pub_->Close();
-  p_optical_flow_direction_img_pub_->Close();
-  p_optical_flow_speed_img_pub_->Close();
-  p_in_pixel_img_pub_->Close();
-  p_full_frame_img_pub_->Close();
+  for (const auto &pub : map_pub_mask) {
+    auto pub_id = pub.first;
+    map_pub_mask.at(pub_id)->Close();
+  }
+}
+
+void CeleX5DisplayController::ChangeOptions(uint16_t mask) {
+  CloseAll();
+  auto judge_bit1 = [=](uint8_t bit_index) {
+    return 0!=((mask >> (bit_index)) & static_cast<uint16_t>(1));
+  };
+  for (const auto &pub : map_pub_mask) {
+    auto pub_id = pub.first;
+    if (judge_bit1(pub_id)) {
+      map_pub_mask.at(pub_id)->Open();
+      // ROS_ERROR("%d, open", pub_id);
+    }
+  }
 }
 

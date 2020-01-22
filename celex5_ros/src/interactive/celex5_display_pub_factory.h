@@ -42,13 +42,11 @@ class CeleX5DisplayPubFactory {
                           std::shared_ptr<CeleX5> p_celex5_sensor,
                           std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec,
                           CeleX5::EventPicType event_pic_type);
-
   CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                           std::string topic_name,
                           std::shared_ptr<CeleX5> p_celex5_sensor,
                           std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec,
                           CeleX5::OpticalFlowPicType optical_flow_pic_type);
-
   CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                           std::string topic_name,
                           std::shared_ptr<CeleX5> p_celex5_sensor,
@@ -58,8 +56,9 @@ class CeleX5DisplayPubFactory {
   virtual ~CeleX5DisplayPubFactory();
 
   void Open();
-
   void Close();
+
+  bool IsPublishEnable() const;
 
  private:
 

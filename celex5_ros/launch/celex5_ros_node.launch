@@ -38,9 +38,9 @@
 
     <arg name="fixed_mode" default="0"/>
     <arg name="is_loop_mode_enabled" default="false"/>
-    <arg name="loop_mode1" default="0"/>
+    <arg name="loop_mode1" default="3"/>
     <arg name="loop_mode2" default="0"/>
-    <arg name="loop_mode3" default="0"/>
+    <arg name="loop_mode3" default="4"/>
 
     <arg name="event_frame_time" default="30000"/>
     <arg name="optical_flow_frame_time" default="20"/>

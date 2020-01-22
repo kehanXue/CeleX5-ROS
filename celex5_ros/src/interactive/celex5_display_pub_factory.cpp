@@ -155,8 +155,8 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                                           is_display = new_is_display;
                                         }, "Whether display this image");
     while (ros::ok()) {
-      if (publish_enable_ && is_display &&
-          p_celex5_sensor_->getSensorFixedMode()==CeleX5::Full_Picture_Mode) {
+      if (publish_enable_ && is_display) {
+        // p_celex5_sensor_->getSensorFixedMode()==CeleX5::Full_Picture_Mode) {
         if (!p_celex5_sensor_->getFullPicMat().empty()) {
           cv::Mat full_frame_img = p_celex5_sensor_->getFullPicMat();
           // cv::imshow("FullPic", full_frame_img);
@@ -187,6 +187,10 @@ void CeleX5DisplayPubFactory::Open() {
 
 void CeleX5DisplayPubFactory::Close() {
   publish_enable_ = false;
+}
+
+bool CeleX5DisplayPubFactory::IsPublishEnable() const {
+  return publish_enable_;
 }
 
 void CeleX5DisplayPubFactory::ToColorOpticalMat(cv::Mat &optical_mat) {
@@ -227,4 +231,5 @@ void CeleX5DisplayPubFactory::ToColorOpticalMat(cv::Mat &optical_mat) {
   }
   optical_mat = color_optical_mat.clone();
 }
+
 
