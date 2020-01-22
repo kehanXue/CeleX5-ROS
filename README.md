@@ -4,7 +4,7 @@
 
 ## 概述
 
-<img src="assets/242069421.jpg" alt="CeleX5-MIPI" style="zoom:30%;" />
+<img src="assets/242069421.jpg" height="300" alt="CeleX5-MIPI"/>
 
 <img src="assets/Screenshot from 2020-01-22 21-16-52.png" style="zoom:80%;" />
 
@@ -23,7 +23,7 @@ CeleX™ CeleX5系列相机的是一款目前市场上极少数的可以提供12
 
 1. 基于`ddynamic_reconfigure`提供的动态调参机制，提供CeleX5调参的界面接口，覆盖几乎所有参数。用户还可自由配置想要输出的数据和其帧率。
 
-   ![](assets/Screenshot from 2020-01-22 21-22-20.png)
+   <img src="assets/Screenshot from 2020-01-22 21-22-20.png" style="zoom:80%;" />
 
 2. 目前已支持CeleX5的五种工作模式：
 
@@ -61,7 +61,7 @@ CeleX™ CeleX5系列相机的是一款目前市场上极少数的可以提供12
    
    ```bash
    source ~/celex_ws/devel/setup.bash # Or source setup.zsh when you use zsh
-roslaunch celex5_ros celex5_ros_node.launch
+   roslaunch celex5_ros celex5_ros_node.launch
    rosrun rqt_reconfigure rqt_reconfigure # Open rqt_reconfigure to config
    ```
    
@@ -104,13 +104,13 @@ roslaunch celex5_ros celex5_ros_node.launch
 
 ## 运行样例
 
-通过上述步骤成功运行后，通过在rqt_reconfigure
+通过上述步骤成功运行后，通过在`rqt_reconfigure`调整参数进行使用了：
 
 1. Event Intensity Mode下获取带极性的Event frame和Superimposed frame（当前二值图像叠加的累计灰度帧上）：
 
    <div align="center">
-       <img src="assets/Screenshot from 2020-01-22 21-26-20.png" style="zoom:44%;" />
-       <img src="assets/Screenshot from 2020-01-22 21-27-36.png" style="zoom:44%;" />
+       <img src="assets/Screenshot from 2020-01-22 21-26-20.png" height="250" alt="Event frame"/>
+       <img src="assets/Screenshot from 2020-01-22 21-27-36.png" height="250" alt="Superimposed frame"/>
    </div>
 
 2. Optical Flow下，整体光流帧、光流方向信息帧与光流速度信息帧：
@@ -119,7 +119,7 @@ roslaunch celex5_ros celex5_ros_node.launch
 
 3. 工作在loop mode下（在三种工作模式中循环，图片从左到右、从上到下：原始二值frame、光流frame和传统图像灰度frame）：
 
-   ![](assets/Screenshot from 2020-01-22 21-16-52-1579704106897.png)
+   <img src="assets/Screenshot from 2020-01-22 21-16-52-1579704106897.png" style="zoom:80%;" />
 
 ## 仍存在的问题
 
