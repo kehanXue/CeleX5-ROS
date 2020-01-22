@@ -51,7 +51,6 @@ bool XmlReader::parse(const std::string &filename, TiXmlDocument *pDom)
     filePath += "\\";
 #endif
     const std::string& filePath = filename;
-    std::cout << "????????????????????????" << filePath << std::endl;
     bool loadOk = pDom->LoadFile(filePath.c_str());
     if (!loadOk)
     {
@@ -96,7 +95,6 @@ bool XmlReader::importCeleX5Commands(std::map<std::string, std::vector<WireinCom
 {
 	std::cout << std::endl << "********** HHXmlReader::importCommands_CeleX5 Begin **********" << std::endl;
 	TiXmlElement *pRootEle = pDom->RootElement();
-	std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!" << std::string(pRootEle->Value()) << std::endl;
 	if (std::string(pRootEle->Value()) != "commands")
 	{
 		std::cout << "Can't find commands in xml." << std::endl;
