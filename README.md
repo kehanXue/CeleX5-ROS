@@ -10,9 +10,11 @@
 
 <img src="assets/242069421.jpg" height="300" alt="CeleX5-MIPI"/>
 
-<img src="assets/Screenshot from 2020-01-22 21-16-52.png" style="zoom:80%;" />
+
 
 本仓库提供了[CeleX5-MP](http://www.celepixel.com/#/Samples)系列[Event-based Camera](https://en.wikipedia.org/wiki/Event_camera)（事件相机）功能较为完善的ROS示例。可根据用户需求自由配置输出多路数据（原始Event数据、IMU数据、灰度帧、光流信息等），并提供了`rqt_reconfigure`调参面板以支持动态调参。
+
+<img src="assets/Screenshot from 2020-01-22 21-16-52.png" style="zoom:80%;" />
 
 CeleX™ CeleX5系列相机的是一款目前市场上极少数的可以提供1280*800这样高分辨率的Event-based Camera，并且实现有片上光流等功能。[ROS](https://www.ros.org/)是目前很主流的实验平台，提供了丰富的开发接口和资源。但在[CeleX™官方开源仓库](https://github.com/CelePixel/CeleX5-MIPI)中，关于ROS下的示例非常的不完善：
 
@@ -113,8 +115,8 @@ CeleX™ CeleX5系列相机的是一款目前市场上极少数的可以提供12
 1. Event Intensity Mode下获取带极性的Event frame和Superimposed frame（当前二值图像叠加的累计灰度帧上）：
 
    <div align="center">
-       <img src="assets/Screenshot from 2020-01-22 21-26-20.png" height="250" alt="Event frame"/>
-       <img src="assets/Screenshot from 2020-01-22 21-27-36.png" height="250" alt="Superimposed frame"/>
+       <img src="assets/Screenshot from 2020-01-22 21-26-20.png" height="260" alt="Event frame"/>
+       <img src="assets/Screenshot from 2020-01-22 21-27-36.png" height="260" alt="Superimposed frame"/>
    </div>
 
 2. Optical Flow下，整体光流帧、光流方向信息帧与光流速度信息帧：
