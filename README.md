@@ -114,11 +114,8 @@ CeleX™ CeleX5系列相机的是一款目前市场上极少数的可以提供12
 
 1. Event Intensity Mode下获取带极性的Event frame和Superimposed frame（当前二值图像叠加的累计灰度帧上）：
 
-   <div align="center">
-       <img src="assets/Screenshot from 2020-01-22 21-26-20.png" height="260" alt="Event frame"/>
-       <img src="assets/Screenshot from 2020-01-22 21-27-36.png" height="260" alt="Superimposed frame"/>
-   </div>
-
+   <img src="assets/Screenshot from 2020-01-22 23-35-10.png" style="zoom:100%;" />
+   
 2. Optical Flow下，整体光流帧、光流方向信息帧与光流速度信息帧：
 
    <img src="assets/Screenshot from 2020-01-22 21-20-36.png" style="zoom:80%;" />
