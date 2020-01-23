@@ -1,8 +1,8 @@
+*[English Version](README.md)*
+
 # CeleX5-ROS
 
 > The ROS package for CeleX™ CeleX5-MIPI Dynamic Vision Sensor.
-
-*English version: TODO*
 
 - [概述](#概述)
 - [特性](#特性)
@@ -18,14 +18,20 @@
 
 本仓库提供了[CeleX5-MP](http://www.celepixel.com/#/Samples)系列[Event-based Camera](https://en.wikipedia.org/wiki/Event_camera)（事件相机）功能较为完善的ROS示例。可根据用户需求自由配置输出多路数据（原始Event数据、IMU数据、灰度帧、光流信息等），并提供了`rqt_reconfigure`调参面板以支持动态调参。
 
+*目前仅仅在CeleX5-MIPI设备上测试通过，由于手里没有CeleX5系列的其他产品所以无法测试。*
+
 <img src="assets/Screenshot from 2020-01-22 21-16-52.png" style="zoom:80%;" />
 
-CeleX™ CeleX5系列相机的是一款目前市场上极少数的可以提供1280*800这样高分辨率的Event-based Camera，并且实现有片上光流等功能。[ROS](https://www.ros.org/)是目前很主流的实验平台，提供了丰富的开发接口和资源。但在[CeleX™官方开源仓库](https://github.com/CelePixel/CeleX5-MIPI)中，关于ROS下的示例非常的不完善：
+CeleX™ 是针对机器视觉而设计的智能图像传感器系列。传感器中的每一像素点能够独立自主地监测相对光强的变化，并在到达阈值时被激发发出被读出信号。行和列仲裁电路实时处理像素激发信号，并确保即使同时接收到多个请求时能够按有序的方式逐一处理。传感器依据被激发的事件，输出连续的异步数据流,而不是图像帧。CeleX™ 传感器监测的运动物体速度不再受传统的曝光时间和帧速率限制。它可以侦测高达万帧/秒昂贵高速相机才能获取到的高速物体运动信息，而且还能大幅降低后端处理量。
+
+CeleX-5 是一款多功能智能图像传感器，具有一百万像素（分辨率为：1280*800）和片上集成的一些附加功能（如光流）。传感器支持几种不同的输出格式:纯二进制地址事件,具有像素强度信息或定时信息的地址事件。此外,传感器的读出方案可以是异步数据流或同步全帧。输出格式和读出方案的不同组合使该传感器具有很大的灵活性,总共支持 6 种独立的操作模式（但是其中有一种未在sdk中提供相应接口）。为了进一步满足不同应用的要求,传感器还可以配置为 Loop 模式,可以在三种不同模式之间自动切换。
+
+[ROS](https://www.ros.org/)是目前很主流的实验平台，提供了丰富的开发接口和资源。但在[CeleX™官方开源仓库](https://github.com/CelePixel/CeleX5-MIPI)中，关于ROS下的示例非常的不完善：
 
 1. 官方的SDK版本已经更新到了v2.0版本，然而其ROS-Sample支持的版本仍停留在v1.6版本。
 2. 官方的ROS-Sample仅为一个简单的示例，只输出一个工作模式下的一种图像，未提供全面且方便的调参功能和界面。
 
-因此，我用最近这一周多的时间，开发了一个较为全面的CeleX5-ROS package。
+因此，我用最近这一周多的时间，开发了一个较为全面的CeleX5-ROS package v1.0版本。
 
 *建议在使用前，请首先认真阅读[CeleX官方提供的](https://github.com/CelePixel/CeleX5-MIPI/tree/master/Documentation)快速入门手册和API文档的概念部分，对基本名词术语有大概认识。*
 
@@ -45,11 +51,11 @@ CeleX™ CeleX5系列相机的是一款目前市场上极少数的可以提供12
    | Event Intensity Mode           | Event Binary Pic Buffer/Mat<br/>Event Gray Pic Buffer/Mat<br/>Event Count Pic Buffer/Mat<br/>Event Accumulated Pic Buffer/Mat<br/>Event Superimposed Pic Buffer/Mat<br/>Event Vector<row, col, brightness, polarity, off-pixel<br/>timestamp> |
    | Optical-Flow Mode              | Event Optical-flow Pic Buffer/Mat<br/>Event Optical-flow Direction Pic Buffer/Mat<br/>Event Optical-flow Speed Pic Buffer/Mat<br/>Event Binary Pic Buffer/Mat |
 
-3. 支持loop_mode模式，在三种模式之间切换。
+3. 支持**loop_mode**模式，在三种模式之间切换。
 
-4. 将官方SDK的源代码加入到了工程中，并修复了官方SDK中加载相机参数文件路径固定的问题，并保持向后兼容。
+4. 将官方SDK的源代码加入到了工程中（因此无需再提前单独编译官方的SDK并放入指定路径），并修复了官方SDK中加载相机参数文件路径固定的问题，并保持之前SDK版本兼容。
 
-5. （提供的nodelet目前还有bug，见文末）
+5. （提供的nodelet机制可以使得实现在数据量大的情况下实现零拷贝消耗。但目前还有bug，见文末）
 
 ## 编译与运行
 
@@ -132,5 +138,6 @@ CeleX™ CeleX5系列相机的是一款目前市场上极少数的可以提供12
 
 1. 实现的[Nodelet](http://wiki.ros.org/nodelet)接口仍存在问题（不过ros node版本是完全正常工作的）。在通过nodelet加载相机的参数文件的过程中，解析xml文件会出现乱码。调了好久都没找到问题，如果大家提供解决建议的话我会非常感谢。
 2. 关于文档中的`Multi_Read_Optical_Flow_Mode`模式，未在SDK中找到相关接口。// TODO
-
-3. 关于数据的发布频率的控制方式有待变得更加科学。
+3. 暂未添加生成FPN的功能，请仍使用CeleX官方提供的GUI Demo进行FPN的生成（其Linux下的Demo运行可能会直接报段错误，Windows下的较为稳定一些）。
+4. 暂未提供CeleX SDK里的有关录制bin文件的功能，但ROS下我们可以使用ROS bag来进行录制。
+5. 关于数据的发布频率的控制方式有待变得更加科学。在Event触发量大的情况下会出现明显的显示延迟。
