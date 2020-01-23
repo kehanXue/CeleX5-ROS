@@ -35,7 +35,7 @@ class CeleX5Options {
                          std::vector<CeleX5::CeleX5Mode> loop_modes = std::vector<CeleX5::CeleX5Mode>(3),
                          uint32_t event_duration_in_loop = 100,
                          uint32_t picture_number_in_loop = 30,
-                         uint32_t event_frame_time_ = 1000,
+                         uint32_t event_frame_time_ = 30000,
                          uint32_t optical_flow_frame_time_ = 20,
                          uint32_t threshold = 185,
                          uint32_t brightness = 150,

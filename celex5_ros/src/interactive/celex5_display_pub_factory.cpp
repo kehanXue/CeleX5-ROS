@@ -57,8 +57,10 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
     while (ros::ok()) {
       if (publish_enable_ && is_display) {
         cv::Mat event_img = p_celex5_sensor_->getEventPicMat(event_pic_type_);
+        cv::Mat flip_img;
+        cv::flip(event_img, flip_img, 1);
         sensor_msgs::ImagePtr image_ptr_msg =
-            cv_bridge::CvImage(std_msgs::Header(), "mono8", event_img).toImageMsg();
+            cv_bridge::CvImage(std_msgs::Header(), "mono8", flip_img).toImageMsg();
         image_ptr_msg->header.stamp = ros::Time::now();
         image_ptr_msg->header.frame_id = this->frame_id_;
         publisher_.publish(image_ptr_msg);
@@ -104,15 +106,17 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
       if (publish_enable_ && is_display) {
 
         cv::Mat optical_flow_img = p_celex5_sensor_->getOpticalFlowPicMat(optical_flow_pic_type_);
+        cv::Mat flip_img;
+        cv::flip(optical_flow_img, flip_img, 1);
         sensor_msgs::ImagePtr image_ptr_msg =
-            cv_bridge::CvImage(std_msgs::Header(), "mono8", optical_flow_img).toImageMsg();
+            cv_bridge::CvImage(std_msgs::Header(), "mono8", flip_img).toImageMsg();
         image_ptr_msg->header.stamp = ros::Time::now();
         image_ptr_msg->header.frame_id = this->frame_id_;
         publisher_.publish(image_ptr_msg);
 
-        ToColorOpticalMat(optical_flow_img);
+        ToColorOpticalMat(flip_img);
         sensor_msgs::ImagePtr colored_image_ptr_msg =
-            cv_bridge::CvImage(std_msgs::Header(), "bgr8", optical_flow_img).toImageMsg();
+            cv_bridge::CvImage(std_msgs::Header(), "bgr8", flip_img).toImageMsg();
         image_ptr_msg->header.stamp = ros::Time::now();
         image_ptr_msg->header.frame_id = this->frame_id_;
         colored_publisher.publish(colored_image_ptr_msg);
@@ -159,10 +163,12 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
         // p_celex5_sensor_->getSensorFixedMode()==CeleX5::Full_Picture_Mode) {
         if (!p_celex5_sensor_->getFullPicMat().empty()) {
           cv::Mat full_frame_img = p_celex5_sensor_->getFullPicMat();
+          cv::Mat flip_img;
+          cv::flip(full_frame_img, flip_img, 1);
           // cv::imshow("FullPic", full_frame_img);
           // cv::waitKey(10);
           sensor_msgs::ImagePtr image_ptr_msg =
-              cv_bridge::CvImage(std_msgs::Header(), "mono8", full_frame_img).toImageMsg();
+              cv_bridge::CvImage(std_msgs::Header(), "mono8", flip_img).toImageMsg();
           image_ptr_msg->header.stamp = ros::Time::now();
           image_ptr_msg->header.frame_id = this->frame_id_;
           publisher_.publish(image_ptr_msg);
