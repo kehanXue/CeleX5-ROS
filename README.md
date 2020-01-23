@@ -122,7 +122,7 @@ After successfully running through the above steps, it was used by configuring p
 
 1. Obtain the **Polarized Event Frame** and **Superimposed Frame** (superimposes event binary picture onto event accumulated picture) in the **Event Intensity Mode**: 
 
-   <img src="assets/Screenshot from 2020-01-22 23-35-10.png" style="zoom:100%;" />
+   <img src="assets/Screenshot from 2020-01-23 13-58-40-1579759278532.png" style="zoom:100%;" />
    
 2. The **Full-frame Optical-flow Frame,  the Speed Frame and Direction Frame** (each pixel calculated on the optical flow raw frame) when in **Optical-flow Mode**.
 
