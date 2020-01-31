@@ -21,6 +21,9 @@
 #define CELEX5_ROS_SRC_BEAN_CELEX5_DATA_FORWARDER_H_
 
 #include <vector>
+#include <mutex>
+#include <thread>
+#include <condition_variable>
 
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
@@ -56,6 +59,17 @@ class CeleX5DataForwarder : public CeleX5DataManager {
 
  private:
   void onFrameDataUpdated(CeleX5ProcessedData *processed_data) override;
+  void CreatePubThreads();
+  void CreateRawEventsPubThread();
+  void CreatePolarityImgPubThread();
+  void CreateImuDataPubThread();
+
+  std::condition_variable cv_;
+  std::mutex mu_;
+
+  std::shared_ptr<std::thread> p_raw_events_pub_thread_;
+  std::shared_ptr<std::thread> p_polarity_img_pub_thread_;
+  std::shared_ptr<std::thread> p_imu_data_pub_thread_;
 
   ros::NodeHandle nh_;
   std::string frame_id_;
