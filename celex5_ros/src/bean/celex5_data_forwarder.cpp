@@ -96,42 +96,45 @@ void celex5_ros::CeleX5DataForwarder::onFrameDataUpdated(CeleX5ProcessedData *p_
       }
       events_pub_.publish(event_vector_ptr_msg);
     }
+
     /*
      * Publish polarity image in Event Intensity Mode
      */
-    if ((current_mode==CeleX5::Event_Intensity_Mode && !p_celex5_sensor_->isLoopModeEnabled())
-        || (p_celex5_sensor_->isLoopModeEnabled()
-            && p_celex5_sensor_->getSensorLoopMode(2)==CeleX5::Event_Intensity_Mode)) {
-      cv::Mat polarity_mat(800, 1280, CV_8UC3, cv::Scalar::all(255));
-      int data_size = vec_events.size();
-      int row = 0, col = 0;
-      for (int i = 0; i < data_size; i++) {
-        row = 799 - vec_events[i].row;
-        // col = 1279 - vec_events[i].col;
-        col = vec_events[i].col;
-        auto *p = polarity_mat.ptr<cv::Vec3b>(row);
-        if (vec_events[i].polarity==1) {
-          p[col][0] = 0;
-          p[col][1] = 0;
-          p[col][2] = 255;
-        } else if (vec_events[i].polarity==-1) {
-          p[col][0] = 255;
-          p[col][1] = 0;
-          p[col][2] = 0;
-        } else {
-          p[col][0] = 255;
-          p[col][1] = 255;
-          p[col][2] = 255;
+    if (p_celex5_options_->IsPolarityImgEnabled()) {
+      if ((current_mode==CeleX5::Event_Intensity_Mode && !p_celex5_sensor_->isLoopModeEnabled())
+          || (p_celex5_sensor_->isLoopModeEnabled()
+              && p_celex5_sensor_->getSensorLoopMode(2)==CeleX5::Event_Intensity_Mode)) {
+        cv::Mat polarity_mat(800, 1280, CV_8UC3, cv::Scalar::all(255));
+        int data_size = vec_events.size();
+        int row = 0, col = 0;
+        for (int i = 0; i < data_size; i++) {
+          row = 799 - vec_events[i].row;
+          // col = 1279 - vec_events[i].col;
+          col = vec_events[i].col;
+          auto *p = polarity_mat.ptr<cv::Vec3b>(row);
+          if (vec_events[i].polarity==1) {
+            p[col][0] = 0;
+            p[col][1] = 0;
+            p[col][2] = 255;
+          } else if (vec_events[i].polarity==-1) {
+            p[col][0] = 255;
+            p[col][1] = 0;
+            p[col][2] = 0;
+          } else {
+            p[col][0] = 255;
+            p[col][1] = 255;
+            p[col][2] = 255;
+          }
         }
-      }
-      sensor_msgs::ImagePtr image_ptr_msg =
-          cv_bridge::CvImage(std_msgs::Header(), "bgr8", polarity_mat).toImageMsg();
-      image_ptr_msg->header.stamp = ros::Time::now();
-      image_ptr_msg->header.frame_id = this->frame_id_;
-      polarity_img_pub_.publish(image_ptr_msg);
-      if (data_size > 0) {
-        cv::imshow("Event Polarity Pic", polarity_mat);
-        cv::waitKey(1);
+        sensor_msgs::ImagePtr image_ptr_msg =
+            cv_bridge::CvImage(std_msgs::Header(), "bgr8", polarity_mat).toImageMsg();
+        image_ptr_msg->header.stamp = ros::Time::now();
+        image_ptr_msg->header.frame_id = this->frame_id_;
+        polarity_img_pub_.publish(image_ptr_msg);
+        // if (data_size > 0) {
+        //   cv::imshow("Event Polarity Pic", polarity_mat);
+        //   cv::waitKey(1);
+        // }
       }
     }
   }
@@ -163,7 +166,6 @@ void celex5_ros::CeleX5DataForwarder::onFrameDataUpdated(CeleX5ProcessedData *p_
 
       imu_vector_ptr_msg->imus.emplace_back(tmp_imu_msg);
     }
-    // TODO Add params: sensor_type, iso, imu_enable
     imu_pub_.publish(imu_vector_ptr_msg);
   }
 }

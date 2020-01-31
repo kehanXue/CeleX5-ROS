@@ -77,6 +77,7 @@ class CeleX5Configure {
   void ParamBrightnessCb(int new_brightness);
   void ParamISOLevelCb(int new_iso_level);
   void ParamRawEventsEnabledCb(bool new_raw_events_status);
+  void ParamPolarityImgEnabledCb(bool new_raw_events_status);
   void ParamImuEnabledCb(bool new_imu_status);
 //  void ParamContrastCb(int new_contrast);
   void ParamClockRateCb(int new_clock_rate);

@@ -31,6 +31,7 @@ namespace celex5_ros {
 class CeleX5Options {
 
  private:
+  // TODO Default value is get from sensor
   explicit CeleX5Options(CeleX5::CeleX5Mode fixed_mode = CeleX5::CeleX5Mode::Event_Off_Pixel_Timestamp_Mode,
                          bool is_loop_mode_enabled = false,
                          std::vector<CeleX5::CeleX5Mode> loop_modes = std::vector<CeleX5::CeleX5Mode>(3),
@@ -42,6 +43,7 @@ class CeleX5Options {
                          uint32_t brightness = 150,
                          uint32_t ISO_level = 2,
                          bool raw_events_enabled = true,
+                         bool polarity_img_enabled = true,
                          bool imu_enabled = true,
 //                         uint32_t contrast = 1,
                          uint32_t clock_rate = 100,
@@ -110,25 +112,29 @@ class CeleX5Options {
   bool IsRawEventsEnabled() const;
   void SetRawEventsEnabled(bool raw_events_enabled);
 
+  bool IsPolarityImgEnabled() const;
+  void SetPolarityImgEnabled(bool polarity_img_enabled);
+
 // private:
-  bool raw_events_enabled_{};
-  bool imu_enabled_{};
+  bool raw_events_enabled_;
+  bool polarity_img_enabled_;
+  bool imu_enabled_;
 
   CeleX5::CeleX5Mode fixed_mode_;
   std::vector<CeleX5::CeleX5Mode> loop_modes_;
 
-  uint32_t event_frame_time_{};
-  uint32_t optical_flow_frame_time_{};
+  uint32_t event_frame_time_;
+  uint32_t optical_flow_frame_time_;
 
-  uint32_t threshold_{};
-  uint32_t brightness_{};
-  uint32_t ISO_level_{};
+  uint32_t threshold_;
+  uint32_t brightness_;
+  uint32_t ISO_level_;
 //  uint32_t contrast_;
-  uint32_t clock_rate_{};
+  uint32_t clock_rate_;
 
-  bool is_loop_mode_enabled_{};
-  uint32_t event_duration_in_loop_{};
-  uint32_t picture_number_in_loop_{};
+  bool is_loop_mode_enabled_;
+  uint32_t event_duration_in_loop_;
+  uint32_t picture_number_in_loop_;
 
   std::string event_FPN_file_path_;
   std::string frame_FPN_file_path_;

@@ -131,6 +131,12 @@ CeleX5Configure::CeleX5Configure(
       ("raw_events_enabled", p_celex5_options_->IsRawEventsEnabled(),
        boost::bind(&CeleX5Configure::ParamRawEventsEnabledCb, this, _1),
        "Enable the Raw Events data output or not");
+
+  p_ddyn_rec_->registerVariable<bool>
+      ("polarity_img_enabled", p_celex5_options_->IsPolarityImgEnabled(),
+       boost::bind(&CeleX5Configure::ParamPolarityImgEnabledCb, this, _1),
+       "Enable the Polarity Img publish or not");
+
 //  p_ddyn_rec_.registerVariable<int>
 //      ("contrast", p_celex5_options_->GetContrast(),
 //       boost::bind(&CeleX5Configure::ParamContrastCb, this, _1),
@@ -445,6 +451,10 @@ void CeleX5Configure::ParamImuEnabledCb(bool new_imu_status) {
 
 void CeleX5Configure::ParamRawEventsEnabledCb(bool new_raw_events_status) {
   p_celex5_options_->SetRawEventsEnabled(new_raw_events_status);
+}
+
+void CeleX5Configure::ParamPolarityImgEnabledCb(bool new_raw_events_status) {
+  p_celex5_options_->SetPolarityImgEnabled(new_raw_events_status);
 }
 
 

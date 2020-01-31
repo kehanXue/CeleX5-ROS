@@ -32,6 +32,7 @@ CeleX5Options::CeleX5Options(CeleX5::CeleX5Mode fixed_mode,
                              uint32_t brightness,
                              uint32_t ISO_level,
                              bool raw_events_enabled,
+                             bool polarity_img_enabled,
                              bool imu_enabled,
 //                             uint32_t contrast,
                              uint32_t clock_rate,
@@ -48,6 +49,7 @@ CeleX5Options::CeleX5Options(CeleX5::CeleX5Mode fixed_mode,
       brightness_(brightness),
       ISO_level_(ISO_level),
       raw_events_enabled_(raw_events_enabled),
+      polarity_img_enabled_(polarity_img_enabled),
       imu_enabled_(imu_enabled),
 //      contrast_(contrast),
       clock_rate_(clock_rate),
@@ -221,5 +223,13 @@ std::shared_ptr<CeleX5Options> CeleX5Options::GetInstance() {
 
 std::shared_ptr<CeleX5Options> CeleX5Options::instance = nullptr;
 std::shared_ptr<std::mutex> CeleX5Options::mutex_instance = std::make_shared<std::mutex>();
+
+bool CeleX5Options::IsPolarityImgEnabled() const {
+  return polarity_img_enabled_;
+}
+
+void CeleX5Options::SetPolarityImgEnabled(bool polarity_img_enabled) {
+  polarity_img_enabled_ = polarity_img_enabled;
+}
 
 
