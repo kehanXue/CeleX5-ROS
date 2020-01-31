@@ -122,7 +122,7 @@ After successfully running through the above steps, it was used by configuring p
 
 1. Obtain the **Polarized Event Frame** and **Superimposed Frame** (superimposes event binary picture onto event accumulated picture) in the **Event Intensity Mode**: 
 
-   <img src="assets/Screenshot from 2020-01-23 13-58-40-1579759278532.png" style="zoom:100%;" />
+   <img src="assets/Screenshot from 2020-01-31 23-57-10.png" style="zoom:100%;" />
    
 2. The **Full-frame Optical-flow Frame,  the Speed Frame and Direction Frame** (each pixel calculated on the optical flow raw frame) when in **Optical-flow Mode**.
 
@@ -138,4 +138,3 @@ After successfully running through the above steps, it was used by configuring p
 2. Regarding the `Multi_Read_Optical_Flow_Mode` mode in the document, no relevant interface was found in the SDK. 
 3. The function of generating FPN has not been added yet, please still use the official GUI Demo provided by CeleX™ to generate FPN (Demo running under Linux may report `Segmentation fault (core dumped)` errors directly. It is more stable under Windows).
 4. The function of recording bin files use CeleX™ SDK is not provided for now, but under ROS we can use ROS bag for recording.
-5. How to control the frequency of data release needs to become more scientific. In the case of a large amount of Event triggers, there will be a significant display delay.

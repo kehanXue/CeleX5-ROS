@@ -124,7 +124,7 @@ CeleX-5 是一款多功能智能图像传感器，具有一百万像素（分辨
 
 1. Event Intensity Mode下获取带极性的Event frame和Superimposed frame（当前二值图像叠加的累计灰度帧上）：
 
-   <img src="assets/Screenshot from 2020-01-23 13-58-40-1579759278532.png" style="zoom:80%;" />
+   <img src="assets/Screenshot from 2020-01-31 23-57-10.png" style="zoom:100%;" />
 
 2. Optical Flow下，整体光流帧、光流方向信息帧与光流速度信息帧：
 
@@ -140,4 +140,3 @@ CeleX-5 是一款多功能智能图像传感器，具有一百万像素（分辨
 2. 关于文档中的`Multi_Read_Optical_Flow_Mode`模式，未在SDK中找到相关接口。// TODO
 3. 暂未添加生成FPN的功能，请仍使用CeleX官方提供的GUI Demo进行FPN的生成（其Linux下的Demo运行可能会直接报段错误，Windows下的较为稳定一些）。
 4. 暂未提供CeleX SDK里的有关录制bin文件的功能，但ROS下我们可以使用ROS bag来进行录制。
-5. 关于数据的发布频率的控制方式有待变得更加科学。在Event触发量大的情况下会出现明显的显示延迟。
