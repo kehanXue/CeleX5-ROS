@@ -45,6 +45,7 @@
     <arg name="loop_mode2" default="0"/>
     <arg name="loop_mode3" default="4"/>
 
+    <arg name="raw_events_enabled" default="true"/>
     <arg name="imu_enabled" default="true"/>
 
     <arg name="event_frame_time" default="30000"/>
@@ -66,6 +67,7 @@
         <param name="sensor_cfg_file_dir" type="str" value="$(arg sensor_cfg_file_dir)"/>
         <param name="fpn_file_dir" type="str" value="$(arg fpn_file_dir)"/>
         <param name="frame_id" type="str" value="$(arg frame_id)"/>
+        <param name="raw_events_enabled" type="bool" value="$(arg raw_events_enabled)"/>
         <param name="imu_enabled" type="bool" value="$(arg imu_enabled)"/>
         <param name="fixed_mode" type="int" value="$(arg fixed_mode)"/>
         <param name="loop_mode1" type="int" value="$(arg loop_mode1)"/>

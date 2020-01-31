@@ -22,13 +22,12 @@
 using namespace celex5_ros;
 
 CeleX5Configure::CeleX5Configure(
-    std::shared_ptr<CeleX5Options> p_celex5_options,
     std::shared_ptr<CeleX5> p_celex5_sensor,
     const ros::NodeHandle &nh)
     : nh_(nh),
-      p_celex5_sensor_(std::move(p_celex5_sensor)),
-      p_celex5_options_(std::move(p_celex5_options)) {
+      p_celex5_sensor_(std::move(p_celex5_sensor)) {
 
+  p_celex5_options_ = CeleX5Options::GetInstance();
   p_ddyn_rec_ = std::make_shared<ddynamic_reconfigure::DDynamicReconfigure>(nh_);
 
   // Associate with enum CeleX5::CeleX5Mode
@@ -127,6 +126,11 @@ CeleX5Configure::CeleX5Configure(
       ("imu_enabled", p_celex5_options_->IsImuEnabled(),
        boost::bind(&CeleX5Configure::ParamImuEnabledCb, this, _1),
        "Enable the IMU data output or not");
+
+  p_ddyn_rec_->registerVariable<bool>
+      ("raw_events_enabled", p_celex5_options_->IsRawEventsEnabled(),
+       boost::bind(&CeleX5Configure::ParamRawEventsEnabledCb, this, _1),
+       "Enable the Raw Events data output or not");
 //  p_ddyn_rec_.registerVariable<int>
 //      ("contrast", p_celex5_options_->GetContrast(),
 //       boost::bind(&CeleX5Configure::ParamContrastCb, this, _1),
@@ -437,6 +441,10 @@ void CeleX5Configure::ParamImuEnabledCb(bool new_imu_status) {
   } else {
     p_celex5_sensor_->disableIMUModule();
   }
+}
+
+void CeleX5Configure::ParamRawEventsEnabledCb(bool new_raw_events_status) {
+  p_celex5_options_->SetRawEventsEnabled(new_raw_events_status);
 }
 
 

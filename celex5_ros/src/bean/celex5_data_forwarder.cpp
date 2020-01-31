@@ -24,6 +24,8 @@ celex5_ros::CeleX5DataForwarder::CeleX5DataForwarder(const ros::NodeHandle &nh,
     : nh_(nh),
       p_celex5_sensor_(p_celex5_sensor) {
 
+  p_celex5_options_ = CeleX5Options::GetInstance();
+
   p_celex5_data_server_ = p_celex5_sensor->getSensorDataServer();
   p_celex5_data_server_->registerData(this, emDataType::CeleX_Frame_Data);
 
@@ -61,44 +63,46 @@ void celex5_ros::CeleX5DataForwarder::onFrameDataUpdated(CeleX5ProcessedData *p_
       current_mode!=CeleX5::CeleX5Mode::Optical_Flow_Mode &&
       !p_celex5_sensor_->isLoopModeEnabled())
       || p_celex5_sensor_->isLoopModeEnabled()) {
+
     std::vector<EventData> vec_events;
     if (!p_celex5_sensor_->getEventDataVector(vec_events)) {
       ROS_ERROR("Read events error!");
       return;
     }
 
-    celex5_msgs::EventVectorPtr event_vector_ptr_msg =
-        boost::make_shared<celex5_msgs::EventVector>();
-    event_vector_ptr_msg->header.stamp = ros::Time::now();
-    event_vector_ptr_msg->header.frame_id = this->frame_id_;
-    event_vector_ptr_msg->height = CELEX5_MAT_ROWS;
-    event_vector_ptr_msg->width = CELEX5_MAT_COLS;
-    event_vector_ptr_msg->vector_length = vec_events.size();
-    for (auto event_i : vec_events) {
-      celex5_msgs::Event tmp_event;
-      tmp_event.x = event_i.row;
-      tmp_event.y = event_i.col;
-      if (current_mode==CeleX5::Event_Off_Pixel_Timestamp_Mode) {
-        tmp_event.brightness = 255;
-      } else if (current_mode==CeleX5::Event_In_Pixel_Timestamp_Mode) {
-        tmp_event.brightness = 255;
-        tmp_event.in_pixel_timestamp = event_i.tInPixelIncreasing;
-      } else if (current_mode==CeleX5::Event_Intensity_Mode) {
-        tmp_event.brightness = event_i.adc;
-        tmp_event.polarity = event_i.polarity;
+    if (p_celex5_options_->IsRawEventsEnabled()) {
+      celex5_msgs::EventVectorPtr event_vector_ptr_msg =
+          boost::make_shared<celex5_msgs::EventVector>();
+      event_vector_ptr_msg->header.stamp = ros::Time::now();
+      event_vector_ptr_msg->header.frame_id = this->frame_id_;
+      event_vector_ptr_msg->height = CELEX5_MAT_ROWS;
+      event_vector_ptr_msg->width = CELEX5_MAT_COLS;
+      event_vector_ptr_msg->vector_length = vec_events.size();
+      for (auto event_i : vec_events) {
+        celex5_msgs::Event tmp_event;
+        tmp_event.x = event_i.row;
+        tmp_event.y = event_i.col;
+        if (current_mode==CeleX5::Event_Off_Pixel_Timestamp_Mode) {
+          tmp_event.brightness = 255;
+        } else if (current_mode==CeleX5::Event_In_Pixel_Timestamp_Mode) {
+          tmp_event.brightness = 255;
+          tmp_event.in_pixel_timestamp = event_i.tInPixelIncreasing;
+        } else if (current_mode==CeleX5::Event_Intensity_Mode) {
+          tmp_event.brightness = event_i.adc;
+          tmp_event.polarity = event_i.polarity;
+        }
+        tmp_event.off_pixel_timestamp = event_i.tOffPixelIncreasing;
+        event_vector_ptr_msg->events.emplace_back(tmp_event);
       }
-      tmp_event.off_pixel_timestamp = event_i.tOffPixelIncreasing;
-      event_vector_ptr_msg->events.emplace_back(tmp_event);
+      events_pub_.publish(event_vector_ptr_msg);
     }
-    events_pub_.publish(event_vector_ptr_msg);
-
     /*
      * Publish polarity image in Event Intensity Mode
      */
     if ((current_mode==CeleX5::Event_Intensity_Mode && !p_celex5_sensor_->isLoopModeEnabled())
         || (p_celex5_sensor_->isLoopModeEnabled()
             && p_celex5_sensor_->getSensorLoopMode(2)==CeleX5::Event_Intensity_Mode)) {
-      cv::Mat polarity_mat(800, 1280, CV_8UC3, cv::Scalar::all(0));
+      cv::Mat polarity_mat(800, 1280, CV_8UC3, cv::Scalar::all(255));
       int data_size = vec_events.size();
       int row = 0, col = 0;
       for (int i = 0; i < data_size; i++) {
@@ -115,9 +119,9 @@ void celex5_ros::CeleX5DataForwarder::onFrameDataUpdated(CeleX5ProcessedData *p_
           p[col][1] = 0;
           p[col][2] = 0;
         } else {
-          p[col][0] = 0;
-          p[col][1] = 0;
-          p[col][2] = 0;
+          p[col][0] = 255;
+          p[col][1] = 255;
+          p[col][2] = 255;
         }
       }
       sensor_msgs::ImagePtr image_ptr_msg =
@@ -125,10 +129,10 @@ void celex5_ros::CeleX5DataForwarder::onFrameDataUpdated(CeleX5ProcessedData *p_
       image_ptr_msg->header.stamp = ros::Time::now();
       image_ptr_msg->header.frame_id = this->frame_id_;
       polarity_img_pub_.publish(image_ptr_msg);
-      // if (data_size > 0) {
-      //   cv::imshow("Event Polarity Pic", polarity_mat);
-      //   cv::waitKey(1);
-      // }
+      if (data_size > 0) {
+        cv::imshow("Event Polarity Pic", polarity_mat);
+        cv::waitKey(1);
+      }
     }
   }
   // }

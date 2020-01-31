@@ -24,10 +24,10 @@ using namespace celex5_ros;
 celex5_ros::CeleX5ROSBean::CeleX5ROSBean(const ros::NodeHandle &nh)
     : nh_(nh) {
   // nh_ = ros::NodeHandle("~");
-  p_celex5_options_ = std::make_shared<CeleX5Options>();
+  p_celex5_options_ = CeleX5Options::GetInstance();
   p_celex5_sensor_ = std::make_shared<CeleX5>();
   p_celex5_configure_ =
-      std::make_shared<CeleX5Configure>(p_celex5_options_, p_celex5_sensor_, nh_);
+      std::make_shared<CeleX5Configure>(p_celex5_sensor_, nh_);
 }
 
 celex5_ros::CeleX5ROSBean::~CeleX5ROSBean() = default;

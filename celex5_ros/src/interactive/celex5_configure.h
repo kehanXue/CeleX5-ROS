@@ -34,8 +34,7 @@ namespace celex5_ros {
 class CeleX5Configure {
 
  public:
-  explicit CeleX5Configure(std::shared_ptr<CeleX5Options> p_celex5_options,
-                           std::shared_ptr<CeleX5> p_celex5_sensor,
+  explicit CeleX5Configure(std::shared_ptr<CeleX5> p_celex5_sensor,
                            const ros::NodeHandle &nh = ros::NodeHandle("~"));
   virtual ~CeleX5Configure();
   void UpdateCeleX5AllOptions();
@@ -77,6 +76,7 @@ class CeleX5Configure {
   void ParamThresholdCb(int new_threshold);
   void ParamBrightnessCb(int new_brightness);
   void ParamISOLevelCb(int new_iso_level);
+  void ParamRawEventsEnabledCb(bool new_raw_events_status);
   void ParamImuEnabledCb(bool new_imu_status);
 //  void ParamContrastCb(int new_contrast);
   void ParamClockRateCb(int new_clock_rate);

@@ -38,6 +38,8 @@
 #include "celex5_msgs/ImuVector.h"
 
 #include "interactive/celex5_configure.h"
+#include "bean/celex5_options.h"
+
 #include "celex5/celex5datamanager.h"
 
 namespace celex5_ros {
@@ -57,7 +59,10 @@ class CeleX5DataForwarder : public CeleX5DataManager {
 
   ros::NodeHandle nh_;
   std::string frame_id_;
+
   std::shared_ptr<CeleX5> p_celex5_sensor_;
+  std::shared_ptr<CeleX5Options> p_celex5_options_;
+
   CX5SensorDataServer *p_celex5_data_server_;
 
   ros::Publisher events_pub_;

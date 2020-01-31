@@ -31,6 +31,7 @@ CeleX5Options::CeleX5Options(CeleX5::CeleX5Mode fixed_mode,
                              uint32_t threshold,
                              uint32_t brightness,
                              uint32_t ISO_level,
+                             bool raw_events_enabled,
                              bool imu_enabled,
 //                             uint32_t contrast,
                              uint32_t clock_rate,
@@ -46,6 +47,7 @@ CeleX5Options::CeleX5Options(CeleX5::CeleX5Mode fixed_mode,
       threshold_(threshold),
       brightness_(brightness),
       ISO_level_(ISO_level),
+      raw_events_enabled_(raw_events_enabled),
       imu_enabled_(imu_enabled),
 //      contrast_(contrast),
       clock_rate_(clock_rate),
@@ -191,5 +193,33 @@ void CeleX5Options::SetIsoLevel(uint32_t iso_level) {
   ISO_level_ = iso_level;
 }
 
+bool CeleX5Options::IsRawEventsEnabled() const {
+  return raw_events_enabled_;
+}
+
+void CeleX5Options::SetRawEventsEnabled(bool raw_events_enabled) {
+  raw_events_enabled_ = raw_events_enabled;
+}
+
+CeleX5Options::CeleX5Options(const CeleX5Options &) {
+}
+
+CeleX5Options &CeleX5Options::operator=(const CeleX5Options &) {
+
+}
+
+std::shared_ptr<CeleX5Options> CeleX5Options::GetInstance() {
+  if (instance==nullptr) {
+    std::unique_lock<std::mutex> uq_lock_instance(*mutex_instance);
+    if (instance==nullptr) {
+      instance = std::shared_ptr<CeleX5Options>(new CeleX5Options());
+    }
+  }
+
+  return instance;
+}
+
+std::shared_ptr<CeleX5Options> CeleX5Options::instance = nullptr;
+std::shared_ptr<std::mutex> CeleX5Options::mutex_instance = std::make_shared<std::mutex>();
 
 
