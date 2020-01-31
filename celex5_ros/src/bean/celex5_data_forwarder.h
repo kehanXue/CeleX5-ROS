@@ -64,8 +64,14 @@ class CeleX5DataForwarder : public CeleX5DataManager {
   void CreatePolarityImgPubThread();
   void CreateImuDataPubThread();
 
-  std::condition_variable cv_;
-  std::mutex mu_;
+  std::condition_variable cv_raw_events_;
+  std::condition_variable cv_polarity_img_;
+  std::condition_variable cv_imu_data_;
+  std::mutex mu_raw_events_;
+  std::mutex mu_polarity_img_;
+  std::mutex mu_imu_data_;
+
+  std::vector<EventData> vec_events_;
 
   std::shared_ptr<std::thread> p_raw_events_pub_thread_;
   std::shared_ptr<std::thread> p_polarity_img_pub_thread_;

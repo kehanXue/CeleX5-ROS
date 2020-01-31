@@ -68,9 +68,16 @@ void celex5_ros::CeleX5DataForwarder::onFrameDataUpdated(CeleX5ProcessedData *p_
   // ROS_ERROR("!!!!!!!!!!!!!!!fps time!!!!!!!!!!!!!!!!");
   // ROS_ERROR("%lf ms\n\n", 1000.0*(time_now - time_last)/CLOCKS_PER_SEC);
   // time_last = time_now;
-  std::unique_lock<std::mutex> lck(mu_);
-  cv_.notify_all();
-  ROS_WARN("Notified!!!!");
+
+
+  std::unique_lock<std::mutex> lck1(mu_raw_events_);
+  std::unique_lock<std::mutex> lck2(mu_polarity_img_);
+  std::unique_lock<std::mutex> lck3(mu_imu_data_);
+
+  cv_raw_events_.notify_all();
+  cv_polarity_img_.notify_all();
+  cv_imu_data_.notify_all();
+  // ROS_WARN("Notified!!!!");
 }
 
 void celex5_ros::CeleX5DataForwarder::CreatePubThreads() {
@@ -81,9 +88,10 @@ void celex5_ros::CeleX5DataForwarder::CreatePubThreads() {
 
 void celex5_ros::CeleX5DataForwarder::CreateRawEventsPubThread() {
   p_raw_events_pub_thread_ = std::make_shared<std::thread>([&]() {
-    std::unique_lock<std::mutex> lck(mu_);
+    std::mutex mu;
     while (ros::ok()) {
-      cv_.wait(lck);
+      std::unique_lock<std::mutex> lck(mu_raw_events_);
+      cv_raw_events_.wait(lck);
       ROS_WARN("Received Notified 1!!!!");
 
       if (p_celex5_options_->IsRawEventsEnabled()) {
@@ -127,6 +135,7 @@ void celex5_ros::CeleX5DataForwarder::CreateRawEventsPubThread() {
             event_vector_ptr_msg->events.emplace_back(tmp_event);
           }
           events_pub_.publish(event_vector_ptr_msg);
+          ROS_WARN("Received Notified 11!!!!");
         }
       }
     }
@@ -135,9 +144,10 @@ void celex5_ros::CeleX5DataForwarder::CreateRawEventsPubThread() {
 
 void celex5_ros::CeleX5DataForwarder::CreatePolarityImgPubThread() {
   p_polarity_img_pub_thread_ = std::make_shared<std::thread>([&]() {
-    std::unique_lock<std::mutex> lck(mu_);
+    std::mutex mu;
     while (ros::ok()) {
-      cv_.wait(lck);
+      std::unique_lock<std::mutex> lck(mu_polarity_img_);
+      cv_polarity_img_.wait(lck);
       ROS_WARN("Received Notified 2!!!!");
 
       if (p_celex5_options_->IsPolarityImgEnabled()) {
@@ -196,9 +206,10 @@ void celex5_ros::CeleX5DataForwarder::CreatePolarityImgPubThread() {
 
 void celex5_ros::CeleX5DataForwarder::CreateImuDataPubThread() {
   p_imu_data_pub_thread_ = std::make_shared<std::thread>([&]() {
-    std::unique_lock<std::mutex> lck(mu_);
+    std::mutex mu;
     while (ros::ok()) {
-      cv_.wait(lck);
+      std::unique_lock<std::mutex> lck(mu_imu_data_);
+      cv_imu_data_.wait(lck);
       ROS_WARN("Received Notified 3!!!!");
 
       if (p_celex5_sensor_->isIMUModuleEnabled()) {
