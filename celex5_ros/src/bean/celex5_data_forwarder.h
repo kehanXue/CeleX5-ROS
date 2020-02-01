@@ -72,6 +72,8 @@ class CeleX5DataForwarder : public CeleX5DataManager {
   std::mutex mu_imu_data_;
 
   std::vector<EventData> vec_events_;
+  std::vector<EventData> vec_raw_events_;
+  std::vector<EventData> vec_polarity_events_;
 
   std::shared_ptr<std::thread> p_raw_events_pub_thread_;
   std::shared_ptr<std::thread> p_polarity_img_pub_thread_;
