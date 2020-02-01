@@ -75,6 +75,9 @@ void celex5_ros::CeleX5DataForwarder::onFrameDataUpdated(CeleX5ProcessedData *p_
       current_mode!=CeleX5::CeleX5Mode::Optical_Flow_Mode &&
       !p_celex5_sensor_->isLoopModeEnabled())
       || p_celex5_sensor_->isLoopModeEnabled()) {
+
+    // clock_t time_begin = clock();
+
     if (!p_celex5_sensor_->getEventDataVector(vec_events_)) {
       ROS_ERROR("Read events error!");
       return;
@@ -90,6 +93,9 @@ void celex5_ros::CeleX5DataForwarder::onFrameDataUpdated(CeleX5ProcessedData *p_
       mu_polarity_img_.unlock();
       cv_polarity_img_.notify_all();
     }
+
+    // ROS_ERROR("Get Events vector: %lf ms", 1000.0*(clock() - time_begin)/CLOCKS_PER_SEC);
+
   }
 
   // if (mu_imu_data_.try_lock()) {
@@ -115,6 +121,7 @@ void celex5_ros::CeleX5DataForwarder::CreateRawEventsPubThread() {
         /*
          * Publish Raw Events Data
          */
+        // clock_t time_begin = clock();
         CeleX5::CeleX5Mode current_mode = p_celex5_sensor_->getSensorFixedMode();
 
         celex5_msgs::EventVectorPtr event_vector_ptr_msg =
@@ -124,6 +131,7 @@ void celex5_ros::CeleX5DataForwarder::CreateRawEventsPubThread() {
         event_vector_ptr_msg->height = CELEX5_MAT_ROWS;
         event_vector_ptr_msg->width = CELEX5_MAT_COLS;
         event_vector_ptr_msg->vector_length = vec_raw_events_.size();
+        event_vector_ptr_msg->events.reserve(vec_raw_events_.size());
         for (auto event_i : vec_raw_events_) {
           celex5_msgs::Event tmp_event;
           tmp_event.x = event_i.row;
@@ -141,6 +149,8 @@ void celex5_ros::CeleX5DataForwarder::CreateRawEventsPubThread() {
           event_vector_ptr_msg->events.emplace_back(tmp_event);
         }
         events_pub_.publish(event_vector_ptr_msg);
+
+        // ROS_WARN("Pub raw events vector: %lf ms", 1000.0*(clock() - time_begin)/CLOCKS_PER_SEC);
         // ROS_WARN("Received Notified 11!!!!");
       }
       lck.unlock();
@@ -163,9 +173,11 @@ void celex5_ros::CeleX5DataForwarder::CreatePolarityImgPubThread() {
           /*
            * Publish polarity image in Event Intensity Mode
            */
+          // clock_t time_begin = clock();
+
           cv::Mat polarity_mat(800, 1280, CV_8UC3, cv::Scalar::all(255));
-          int data_size = vec_polarity_events_.size();
           int row = 0, col = 0;
+          // TODO Multi-Thread
           for (auto event_i : vec_polarity_events_) {
             row = CELEX5_MAT_ROWS - 1 - event_i.row;
             // col = CELEX5_MAT_COLS - 1 - event_i.col;
@@ -179,10 +191,6 @@ void celex5_ros::CeleX5DataForwarder::CreatePolarityImgPubThread() {
               p[col][0] = 255;
               p[col][1] = 0;
               p[col][2] = 0;
-            } else {
-              p[col][0] = 255;
-              p[col][1] = 255;
-              p[col][2] = 255;
             }
           }
           sensor_msgs::ImagePtr image_ptr_msg =
@@ -194,6 +202,7 @@ void celex5_ros::CeleX5DataForwarder::CreatePolarityImgPubThread() {
           //   cv::imshow("Event Polarity Pic", polarity_mat);
           //   cv::waitKey(1);
           // }
+          // ROS_INFO("Pub polarity img: %lf ms", 1000.0*(clock() - time_begin)/CLOCKS_PER_SEC);
         }
       }
       lck.unlock();
