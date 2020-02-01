@@ -79,11 +79,21 @@ void celex5_ros::CeleX5DataForwarder::onFrameDataUpdated(CeleX5ProcessedData *p_
       ROS_ERROR("Read events error!");
       return;
     }
-    cv_raw_events_.notify_all();
-    cv_polarity_img_.notify_all();
+
+    if (mu_raw_events_.try_lock()) {
+      mu_raw_events_.unlock();
+      cv_raw_events_.notify_all();
+    }
+    if (mu_polarity_img_.try_lock()) {
+      mu_polarity_img_.unlock();
+      cv_polarity_img_.notify_all();
+    }
   }
 
-  cv_imu_data_.notify_all();
+  if (mu_imu_data_.try_lock()) {
+    mu_imu_data_.unlock();
+    cv_imu_data_.notify_all();
+  }
   // ROS_WARN("Notified!!!!");
 }
 
@@ -95,9 +105,8 @@ void celex5_ros::CeleX5DataForwarder::CreatePubThreads() {
 
 void celex5_ros::CeleX5DataForwarder::CreateRawEventsPubThread() {
   p_raw_events_pub_thread_ = std::make_shared<std::thread>([&]() {
-    std::mutex mu;
-    std::unique_lock<std::mutex> lck(mu_raw_events_);
     while (ros::ok()) {
+      std::unique_lock<std::mutex> lck(mu_raw_events_);
       cv_raw_events_.wait(lck);
       // ROS_WARN("Received Notified 1!!!!");
       if (p_celex5_options_->IsRawEventsEnabled() && !vec_events_.empty()) {
@@ -132,15 +141,15 @@ void celex5_ros::CeleX5DataForwarder::CreateRawEventsPubThread() {
         events_pub_.publish(event_vector_ptr_msg);
         // ROS_WARN("Received Notified 11!!!!");
       }
+      lck.unlock();
     }
   });
 }
 
 void celex5_ros::CeleX5DataForwarder::CreatePolarityImgPubThread() {
   p_polarity_img_pub_thread_ = std::make_shared<std::thread>([&]() {
-    std::mutex mu;
-    std::unique_lock<std::mutex> lck(mu_polarity_img_);
     while (ros::ok()) {
+      std::unique_lock<std::mutex> lck(mu_polarity_img_);
       cv_polarity_img_.wait(lck);
       // ROS_WARN("Received Notified 2!!!!");
       if (p_celex5_options_->IsPolarityImgEnabled() && !vec_events_.empty()) {
@@ -185,15 +194,15 @@ void celex5_ros::CeleX5DataForwarder::CreatePolarityImgPubThread() {
           // }
         }
       }
+      lck.unlock();
     }
   });
 }
 
 void celex5_ros::CeleX5DataForwarder::CreateImuDataPubThread() {
   p_imu_data_pub_thread_ = std::make_shared<std::thread>([&]() {
-    std::mutex mu;
-    std::unique_lock<std::mutex> lck(mu_imu_data_);
     while (ros::ok()) {
+      std::unique_lock<std::mutex> lck(mu_imu_data_);
       cv_imu_data_.wait(lck);
       // ROS_WARN("Received Notified 3!!!!");
       if (p_celex5_sensor_->isIMUModuleEnabled()) {
@@ -224,6 +233,7 @@ void celex5_ros::CeleX5DataForwarder::CreateImuDataPubThread() {
         }
         imu_pub_.publish(imu_vector_ptr_msg);
       }
+      lck.unlock();
     }
   });
 }
