@@ -17,7 +17,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<library path="lib/libcelex5_ros">
+<library path="lib/libcelex5_nodelet">
     <class name="celex5_ros/CeleX5Nodelet" type="celex5_ros::CeleX5Nodelet" base_class_type="nodelet::Nodelet">
         <description>
             This is CeleX5-MIPI nodelet.

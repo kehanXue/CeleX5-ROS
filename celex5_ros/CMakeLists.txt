@@ -166,14 +166,11 @@ include_directories(
 #         src/sdk/lib
 # )
 
-# TODO library name
 add_library(celex5_ros
         src/sdk/include/celextypes.h
         src/sdk/include/celex5/celex5datamanager.h
         src/sdk/include/celex5/celex5.h
         src/sdk/include/celex5/celex5processeddata.h
-        src/nodelet/celex5_nodelet.cpp
-        src/nodelet/celex5_nodelet.h
         src/interactive/celex5_configure.cpp
         src/interactive/celex5_configure.h
         src/bean/celex5_options.cpp
@@ -186,39 +183,23 @@ add_library(celex5_ros
         src/interactive/celex5_display_pub_factory.h
         src/interactive/celex5_display_controller.cpp
         src/interactive/celex5_display_controller.h)
-
-add_dependencies(celex5_ros ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
 target_link_libraries(celex5_ros
         ${catkin_LIBRARIES}
-        CeleX5
-        )
+        CeleX5)
+
+add_library(celex5_nodelet
+        src/nodelet/celex5_nodelet.cpp
+        src/nodelet/celex5_nodelet.h)
+add_dependencies(celex5_nodelet ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(celex5_nodelet
+        ${catkin_LIBRARIES}
+        celex5_ros)
 
 add_executable(celex5_ros_node
-        src/celex5_ros_node.cpp
-        src/sdk/include/celextypes.h
-        src/sdk/include/celex5/celex5datamanager.h
-        src/sdk/include/celex5/celex5.h
-        src/sdk/include/celex5/celex5processeddata.h
-        src/nodelet/celex5_nodelet.cpp
-        src/nodelet/celex5_nodelet.h
-        src/interactive/celex5_configure.cpp
-        src/interactive/celex5_configure.h
-        src/bean/celex5_options.cpp
-        src/bean/celex5_options.h
-        src/bean/celex5_data_forwarder.cpp
-        src/bean/celex5_data_forwarder.h
-        src/bean/celex5_ros_bean.h
-        src/bean/celex5_ros_bean.cpp
-        src/interactive/celex5_display_pub_factory.cpp
-        src/interactive/celex5_display_pub_factory.h
-        src/interactive/celex5_display_controller.cpp
-        src/interactive/celex5_display_controller.h)
-
+        src/celex5_ros_node.cpp)
 target_link_libraries(celex5_ros_node
         ${catkin_LIBRARIES}
-        CeleX5
-        )
+        celex5_ros)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -256,18 +237,18 @@ target_link_libraries(celex5_ros_node
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-# install(TARGETS ${PROJECT_NAME}
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-# )
+install(TARGETS celex5_ros
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+        )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(DIRECTORY src/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+        FILES_MATCHING PATTERN "*.h"
+        PATTERN ".svn" EXCLUDE
+        )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
