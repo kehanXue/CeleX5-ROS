@@ -24,11 +24,12 @@
 using namespace celex5_ros;
 
 CeleX5DisplayController::CeleX5DisplayController(const ros::NodeHandle &nh,
-                                                 std::shared_ptr<CeleX5> p_celex5_sensor,
-                                                 std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec)
-    : nh_(nh),
-      p_celex5_sensor_(std::move(p_celex5_sensor)),
-      p_ddyn_rec_(std::move(p_ddyn_rec)) {
+                                                 std::shared_ptr<CeleX5> p_celex5_sensor)
+    : p_celex5_sensor_(std::move(p_celex5_sensor)) {
+
+  nh_ = ros::NodeHandle(nh, "display");
+  p_ddyn_rec_ = std::make_shared<ddynamic_reconfigure::DDynamicReconfigure>(nh_);
+
   p_binary_img_pub_ =
       std::make_shared<CeleX5DisplayPubFactory>(nh_,
                                                 "binary_img",
@@ -164,6 +165,7 @@ CeleX5DisplayController::CeleX5DisplayController(const ros::NodeHandle &nh,
   //                          <int, uint16_t>::value_type
   //                          (CeleX5::Multi_Read_Optical_Flow_Mode,
   //                           static_cast<uint16_t>(1 << 0 | 1 << 1 | 1 << 2)));
+  p_ddyn_rec_->publishServicesTopics();
   this->CloseAll();
 }
 
@@ -182,13 +184,12 @@ std::shared_ptr<std::mutex> CeleX5DisplayController::mutex_instance = std::make_
 
 std::shared_ptr<CeleX5DisplayController>
 CeleX5DisplayController::GetInstance(const ros::NodeHandle &nh,
-                                     const std::shared_ptr<CeleX5> &p_celex5_sensor,
-                                     const std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> &p_ddyn_rec) {
+                                     const std::shared_ptr<CeleX5> &p_celex5_sensor) {
   if (instance==nullptr) {
     std::unique_lock<std::mutex> uq_lock_instance(*mutex_instance);
     if (instance==nullptr) {
 //      instance = std::make_shared<CeleX5DisplayController>(nh, p_celex5_sensor);
-      instance = std::shared_ptr<CeleX5DisplayController>(new CeleX5DisplayController(nh, p_celex5_sensor, p_ddyn_rec));
+      instance = std::shared_ptr<CeleX5DisplayController>(new CeleX5DisplayController(nh, p_celex5_sensor));
     }
   }
 
@@ -199,7 +200,6 @@ void CeleX5DisplayController::SetCeleX5Mode(CeleX5::CeleX5Mode mode) {
   if (!p_celex5_sensor_->isLoopModeEnabled()) {
     ChangeOptions(map_mode_mask.at(static_cast<int>(mode)));
   } else {
-    // TODO
     uint16_t enable_mask =
         map_mode_mask.at(p_celex5_sensor_->getSensorLoopMode(1));
     enable_mask |= map_mode_mask.at(p_celex5_sensor_->getSensorLoopMode(2));

@@ -33,16 +33,14 @@ typedef std::shared_ptr<CeleX5DisplayPubFactory> CeleX5DisplayPubFactoryPtr;
 class CeleX5DisplayController {
  public:
   static std::shared_ptr<CeleX5DisplayController> GetInstance(const ros::NodeHandle &nh,
-                                                              const std::shared_ptr<CeleX5> &p_celex5_sensor,
-                                                              const std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> &p_ddyn_rec);
+                                                              const std::shared_ptr<CeleX5> &p_celex5_sensor);
   virtual ~CeleX5DisplayController();
   void SetCeleX5Mode(CeleX5::CeleX5Mode mode);
 
  private:
 
   CeleX5DisplayController(const ros::NodeHandle &nh,
-                          std::shared_ptr<CeleX5> p_celex5_sensor,
-                          std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec);
+                          std::shared_ptr<CeleX5> p_celex5_sensor);
   CeleX5DisplayController(const CeleX5DisplayController &);
   CeleX5DisplayController &operator=(const CeleX5DisplayController &);
 

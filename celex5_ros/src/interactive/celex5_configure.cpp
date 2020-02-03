@@ -28,7 +28,9 @@ CeleX5Configure::CeleX5Configure(
       p_celex5_sensor_(std::move(p_celex5_sensor)) {
 
   p_celex5_options_ = CeleX5Options::GetInstance();
-  p_ddyn_rec_ = std::make_shared<ddynamic_reconfigure::DDynamicReconfigure>(nh_);
+
+  ros::NodeHandle nh_config = ros::NodeHandle(nh_, "sensor");
+  p_ddyn_rec_ = std::make_shared<ddynamic_reconfigure::DDynamicReconfigure>(nh_config);
 
   // Associate with enum CeleX5::CeleX5Mode
   std::map<std::string, int> map_enum_celex5_fixed_mode = {
@@ -182,6 +184,7 @@ CeleX5Configure::CeleX5Configure(
        boost::bind(&CeleX5Configure::ParamFrameFpnFilePathCb, this, _1),
        "The path of FPN file of Frame Mode.");
 
+  p_ddyn_rec_->publishServicesTopics();
 }
 
 CeleX5Configure::~CeleX5Configure() = default;
@@ -244,8 +247,7 @@ void CeleX5Configure::ParamFixedModeCb(int fixed_mode) {
     * TODO Open a thread in Controller class to monitor
     */
     CeleX5DisplayController::GetInstance(
-        nh_, p_celex5_sensor_,
-        this->GetPtrDDynRec())->SetCeleX5Mode(mode);
+        nh_, p_celex5_sensor_)->SetCeleX5Mode(mode);
   }
   /*
    * Update the Global CeleX5 Option
@@ -259,8 +261,7 @@ void CeleX5Configure::ParamLoopMode1Cb(int loop_mode1) {
   p_celex5_sensor_->setSensorLoopMode(mode, 1);
   p_celex5_options_->SetLoopMode1(mode);
   CeleX5DisplayController::GetInstance(
-      nh_, p_celex5_sensor_,
-      this->GetPtrDDynRec())->SetCeleX5Mode(mode);
+      nh_, p_celex5_sensor_)->SetCeleX5Mode(mode);
 }
 
 void CeleX5Configure::ParamLoopMode2Cb(int loop_mode2) {
@@ -268,8 +269,7 @@ void CeleX5Configure::ParamLoopMode2Cb(int loop_mode2) {
   p_celex5_sensor_->setSensorLoopMode(mode, 2);
   p_celex5_options_->SetLoopMode2(mode);
   CeleX5DisplayController::GetInstance(
-      nh_, p_celex5_sensor_,
-      this->GetPtrDDynRec())->SetCeleX5Mode(mode);
+      nh_, p_celex5_sensor_)->SetCeleX5Mode(mode);
 }
 
 void CeleX5Configure::ParamLoopMode3Cb(int loop_mode3) {
@@ -277,8 +277,7 @@ void CeleX5Configure::ParamLoopMode3Cb(int loop_mode3) {
   p_celex5_sensor_->setSensorLoopMode(mode, 3);
   p_celex5_options_->SetLoopMode3(mode);
   CeleX5DisplayController::GetInstance(
-      nh_, p_celex5_sensor_,
-      this->GetPtrDDynRec())->SetCeleX5Mode(mode);
+      nh_, p_celex5_sensor_)->SetCeleX5Mode(mode);
 }
 
 void CeleX5Configure::ParamEventFrameTimeCb(int new_event_frame_time) {
@@ -328,12 +327,11 @@ void CeleX5Configure::ParamLoopModeEnabledCb(bool new_loop_mode_status) {
     p_celex5_sensor_->setSensorLoopMode(p_celex5_options_->GetLoopModes().at(2), 3);;
     usleep(5000);
     CeleX5DisplayController::GetInstance(
-        nh_, p_celex5_sensor_,
-        this->GetPtrDDynRec())->SetCeleX5Mode(p_celex5_options_->GetLoopModes().at(1));
+        nh_, p_celex5_sensor_
+    )->SetCeleX5Mode(p_celex5_options_->GetLoopModes().at(1));
   } else {
     CeleX5DisplayController::GetInstance(
-        nh_, p_celex5_sensor_,
-        this->GetPtrDDynRec())->SetCeleX5Mode(p_celex5_options_->GetFixedMode());
+        nh_, p_celex5_sensor_)->SetCeleX5Mode(p_celex5_options_->GetFixedMode());
   }
 
 }

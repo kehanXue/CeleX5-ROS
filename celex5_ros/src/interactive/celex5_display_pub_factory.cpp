@@ -42,7 +42,7 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
-    publisher_ = nh_.advertise<sensor_msgs::Image>("display_" + topic_name, 10);
+    publisher_ = nh_.advertise<sensor_msgs::Image>(topic_name, 10);
     int fps = 60;
     ros::Rate loop_rate(fps);
     bool is_display = true;
@@ -89,8 +89,8 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
-    publisher_ = nh_.advertise<sensor_msgs::Image>("display_" + topic_name, 10);
-    ros::Publisher colored_publisher = nh_.advertise<sensor_msgs::Image>("display_colored_" + topic_name, 10);
+    publisher_ = nh_.advertise<sensor_msgs::Image>(topic_name, 10);
+    ros::Publisher colored_publisher = nh_.advertise<sensor_msgs::Image>("colored_" + topic_name, 10);
     int fps = 60;
     ros::Rate loop_rate(fps);
     bool is_display = true;
@@ -146,7 +146,7 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
-    publisher_ = nh_.advertise<sensor_msgs::Image>("display_" + topic_name, 10);
+    publisher_ = nh_.advertise<sensor_msgs::Image>(topic_name, 10);
     int fps = 60;
     ros::Rate loop_rate(fps);
     bool is_display = true;

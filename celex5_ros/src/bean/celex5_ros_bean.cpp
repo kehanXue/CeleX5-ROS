@@ -23,8 +23,13 @@ using namespace celex5_ros;
 
 celex5_ros::CeleX5ROSBean::CeleX5ROSBean(const ros::NodeHandle &nh)
     : nh_(nh) {
-  // nh_ = ros::NodeHandle("~");
+
   p_celex5_options_ = CeleX5Options::GetInstance();
+  /*
+   * Read initial parameters from ROS Param Server
+   */
+  ReadParams();
+
   p_celex5_sensor_ = std::make_shared<CeleX5>();
   p_celex5_configure_ =
       std::make_shared<CeleX5Configure>(p_celex5_sensor_, nh_);
@@ -52,9 +57,9 @@ void celex5_ros::CeleX5ROSBean::Run() {
   ROS_INFO("Sensor status: %d", p_celex5_sensor_->isSensorReady());
 
   /*
-   * Read initial parameters from ROS Param Server
+   * Update CeleX5 sensor config with default value
    */
-  ReadParams();
+  p_celex5_configure_->UpdateCeleX5AllOptions();
 
   /*
    * Create CeleX5DataForwarder handle to forward full stream data from CeleX5 Sensor to ROS framework
@@ -65,14 +70,9 @@ void celex5_ros::CeleX5ROSBean::Run() {
    * Provide display function. Can change the display fps in rqt_reconfigure
    */
   p_celex5_display_ = CeleX5DisplayController::GetInstance(nh_,
-                                                           p_celex5_sensor_,
-                                                           p_celex5_configure_->GetPtrDDynRec());
+                                                           p_celex5_sensor_);
   p_celex5_display_->SetCeleX5Mode(p_celex5_sensor_->getSensorFixedMode());
 
-  /*
-   * Publish dynamic reconfigure services
-   */
-  p_celex5_configure_->PublishReconfigureServices();
 }
 
 void celex5_ros::CeleX5ROSBean::ReadParams() {
@@ -80,6 +80,7 @@ void celex5_ros::CeleX5ROSBean::ReadParams() {
    * Read parameters from ROS param server
    */
 
+  // TODO Get default value from sensor
   int tmp_celex5_mode_param = p_celex5_options_->GetFixedMode();
   CeleX5Configure::ReadROSParam(nh_, "fixed_mode", tmp_celex5_mode_param);
   p_celex5_options_->SetFixedMode(static_cast<CeleX5::CeleX5Mode>(tmp_celex5_mode_param));
@@ -104,6 +105,5 @@ void celex5_ros::CeleX5ROSBean::ReadParams() {
   CeleX5Configure::ReadROSParam(nh_, "event_FPN_file_path", p_celex5_options_->event_FPN_file_path_);
   CeleX5Configure::ReadROSParam(nh_, "frame_FPN_file_path", p_celex5_options_->frame_FPN_file_path_);
 
-  p_celex5_configure_->UpdateCeleX5AllOptions();
 }
 
