@@ -38,7 +38,7 @@ PatternGenerator::PatternGenerator(const ros::NodeHandle &nh,
 
   p_ddyn_rec_ = std::make_shared<ddynamic_reconfigure::DDynamicReconfigure>(nh_);
   p_ddyn_rec_->registerVariable<int>("square_size", &square_size_,
-                                     "Square size in chessboard.", 0, 400);
+                                     "Square size in chessboard. Uint: pixel", 0, 400);
   p_ddyn_rec_->registerVariable<int>("col_corners_num", &col_corners_num_,
                                      "Corners' number in col of chessboard.", 0, 20);
   p_ddyn_rec_->registerVariable<int>("row_corners_num", &row_corners_num_,

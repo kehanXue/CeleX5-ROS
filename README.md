@@ -76,6 +76,7 @@ Therefore, I have developed a more comprehensive CeleX5-ROS package v1.0 in the 
    ```bash
    source ~/celex_ws/devel/setup.bash # Or source setup.zsh when you use zsh
    roslaunch celex5_ros celex5_ros_node.launch
+   # In a new Terminal
    rosrun rqt_reconfigure rqt_reconfigure # Open rqt_reconfigure to config
    ```
    
@@ -83,25 +84,27 @@ Therefore, I have developed a more comprehensive CeleX5-ROS package v1.0 in the 
    
    ```bash
    $ rostopic list 
-   /celex5_mipi/display_accumulated_img
-   /celex5_mipi/display_binary_img
-   /celex5_mipi/display_colored_optical_flow_direction_img
-   /celex5_mipi/display_colored_optical_flow_img
-   /celex5_mipi/display_colored_optical_flow_speed_img
-   /celex5_mipi/display_count_img
-   /celex5_mipi/display_denoised_binary_img
-   /celex5_mipi/display_full_frame_img
-   /celex5_mipi/display_gray_img
-   /celex5_mipi/display_in_pixel_img
-   /celex5_mipi/display_optical_flow_direction_img
-   /celex5_mipi/display_optical_flow_img
-   /celex5_mipi/display_optical_flow_speed_img
-   /celex5_mipi/display_superimposed_img
+   /celex5_mipi/display/accumulated_img
+   /celex5_mipi/display/binary_img
+   /celex5_mipi/display/colored_optical_flow_direction_img
+   /celex5_mipi/display/colored_optical_flow_img
+   /celex5_mipi/display/colored_optical_flow_speed_img
+   /celex5_mipi/display/count_img
+   /celex5_mipi/display/denoised_binary_img
+   /celex5_mipi/display/full_frame_img
+   /celex5_mipi/display/gray_img
+   /celex5_mipi/display/in_pixel_img
+   /celex5_mipi/display/optical_flow_direction_img
+   /celex5_mipi/display/optical_flow_img
+   /celex5_mipi/display/optical_flow_speed_img
+   /celex5_mipi/display/parameter_descriptions
+   /celex5_mipi/display/parameter_updates
+   /celex5_mipi/display/superimposed_img
    /celex5_mipi/events
    /celex5_mipi/imu_data
-   /celex5_mipi/parameter_descriptions
-   /celex5_mipi/parameter_updates
    /celex5_mipi/polarity_img
+   /celex5_mipi/sensor/parameter_descriptions
+   /celex5_mipi/sensor/parameter_updates
    /rosout
    /rosout_agg
    ```
@@ -130,7 +133,7 @@ After successfully running through the above steps, it was used by configuring p
 
 3. Work in loop mode, loop in three working modes (**Full-Picture Mode, Event Off-Pixel Timestamp Mode, Optical-flow Mode**). Pictures from left to right, top to bottom: original **Binary Event Frame, Optical-flow Frame and Traditional Image Gray Frame)**:
 
-   <img src="assets/Screenshot from 2020-01-22 21-16-52-1579704106897.png" style="zoom:80%;" />
+   <img src="assets/Screenshot from 2020-01-22 21-16-52.png" style="zoom:80%;" />
 
 ## Known Issues
 
