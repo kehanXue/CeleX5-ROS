@@ -34,7 +34,9 @@ class PatternGenerator {
                             int col_corners_num = 8,
                             int row_corners_num = 6,
                             bool static_board = false,
-                            int blinking_fps = 30);
+                            int blinking_fps = 15,
+                            bool record_video = false,
+                            bool show_img = true);
   virtual ~PatternGenerator();
 
  private:
@@ -48,6 +50,9 @@ class PatternGenerator {
   bool static_board_;
   int blinking_fps_;
   cv::Mat pattern_board_;
+
+  bool record_video_;
+  bool show_img_;
 
   ros::NodeHandle nh_;
   std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec_;
