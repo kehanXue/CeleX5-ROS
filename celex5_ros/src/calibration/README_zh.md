@@ -6,13 +6,13 @@
 
 - [概述](#概述)
 - [编译与运行](#编译与运行)
-- [CeleX5-MIPI的内参标定样例](#CeleX5-MIPI的内参标定样例)
+- [CeleX5-MIPI的内参标定样例](#celex5-mipi的内参标定样例)
 
 ## 概述
 
 提供了一个ROS节点，用于生成标定相机的闪烁的棋盘格。提供了`rqt_reconfigure`的支持以来控制棋盘格的大小、闪烁的频率。并提供将其保存成.avi视频格式。
 
-<img src="assets/Screenshot from 2020-02-04 22-09-31.png" height="300" alt="Chessboard" />
+<img src="assets/Screenshot from 2020-02-04 22-09-31.png" height="400" alt="Chessboard" />
 
 <img src="assets/Screenshot from 2020-02-04 22-34-03.png" style="zoom:80%;" />
 
@@ -35,7 +35,7 @@
 2. 运行
 
    ```bash
-source ~/celex_ws/devel/setup.bash # Or source setup.zsh when you use zsh
+   source ~/celex_ws/devel/setup.bash # Or source setup.zsh when you use zsh
    rosrun celex5_ros pattern_generator_node
    # In a new Terminal
    rosrun rqt_reconfigure rqt_reconfigure #  Open rqt_reconfigure to config
@@ -134,8 +134,8 @@ source ~/celex_ws/devel/setup.bash # Or source setup.zsh when you use zsh
 
    过程中用到的图片样例：
 
-   <img src="assets/left-0013.png" style="zoom:80%;" />
+   <img src="assets/left-0013.png" height="300" />
 
-   <img src="assets/left-0021.png" style="zoom:80%;" />
+   <img src="assets/left-0021.png" height="300" />
 
-   <img src="assets/left-0006.png" style="zoom:80%;" />
+   <img src="assets/left-0006.png" height="300" />
