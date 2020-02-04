@@ -141,7 +141,7 @@ projection_matrix:
      data: [1647.456299, 0.000000, 677.701102, 0.000000, 0.000000, 1683.463867, 418.507924, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000]
    ```
    
-   The image frame used in the calibration:
+   The sample image frame used in the calibration:
    
    <img src="assets/left-0013.png" height="300" />
    
