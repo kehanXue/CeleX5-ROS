@@ -39,7 +39,6 @@ class CeleX5Configure {
   virtual ~CeleX5Configure();
   void UpdateCeleX5AllOptions();
   void PublishReconfigureServices();
-  const std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> &GetPtrDDynRec() const;
 
   /*
    * Function tools to get parameters from ROS Param Server

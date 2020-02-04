@@ -368,10 +368,6 @@ void CeleX5Configure::PublishReconfigureServices() {
   p_ddyn_rec_->publishServicesTopics();
 }
 
-const std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> &CeleX5Configure::GetPtrDDynRec() const {
-  return p_ddyn_rec_;
-}
-
 void CeleX5Configure::ReadROSParam(const ros::NodeHandle &nh, const std::string &param_name, uint32_t &param) {
   if (nh.hasParam(param_name)) {
     int tmp_param = 0;

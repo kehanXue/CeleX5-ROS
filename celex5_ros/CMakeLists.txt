@@ -128,7 +128,7 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-        #  INCLUDE_DIRS include
+        INCLUDE_DIRS src/
         LIBRARIES celex5_ros
         CATKIN_DEPENDS cv_bridge geometry_msgs roscpp std_msgs ddynamic_reconfigure nodelet
         #  DEPENDS system_lib
@@ -139,6 +139,7 @@ catkin_package(
 ###########
 
 add_subdirectory(src/sdk/)
+add_subdirectory(src/calibration/)
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
@@ -196,7 +197,7 @@ target_link_libraries(celex5_nodelet
         celex5_ros)
 
 add_executable(celex5_ros_node
-        src/celex5_ros_node.cpp)
+        src/node/celex5_ros_node.cpp)
 target_link_libraries(celex5_ros_node
         ${catkin_LIBRARIES}
         celex5_ros)
