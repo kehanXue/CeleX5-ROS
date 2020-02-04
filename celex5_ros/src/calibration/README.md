@@ -6,13 +6,13 @@
 
 - [Overview](#overview)
 - [Build and Run](#build-and-run)
-- [CeleX5-MIPI's Intrinsics Calibration Demo](#celex5-mipi's-intrinsics-calibration-demo)
+- [CeleX5-MIPI's Intrinsics Calibration Demo](#celex5-mipi-intrinsics-calibration-demo)
 
 ## Overview
 
 An ROS node is provided to generate a **blinking chessboard** for calibrating the Event-based Camera(Dynamic Vision Sensor). It provides the support of `rqt_reconfigure` to control the size and blinking frequency of the chessboard. And provide to save it in ` .avi` video format.
 
-<img src="assets/Screenshot from 2020-02-04 22-09-31.png" height="300" alt="Chessboard" />
+<img src="assets/Screenshot from 2020-02-04 22-09-31.png" height="400" alt="Chessboard" />
 
 <img src="assets/Screenshot from 2020-02-04 22-34-03.png" style="zoom:80%;" />
 
@@ -35,7 +35,7 @@ An ROS node is provided to generate a **blinking chessboard** for calibrating th
 2. Run
 
    ```bash
-source ~/celex_ws/devel/setup.bash # Or source setup.zsh when you use zsh
+   source ~/celex_ws/devel/setup.bash # Or source setup.zsh when you use zsh
    rosrun celex5_ros pattern_generator_node
    # In a new Terminal
    rosrun rqt_reconfigure rqt_reconfigure #  Open rqt_reconfigure to config
@@ -59,7 +59,7 @@ source ~/celex_ws/devel/setup.bash # Or source setup.zsh when you use zsh
    
      
 
-## CeleX5-MIPI's Intrinsics Calibration Demo
+## CeleX5-MIPI Intrinsics Calibration Demo
 
 We use the blinking chessboard calibration board to calibrate the CeleX™ CeleX5-MIPI Event-based Camera.
 
@@ -102,11 +102,11 @@ By using the blinking chessboard, the CeleX5-MIPI camera can generate a chessboa
    Reference the [official document of `camera-calibration`](http://wiki.ros.org/camera_calibration/Tutorials/MonocularCalibration): 
 
    - checkerboard on the camera's left, right, top and bottom of field of view
-  - X bar - left/right in field of view
-     - Y bar - top/bottom in field of view
-  - Size bar - toward/away and tilt from the camera
+   - X bar - left/right in field of view
+   - Y bar - top/bottom in field of view
+   - Size bar - toward/away and tilt from the camera
    - checkerboard filling the whole field of view
-- checkerboard tilted to the left, right, top and bottom (Skew)
+   - checkerboard tilted to the left, right, top and bottom (Skew)
    
 *Tips: In the process of moving, the blinking chessboard pattern can be suspended, so as to avoid corner detection when the dragging is serious. After fixing the position, continue to make the checkerboard blinking to obtain a high-quality Event frame* 
    
@@ -143,8 +143,8 @@ projection_matrix:
    
    The image frame used in the calibration:
    
-   <img src="assets/left-0013.png" style="zoom:80%;" />
+   <img src="assets/left-0013.png" height="300" />
    
-   <img src="assets/left-0021.png" style="zoom:80%;" />
+   <img src="assets/left-0021.png" height="300" />
    
-   <img src="assets/left-0006.png" style="zoom:80%;" />
+   <img src="assets/left-0006.png" height="300" />
