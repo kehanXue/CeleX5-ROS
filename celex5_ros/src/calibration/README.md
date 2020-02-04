@@ -6,7 +6,7 @@
 
 - [Overview](#overview)
 - [Build and Run](#build-and-run)
-- [CeleX5-MIPI's Intrinsics Calibration Demo](#celex5-mipi-intrinsics-calibration-demo)
+- [CeleX5-MIPI Intrinsics Calibration Demo](#celex5-mipi-intrinsics-calibration-demo)
 
 ## Overview
 
