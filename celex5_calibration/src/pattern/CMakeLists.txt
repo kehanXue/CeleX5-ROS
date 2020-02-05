@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 2.8.3)
-project(dvs_calibration)
+project(pattern_generator)
 
 add_compile_options(-std=c++14)
 find_package(catkin REQUIRED COMPONENTS
