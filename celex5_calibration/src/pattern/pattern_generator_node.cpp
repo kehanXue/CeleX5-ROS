@@ -1,5 +1,6 @@
 /**
- *  The ROS package for CeleX^TM CeleX5-MIPI Dynamic Vision Sensor.
+ *  The celex5_calibration ROS package,
+ *  used to calibrate camera parameters for CeleX5-MIPI Event-based Camera.
  *
  *  Copyright (C) 2020  Kehan.Xue<kehan.xue@gmail.com>
  *
