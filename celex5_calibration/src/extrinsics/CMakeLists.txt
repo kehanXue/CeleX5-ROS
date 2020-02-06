@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 2.8.3)
-project(celex5_calibration)
+project(celex5_extrinsics_calibration)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++14)
@@ -37,6 +37,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 
 find_package(OpenCV 3 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${catkin_INCLUDE_DIRS})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -123,12 +124,12 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
+# catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES celex5_calibration
- CATKIN_DEPENDS message_filters roscpp sensor_msgs
+# CATKIN_DEPENDS message_filters roscpp sensor_msgs
 #  DEPENDS system_lib
-)
+# )
 
 ###########
 ## Build ##
@@ -137,13 +138,11 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 
-add_subdirectory(src/pattern/)
-add_subdirectory(src/extrinsics/)
 
-# include_directories(
+include_directories(
 # include
-#   ${catkin_INCLUDE_DIRS}
-# )
+  ${catkin_INCLUDE_DIRS}
+)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
