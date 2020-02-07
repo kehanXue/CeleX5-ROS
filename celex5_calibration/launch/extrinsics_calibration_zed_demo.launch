@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <launch>
-    <arg name="frame_topic" default="/zed_node/left_raw/image_raw_color"/>
+    <arg name="frame_topic" default="/zed/zed_node/left_raw/image_raw_color"/>
     <arg name="events_topic" default="/celex5_mipi/display/binary_img"/>
     <arg name="store_dir" default="$(find celex5_calibration)/output/"/>
 

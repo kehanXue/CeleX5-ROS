@@ -95,3 +95,6 @@ gen/*
 # Protobuf
 *.pb.cc
 *.pb.h
+
+output/
+output/*

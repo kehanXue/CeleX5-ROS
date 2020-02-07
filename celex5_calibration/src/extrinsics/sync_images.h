@@ -23,6 +23,7 @@
 
 #include <string>
 #include <boost/thread/thread.hpp>
+#include <boost/filesystem.hpp>
 
 #include <ros/ros.h>
 #include <message_filters/subscriber.h>
@@ -41,14 +42,21 @@ class SyncImages {
  private:
   void SyncImagesCallback(const sensor_msgs::ImageConstPtr &frame_msg,
                           const sensor_msgs::ImageConstPtr &events_msg);
+  // void FrameImageCallback(const sensor_msgs::ImageConstPtr &frame_msg);
+  // void EventsImageCallback(const sensor_msgs::ImageConstPtr &events_msg);
 
   ros::NodeHandle nh_;
   typedef message_filters::Subscriber<sensor_msgs::Image> MfImageSub;
-  std::shared_ptr<MfImageSub> p_frame_sub_;
-  std::shared_ptr<MfImageSub> p_events_sub_;
+  std::shared_ptr<MfImageSub> p_frame_sync_sub_;
+  std::shared_ptr<MfImageSub> p_events_sync_sub_;
+
+  // ros::Subscriber frame_sub_;
+  // ros::Subscriber events_sub_;
 
   typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> SyncPolicy;
   std::shared_ptr<message_filters::Synchronizer<SyncPolicy>> p_sync_;
+
+  std::string store_dir_;
 };
 
 #endif //CELEX5_CALIBRATION_SRC_EXTRINSICS_SYNCIMAGES_H_

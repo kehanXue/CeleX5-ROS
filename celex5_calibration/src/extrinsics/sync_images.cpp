@@ -20,22 +20,45 @@
 
 
 #include "sync_images.h"
-SyncImages::SyncImages(const ros::NodeHandle &nh)
-    : nh_(nh) {
 
+SyncImages::SyncImages(const ros::NodeHandle &nh)
+    : nh_(nh),
+      store_dir_("./") {
+
+  /*
+   * Create a new clean directory to store images
+   */
+  nh_.param("store_dir", store_dir_, store_dir_);
+  if (!boost::filesystem::is_empty(store_dir_)) {
+    boost::filesystem::remove_all(store_dir_);
+  }
+  if (!boost::filesystem::exists(store_dir_)) {
+    boost::filesystem::create_directory(store_dir_);
+  }
+
+  /*
+   * Create sync images handle
+   */
   std::string frame_topic_name("/frame_image");
   nh_.param("frame_topic", frame_topic_name, frame_topic_name);
-  p_frame_sub_ = std::make_shared<MfImageSub>(nh_, frame_topic_name, 2,
-                                              ros::TransportHints().tcpNoDelay());
+  p_frame_sync_sub_ = std::make_shared<MfImageSub>(nh_, frame_topic_name, 2,
+                                                   ros::TransportHints().tcpNoDelay());
   std::string events_topic_name("/events_image");
   nh_.param("events_topic", events_topic_name, events_topic_name);
-  p_events_sub_ = std::make_shared<MfImageSub>(nh_, events_topic_name, 2,
-                                               ros::TransportHints().tcpNoDelay());
+  p_events_sync_sub_ = std::make_shared<MfImageSub>(nh_, events_topic_name, 2,
+                                                    ros::TransportHints().tcpNoDelay());
 
   p_sync_ = std::make_shared<message_filters::Synchronizer<SyncPolicy>>(
-      SyncPolicy(10), *p_frame_sub_, *p_events_sub_
+      SyncPolicy(10), *p_frame_sync_sub_, *p_events_sync_sub_
   );
   p_sync_->registerCallback(boost::bind(&SyncImages::SyncImagesCallback, this, _1, _2));
+
+  // frame_sub_ = nh_.subscribe<sensor_msgs::Image>(frame_topic_name, 10,
+  //                                                &SyncImages::FrameImageCallback,
+  //                                                this);
+  // events_sub_ = nh_.subscribe<sensor_msgs::Image>(events_topic_name, 10,
+  //                                                 &SyncImages::EventsImageCallback,
+  //                                                 this);
 }
 
 SyncImages::~SyncImages() = default;
@@ -57,11 +80,20 @@ void SyncImages::SyncImagesCallback(const sensor_msgs::ImageConstPtr &frame_msg,
   cv::Mat frame_img = frame_image_ptr->image;
   cv::Mat events_img = events_image_ptr->image;
 
-  std::string store_dir("./");
-  nh_.param("store_dir", store_dir, store_dir);
-  // TODO static int cnt
-  store_dir += std::to_string(frame_msg->header.seq) + "/";
-  cv::imwrite(store_dir + "frame.jpg", frame_img);
-  cv::imwrite(store_dir + "events.jpg", events_img);
+  std::string pair_id = std::to_string(frame_msg->header.seq);
+  boost::filesystem::create_directory(store_dir_ + pair_id);
+
+  // ROS_INFO("store_path, %s", store_dir.c_str());
+  cv::imwrite(store_dir_ + pair_id + "/frame.jpg", frame_img);
+  cv::imwrite(store_dir_ + pair_id + "/events.jpg", events_img);
+  cv::waitKey(1);
   ROS_INFO("Write!");
 }
+
+// void SyncImages::FrameImageCallback(const sensor_msgs::ImageConstPtr &frame_msg) {
+//   ROS_ERROR("Frame : %lf", frame_msg->header.stamp.toSec());
+// }
+//
+// void SyncImages::EventsImageCallback(const sensor_msgs::ImageConstPtr &events_msg) {
+//   ROS_WARN("Events: %lf", events_msg->header.stamp.toSec());
+// }

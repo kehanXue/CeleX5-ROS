@@ -162,6 +162,7 @@ add_executable(extrinsics_calibration_node
         sync_images.h
         sync_images.cpp extrinsics_calibration_node.cpp)
 target_link_libraries(extrinsics_calibration_node
+        ${OpenCV_LIBS}
         ${catkin_LIBRARIES}
         )
 ## Rename C++ executable without prefix
