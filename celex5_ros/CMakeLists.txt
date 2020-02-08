@@ -34,6 +34,7 @@ find_package(catkin REQUIRED COMPONENTS
         nodelet
         celex5_msgs
         sensor_msgs
+        camera_info_manager
         )
 
 ## System dependencies are found with CMake's conventions
@@ -180,6 +181,8 @@ add_library(celex5_ros
         src/bean/celex5_data_forwarder.h
         src/bean/celex5_ros_bean.h
         src/bean/celex5_ros_bean.cpp
+        src/bean/camera_publisher.cpp
+        src/bean/camera_publisher.h
         src/interactive/celex5_display_pub_factory.cpp
         src/interactive/celex5_display_pub_factory.h
         src/interactive/celex5_display_controller.cpp
