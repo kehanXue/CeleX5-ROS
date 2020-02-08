@@ -29,23 +29,24 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                                                  std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec,
                                                  CeleX5::EventPicType event_pic_type)
     : frame_id_("celex5_mipi"),
+      nh_(nh),
       p_celex5_sensor_(std::move(p_celex5_sensor)),
       p_ddyn_rec_(std::move(p_ddyn_rec)),
       event_pic_type_(event_pic_type),
       publish_enable_(false) {
 
-  nh_ = ros::NodeHandle(nh, topic_name);
+  // nh_ = ros::NodeHandle(nh, topic_name);
   // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
-  nh.param("frame_id", frame_id_, frame_id_);
+  nh_.param("frame_id", frame_id_, frame_id_);
   optical_flow_pic_type_ = CeleX5::OpticalFlowPicType::Unknown_Optical_Flow_Type;
   full_frame_pic_type_ = CeleX5::FullFramePicType::Unknown_Full_Frame_Type;
   p_mutex_ = std::make_shared<std::mutex>();
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
-    p_publisher_ = std::make_shared<CameraPublisher>("raw_image", 1, nh_);
+    p_publisher_ = std::make_shared<CameraPublisher>(topic_name, 1, nh_);
     int fps = 60;
-    nh.param("display_fps", fps, fps);
+    nh_.param("display_fps", fps, fps);
     ros::Rate loop_rate(fps);
     p_ddyn_rec_->registerVariable<int>(topic_name + "_display_fps", fps,
                                        [&loop_rate](int new_fps) {
@@ -74,13 +75,14 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                                                  std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec,
                                                  CeleX5::OpticalFlowPicType optical_flow_pic_type)
     : frame_id_("celex5_mipi"),
+      nh_(nh),
       p_celex5_sensor_(std::move(p_celex5_sensor)),
       p_ddyn_rec_(std::move(p_ddyn_rec)),
       optical_flow_pic_type_(optical_flow_pic_type),
       publish_enable_(false) {
 
-  nh_ = ros::NodeHandle(nh, topic_name);
-  nh.param("frame_id", frame_id_, frame_id_);
+  // nh_ = ros::NodeHandle(nh, topic_name);
+  nh_.param("frame_id", frame_id_, frame_id_);
   // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
   event_pic_type_ = CeleX5::EventPicType::Unknown_Event_Type;
   full_frame_pic_type_ = CeleX5::FullFramePicType::Unknown_Full_Frame_Type;
@@ -88,13 +90,13 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
-    p_publisher_ = std::make_shared<CameraPublisher>("raw_image", 1, nh_);
+    p_publisher_ = std::make_shared<CameraPublisher>(topic_name, 1, nh_);
 
-    ros::NodeHandle nh_color(nh_, "color");
+    // ros::NodeHandle nh_color(nh_, "color");
     std::shared_ptr<CameraPublisher> p_colored_publisher =
-        std::make_shared<CameraPublisher>("raw_image", 1, nh_color);
+        std::make_shared<CameraPublisher>("colored_" + topic_name, 1, nh_);
     int fps = 60;
-    nh.param("display_fps", fps, fps);
+    nh_.param("display_fps", fps, fps);
     ros::Rate loop_rate(fps);
     p_ddyn_rec_->registerVariable<int>(topic_name + "_display_fps", fps,
                                        [&loop_rate](int new_fps) {
@@ -128,13 +130,14 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                                                  CeleX5::FullFramePicType full_frame_pic_type)
 
     : frame_id_("celex5_mipi"),
+      nh_(nh),
       p_celex5_sensor_(std::move(p_celex5_sensor)),
       p_ddyn_rec_(std::move(p_ddyn_rec)),
       full_frame_pic_type_(full_frame_pic_type),
       publish_enable_(false) {
 
-  nh_ = ros::NodeHandle(nh, topic_name);
-  nh.param("frame_id", frame_id_, frame_id_);
+  // nh_ = ros::NodeHandle(nh, topic_name);
+  nh_.param("frame_id", frame_id_, frame_id_);
   // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
   event_pic_type_ = CeleX5::EventPicType::Unknown_Event_Type;
   optical_flow_pic_type_ = CeleX5::OpticalFlowPicType::Unknown_Optical_Flow_Type;
@@ -144,11 +147,11 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
 
     std::string camera_cfg_path("./");
-    nh.param("sensor_cfg_file_dir", camera_cfg_path, camera_cfg_path);
+    nh_.param("sensor_cfg_file_dir", camera_cfg_path, camera_cfg_path);
     std::string parameters_url = "file://" + camera_cfg_path + "celex5_frame_parameters.yaml";
-    p_publisher_ = std::make_shared<CameraPublisher>("raw_image", 1, parameters_url, nh_);
+    p_publisher_ = std::make_shared<CameraPublisher>(topic_name, 1, parameters_url, nh_);
     int fps = 60;
-    nh.param("display_fps", fps, fps);
+    nh_.param("display_fps", fps, fps);
     ros::Rate loop_rate(fps);
     p_ddyn_rec_->registerVariable<int>(topic_name + "_display_fps", fps,
                                        [&loop_rate](int new_fps) {

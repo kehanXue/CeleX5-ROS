@@ -27,6 +27,7 @@ celex5_ros::CameraPublisher::CameraPublisher(std::string image_name,
     : image_name_(std::move(image_name)),
       buffer_length_(buffer_length),
       nh_(nh) {
+
   image_pub_ = nh_.advertise<sensor_msgs::Image>(image_name_, buffer_length_);
   camera_info_pub_ = nh_.advertise<sensor_msgs::CameraInfo>(image_name_ + "/camera_info", buffer_length_);
 
