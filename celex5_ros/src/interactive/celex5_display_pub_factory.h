@@ -30,6 +30,8 @@
 #include <sensor_msgs/Imu.h>
 #include <ddynamic_reconfigure/ddynamic_reconfigure.h>
 
+#include "bean/camera_publisher.h"
+
 #include "celex5/celex5.h"
 
 namespace celex5_ros {
@@ -69,7 +71,7 @@ class CeleX5DisplayPubFactory {
 
   ros::NodeHandle nh_;
   std::string frame_id_;
-  ros::Publisher publisher_;
+  std::shared_ptr<CameraPublisher> p_publisher_;
 
   bool publish_enable_;
   std::shared_ptr<std::mutex> p_mutex_; //TODO Delete

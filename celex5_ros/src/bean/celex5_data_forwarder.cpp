@@ -33,7 +33,7 @@ celex5_ros::CeleX5DataForwarder::CeleX5DataForwarder(const ros::NodeHandle &nh,
 
   events_pub_ = nh_.advertise<celex5_msgs::EventVector>("events", 10);
   imu_pub_ = nh_.advertise<celex5_msgs::ImuVector>("imu_data", 10);
-  polarity_img_pub_ = nh_.advertise<sensor_msgs::Image>("polarity_img", 10);
+  p_polarity_img_pub_ = std::make_shared<CameraPublisher>("polarity_img", 1, nh_);
 
   // binary_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_binary_img", 10);
   // denoised_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_denoised_img", 10);;
@@ -164,45 +164,43 @@ void celex5_ros::CeleX5DataForwarder::CreatePolarityImgPubThread() {
       std::unique_lock<std::mutex> lck(mu_polarity_img_);
       cv_polarity_img_.wait(lck);
       // ROS_WARN("Received Notified 2!!!!");
-      if (p_celex5_options_->IsPolarityImgEnabled() && !vec_polarity_events_.empty()) {
+      if (p_polarity_img_pub_->IsSubscribed()) {
+        if (p_celex5_options_->IsPolarityImgEnabled() && !vec_polarity_events_.empty()) {
 
-        CeleX5::CeleX5Mode current_mode = p_celex5_sensor_->getSensorFixedMode();
-        if ((current_mode==CeleX5::Event_Intensity_Mode && !p_celex5_sensor_->isLoopModeEnabled())
-            || (p_celex5_sensor_->isLoopModeEnabled()
-                && p_celex5_sensor_->getSensorLoopMode(2)==CeleX5::Event_Intensity_Mode)) {
-          /*
-           * Publish polarity image in Event Intensity Mode
-           */
-          // clock_t time_begin = clock();
+          CeleX5::CeleX5Mode current_mode = p_celex5_sensor_->getSensorFixedMode();
+          if ((current_mode==CeleX5::Event_Intensity_Mode && !p_celex5_sensor_->isLoopModeEnabled())
+              || (p_celex5_sensor_->isLoopModeEnabled()
+                  && p_celex5_sensor_->getSensorLoopMode(2)==CeleX5::Event_Intensity_Mode)) {
+            /*
+             * Publish polarity image in Event Intensity Mode
+             */
+            // clock_t time_begin = clock();
 
-          cv::Mat polarity_mat(800, 1280, CV_8UC3, cv::Scalar::all(255));
-          int row = 0, col = 0;
-          // TODO Multi-Thread
-          for (auto event_i : vec_polarity_events_) {
-            row = CELEX5_MAT_ROWS - 1 - event_i.row;
-            // col = CELEX5_MAT_COLS - 1 - event_i.col;
-            col = event_i.col;
-            auto *p = polarity_mat.ptr<cv::Vec3b>(row);
-            if (event_i.polarity==1) {
-              p[col][0] = 0;
-              p[col][1] = 0;
-              p[col][2] = 255;
-            } else if (event_i.polarity==-1) {
-              p[col][0] = 255;
-              p[col][1] = 0;
-              p[col][2] = 0;
+            cv::Mat polarity_mat(800, 1280, CV_8UC3, cv::Scalar::all(255));
+            int row = 0, col = 0;
+            // TODO Multi-Thread
+            for (auto event_i : vec_polarity_events_) {
+              row = CELEX5_MAT_ROWS - 1 - event_i.row;
+              // col = CELEX5_MAT_COLS - 1 - event_i.col;
+              col = event_i.col;
+              auto *p = polarity_mat.ptr<cv::Vec3b>(row);
+              if (event_i.polarity==1) {
+                p[col][0] = 0;
+                p[col][1] = 0;
+                p[col][2] = 255;
+              } else if (event_i.polarity==-1) {
+                p[col][0] = 255;
+                p[col][1] = 0;
+                p[col][2] = 0;
+              }
             }
+            p_polarity_img_pub_->Publish(polarity_mat, "bgr8", frame_id_);
+            // if (data_size > 0) {
+            //   cv::imshow("Event Polarity Pic", polarity_mat);
+            //   cv::waitKey(1);
+            // }
+            // ROS_INFO("Pub polarity img: %lf ms", 1000.0*(clock() - time_begin)/CLOCKS_PER_SEC);
           }
-          sensor_msgs::ImagePtr image_ptr_msg =
-              cv_bridge::CvImage(std_msgs::Header(), "bgr8", polarity_mat).toImageMsg();
-          image_ptr_msg->header.stamp = ros::Time::now();
-          image_ptr_msg->header.frame_id = this->frame_id_;
-          polarity_img_pub_.publish(image_ptr_msg);
-          // if (data_size > 0) {
-          //   cv::imshow("Event Polarity Pic", polarity_mat);
-          //   cv::waitKey(1);
-          // }
-          // ROS_INFO("Pub polarity img: %lf ms", 1000.0*(clock() - time_begin)/CLOCKS_PER_SEC);
         }
       }
       lck.unlock();

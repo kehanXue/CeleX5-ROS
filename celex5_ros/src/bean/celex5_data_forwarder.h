@@ -42,6 +42,7 @@
 
 #include "interactive/celex5_configure.h"
 #include "bean/celex5_options.h"
+#include "bean/camera_publisher.h"
 
 #include "celex5/celex5datamanager.h"
 
@@ -90,7 +91,7 @@ class CeleX5DataForwarder : public CeleX5DataManager {
   ros::Publisher events_pub_;
   ros::Publisher imu_pub_;
 
-  ros::Publisher polarity_img_pub_;
+  std::shared_ptr<celex5_ros::CameraPublisher> p_polarity_img_pub_;
   // ros::Publisher binary_img_pub_;
   // ros::Publisher denoised_img_pub_;
   // ros::Publisher count_img_pub_;

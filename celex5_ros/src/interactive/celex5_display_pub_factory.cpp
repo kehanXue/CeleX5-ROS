@@ -28,42 +28,38 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                                                  std::shared_ptr<CeleX5> p_celex5_sensor,
                                                  std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec,
                                                  CeleX5::EventPicType event_pic_type)
-    : nh_(nh),
-      frame_id_("celex5_mipi"),
+    : frame_id_("celex5_mipi"),
       p_celex5_sensor_(std::move(p_celex5_sensor)),
       p_ddyn_rec_(std::move(p_ddyn_rec)),
       event_pic_type_(event_pic_type),
       publish_enable_(false) {
+
+  nh_ = ros::NodeHandle(nh, topic_name);
   // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
-  nh_.param("frame_id", frame_id_, frame_id_);
+  nh.param("frame_id", frame_id_, frame_id_);
   optical_flow_pic_type_ = CeleX5::OpticalFlowPicType::Unknown_Optical_Flow_Type;
   full_frame_pic_type_ = CeleX5::FullFramePicType::Unknown_Full_Frame_Type;
   p_mutex_ = std::make_shared<std::mutex>();
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
-    publisher_ = nh_.advertise<sensor_msgs::Image>(topic_name, 10);
+    p_publisher_ = std::make_shared<CameraPublisher>("raw_image", 1, nh_);
     int fps = 60;
+    nh.param("display_fps", fps, fps);
     ros::Rate loop_rate(fps);
-    bool is_display = true;
     p_ddyn_rec_->registerVariable<int>(topic_name + "_display_fps", fps,
                                        [&loop_rate](int new_fps) {
                                          loop_rate = ros::Rate(new_fps);
                                        }, "FPS of this display image", 0, 144);
-    p_ddyn_rec_->registerVariable<bool>(topic_name + "_enable", is_display,
-                                        [&is_display](int new_is_display) {
-                                          is_display = new_is_display;
-                                        }, "Whether display this image");
     while (ros::ok()) {
-      if (publish_enable_ && is_display) {
-        cv::Mat event_img = p_celex5_sensor_->getEventPicMat(event_pic_type_);
-        cv::Mat flip_img;
-        cv::flip(event_img, flip_img, 1);
-        sensor_msgs::ImagePtr image_ptr_msg =
-            cv_bridge::CvImage(std_msgs::Header(), "mono8", flip_img).toImageMsg();
-        image_ptr_msg->header.stamp = ros::Time::now();
-        image_ptr_msg->header.frame_id = this->frame_id_;
-        publisher_.publish(image_ptr_msg);
+      if (p_publisher_->IsSubscribed()) {
+        if (publish_enable_) {
+          cv::Mat event_img = p_celex5_sensor_->getEventPicMat(event_pic_type_);
+          // TODO config, whether flip
+          cv::Mat flip_img;
+          cv::flip(event_img, flip_img, 1);
+          p_publisher_->Publish(flip_img, "mono8", frame_id_);
+        }
       }
       loop_rate.sleep();
     }
@@ -77,11 +73,14 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                                                  std::shared_ptr<CeleX5> p_celex5_sensor,
                                                  std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec,
                                                  CeleX5::OpticalFlowPicType optical_flow_pic_type)
-    : nh_(nh),
+    : frame_id_("celex5_mipi"),
       p_celex5_sensor_(std::move(p_celex5_sensor)),
       p_ddyn_rec_(std::move(p_ddyn_rec)),
       optical_flow_pic_type_(optical_flow_pic_type),
       publish_enable_(false) {
+
+  nh_ = ros::NodeHandle(nh, topic_name);
+  nh.param("frame_id", frame_id_, frame_id_);
   // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
   event_pic_type_ = CeleX5::EventPicType::Unknown_Event_Type;
   full_frame_pic_type_ = CeleX5::FullFramePicType::Unknown_Full_Frame_Type;
@@ -89,37 +88,31 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
-    publisher_ = nh_.advertise<sensor_msgs::Image>(topic_name, 10);
-    ros::Publisher colored_publisher = nh_.advertise<sensor_msgs::Image>("colored_" + topic_name, 10);
+    p_publisher_ = std::make_shared<CameraPublisher>("raw_image", 1, nh_);
+
+    ros::NodeHandle nh_color(nh_, "color");
+    std::shared_ptr<CameraPublisher> p_colored_publisher =
+        std::make_shared<CameraPublisher>("raw_image", 1, nh_color);
     int fps = 60;
+    nh.param("display_fps", fps, fps);
     ros::Rate loop_rate(fps);
-    bool is_display = true;
     p_ddyn_rec_->registerVariable<int>(topic_name + "_display_fps", fps,
                                        [&loop_rate](int new_fps) {
                                          loop_rate = ros::Rate(new_fps);
                                        }, "FPS of this display image", 0, 144);
-    p_ddyn_rec_->registerVariable<bool>(topic_name + "_enable", is_display,
-                                        [&is_display](int new_is_display) {
-                                          is_display = new_is_display;
-                                        }, "Whether display this image");
     while (ros::ok()) {
-      if (publish_enable_ && is_display) {
+      if (p_publisher_->IsSubscribed()) {
+        if (publish_enable_) {
+          cv::Mat optical_flow_img = p_celex5_sensor_->getOpticalFlowPicMat(optical_flow_pic_type_);
+          cv::Mat flip_img;
+          cv::flip(optical_flow_img, flip_img, 1);
+          p_publisher_->Publish(flip_img, "mono8", frame_id_);
 
-        cv::Mat optical_flow_img = p_celex5_sensor_->getOpticalFlowPicMat(optical_flow_pic_type_);
-        cv::Mat flip_img;
-        cv::flip(optical_flow_img, flip_img, 1);
-        sensor_msgs::ImagePtr image_ptr_msg =
-            cv_bridge::CvImage(std_msgs::Header(), "mono8", flip_img).toImageMsg();
-        image_ptr_msg->header.stamp = ros::Time::now();
-        image_ptr_msg->header.frame_id = this->frame_id_;
-        publisher_.publish(image_ptr_msg);
-
-        ToColorOpticalMat(flip_img);
-        sensor_msgs::ImagePtr colored_image_ptr_msg =
-            cv_bridge::CvImage(std_msgs::Header(), "bgr8", flip_img).toImageMsg();
-        image_ptr_msg->header.stamp = ros::Time::now();
-        image_ptr_msg->header.frame_id = this->frame_id_;
-        colored_publisher.publish(colored_image_ptr_msg);
+          if (p_colored_publisher->IsSubscribed()) {
+            ToColorOpticalMat(flip_img);
+            p_colored_publisher->Publish(flip_img, "bgr8", frame_id_);
+          }
+        }
       }
       loop_rate.sleep();
     }
@@ -134,11 +127,14 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                                                  std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec,
                                                  CeleX5::FullFramePicType full_frame_pic_type)
 
-    : nh_(nh),
+    : frame_id_("celex5_mipi"),
       p_celex5_sensor_(std::move(p_celex5_sensor)),
       p_ddyn_rec_(std::move(p_ddyn_rec)),
       full_frame_pic_type_(full_frame_pic_type),
       publish_enable_(false) {
+
+  nh_ = ros::NodeHandle(nh, topic_name);
+  nh.param("frame_id", frame_id_, frame_id_);
   // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
   event_pic_type_ = CeleX5::EventPicType::Unknown_Event_Type;
   optical_flow_pic_type_ = CeleX5::OpticalFlowPicType::Unknown_Optical_Flow_Type;
@@ -146,32 +142,30 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
-    publisher_ = nh_.advertise<sensor_msgs::Image>(topic_name, 10);
+
+    std::string camera_cfg_path("./");
+    nh.param("sensor_cfg_file_dir", camera_cfg_path, camera_cfg_path);
+    std::string parameters_url = "file://" + camera_cfg_path + "celex5_frame_parameters.yaml";
+    p_publisher_ = std::make_shared<CameraPublisher>("raw_image", 1, parameters_url, nh_);
     int fps = 60;
+    nh.param("display_fps", fps, fps);
     ros::Rate loop_rate(fps);
-    bool is_display = true;
     p_ddyn_rec_->registerVariable<int>(topic_name + "_display_fps", fps,
                                        [&loop_rate](int new_fps) {
                                          loop_rate = ros::Rate(new_fps);
                                        }, "FPS of this display image", 0, 144);
-    p_ddyn_rec_->registerVariable<bool>(topic_name + "_enable", is_display,
-                                        [&is_display](int new_is_display) {
-                                          is_display = new_is_display;
-                                        }, "Whether display this image");
     while (ros::ok()) {
-      if (publish_enable_ && is_display) {
-        // p_celex5_sensor_->getSensorFixedMode()==CeleX5::Full_Picture_Mode) {
-        if (!p_celex5_sensor_->getFullPicMat().empty()) {
-          cv::Mat full_frame_img = p_celex5_sensor_->getFullPicMat();
-          cv::Mat flip_img;
-          cv::flip(full_frame_img, flip_img, 1);
-          // cv::imshow("FullPic", full_frame_img);
-          // cv::waitKey(10);
-          sensor_msgs::ImagePtr image_ptr_msg =
-              cv_bridge::CvImage(std_msgs::Header(), "mono8", flip_img).toImageMsg();
-          image_ptr_msg->header.stamp = ros::Time::now();
-          image_ptr_msg->header.frame_id = this->frame_id_;
-          publisher_.publish(image_ptr_msg);
+      if (p_publisher_->IsSubscribed()) {
+        if (publish_enable_) {
+          // p_celex5_sensor_->getSensorFixedMode()==CeleX5::Full_Picture_Mode) {
+          if (!p_celex5_sensor_->getFullPicMat().empty()) {
+            cv::Mat full_frame_img = p_celex5_sensor_->getFullPicMat();
+            cv::Mat flip_img;
+            cv::flip(full_frame_img, flip_img, 1);
+            // cv::imshow("FullPic", full_frame_img);
+            // cv::waitKey(10);
+            p_publisher_->Publish(flip_img, "mono8", frame_id_);
+          }
         }
       }
       loop_rate.sleep();

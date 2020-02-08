@@ -47,10 +47,10 @@ namespace celex5_ros {
 class CameraPublisher {
  public:
   CameraPublisher(std::string image_name,
-                  int frequency,
+                  int buffer_length,
                   const ros::NodeHandle &nh = ros::NodeHandle("~"));
   CameraPublisher(std::string image_name,
-                  int frequency,
+                  int buffer_length,
                   std::string parameters_file_url,
                   const ros::NodeHandle &nh = ros::NodeHandle("~"));
   virtual ~CameraPublisher();
@@ -61,7 +61,7 @@ class CameraPublisher {
 
  private:
   std::string image_name_;
-  int frequency_;
+  int buffer_length_;
 
   std::string parameters_file_url_;
 

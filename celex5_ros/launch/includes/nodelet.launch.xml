@@ -67,6 +67,8 @@
     <arg name="event_FPN_file_path" default="$(find celex5_ros)/config/FPN_Optical.txt"/>
     <arg name="frame_FPN_file_path" default="$(find celex5_ros)/config/FPN_2.txt"/>
 
+    <arg name="display_fps" default="60"/>
+
     <node unless="$(arg external_manager)" pkg="nodelet" type="nodelet" name="$(arg manager_name)" args="manager"
           output="screen" required="$(arg required)"/>
     <node pkg="nodelet" type="nodelet" name="celex5_mipi" args="load celex5_ros/CeleX5Nodelet $(arg manager_name)"
@@ -93,6 +95,7 @@
         <param name="picture_number_in_loop" type="int" value="$(arg picture_number_in_loop)"/>
         <param name="event_FPN_file_path" type="str" value="$(arg event_FPN_file_path)"/>
         <param name="frame_FPN_file_path" type="str" value="$(arg frame_FPN_file_path)"/>
+        <param name="display_fps" type="int" value="$(arg display_fps)"/>
     </node>
 
 </launch>
