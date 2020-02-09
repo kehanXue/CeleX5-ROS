@@ -30,6 +30,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_filters
   roscpp
   sensor_msgs
+  ddynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions

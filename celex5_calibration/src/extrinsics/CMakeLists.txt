@@ -31,6 +31,7 @@ find_package(catkin REQUIRED COMPONENTS
         roscpp
         sensor_msgs
         cv_bridge
+	ddynamic_reconfigure
         )
 
 ## System dependencies are found with CMake's conventions
