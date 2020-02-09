@@ -41,6 +41,10 @@ find_package(OpenCV 3 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${catkin_INCLUDE_DIRS})
 
+# For matplotlib-cpp
+#find_package(Python2 COMPONENTS Development NumPy)
+find_package(PythonLibs 2.7)
+
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
@@ -142,7 +146,7 @@ include_directories(${catkin_INCLUDE_DIRS})
 
 
 include_directories(
-        # include
+        ../../third_party/
         ${catkin_INCLUDE_DIRS}
 )
 
@@ -165,10 +169,14 @@ add_executable(temporal_offset_calibration_node
         temporal_offset_calibration_node.cpp
         temporal_offset_calculate.cpp
         temporal_offset_calculate.h)
+#target_include_directories(temporal_offset_calibration_node PRIVATE ${Python2_INCLUDE_DIRS} ${Python2_NumPy_INCLUDE_DIRS})
+target_include_directories(temporal_offset_calibration_node PRIVATE ${PYTHON_INCLUDE_DIRS})
 target_link_libraries(temporal_offset_calibration_node
         ${OpenCV_LIBS}
         ${catkin_LIBRARIES}
-        )
+        ${PYTHON_LIBRARIES})
+#        Python2::Python
+#        Python2::NumPy)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use

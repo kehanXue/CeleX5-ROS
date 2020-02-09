@@ -1,0 +1,3 @@
+[submodule "celex5_calibration/third_party/matplotlib-cpp"]
+	path = celex5_calibration/third_party/matplotlib-cpp
+	url = https://github.com/lava/matplotlib-cpp.git

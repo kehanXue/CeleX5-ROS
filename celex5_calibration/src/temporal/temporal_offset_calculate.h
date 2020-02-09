@@ -22,6 +22,7 @@
 #define CELEX5_CALIBRATION_SRC_EXTRINSICS_EXTRINSICS_CALCULATE_H_
 
 #include <memory>
+#include <cmath>
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/calib3d.hpp>
@@ -29,23 +30,40 @@
 #include <ros/ros.h>
 #include <ddynamic_reconfigure/ddynamic_reconfigure.h>
 #include <celex5_msgs/EventVector.h>
+#include <sensor_msgs/Image.h>
+
+#include "matplotlib-cpp/matplotlibcpp.h"
+namespace plt = matplotlibcpp;
 
 class TemporalOffsetCalculate {
  public:
-  explicit TemporalOffsetCalculate(const ros::NodeHandle &nh = ros::NodeHandle("~"),
-                                   bool show_match = false);
+  explicit TemporalOffsetCalculate(const ros::NodeHandle &nh = ros::NodeHandle("~"));
   virtual ~TemporalOffsetCalculate();
-  void Process(cv::Mat image1, cv::Mat image2);
 
  private:
+  void CalculateEventsRate(const celex5_msgs::EventVectorConstPtr &msg);
+  void CalculateIntensityChanges(const sensor_msgs::ImageConstPtr &msg);
 
-  std::vector<cv::Point2f> FindCorners(const cv::Mat &image);
+  void AnimationPlot();
+  // std::vector<cv::Point2f> FindCorners(const cv::Mat &image);
 
   ros::NodeHandle nh_;
+
+  ros::Subscriber events_sub_;
+  ros::Subscriber frame_sub_;
+
   std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec_;
-  bool show_match_;
+  bool plot;
 
+  ros::Time init_stamp_;
+  ros::Time last_events_stamp_;
+  double last_events_rate_;
+  double last_intensity_changes_;
 
+  std::vector<double> vec_events_rate_history_;
+  std::vector<double> vec_events_rate_stamps_;
+  std::vector<double> vec_intensity_changes_history_;
+  std::vector<double> vec_intensity_changes_stamps_;
 };
 
 #endif //CELEX5_CALIBRATION_SRC_EXTRINSICS_EXTRINSICS_CALCULATE_H_

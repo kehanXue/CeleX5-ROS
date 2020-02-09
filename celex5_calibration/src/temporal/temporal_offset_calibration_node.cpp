@@ -20,10 +20,12 @@
 
 #include <ros/ros.h>
 #include "sync_images.h"
+#include "temporal_offset_calculate.h"
 
 int main(int argc, char **argv) {
   ros::init(argc, argv, "temporal_offset_calibration_node");
   ros::NodeHandle nh("~");
-  SyncImages sync_images(nh);
+  TemporalOffsetCalculate temporal_offset_calculate(nh);
+  // SyncImages sync_images(nh);
   ros::spin();
 }
