@@ -31,12 +31,12 @@
 #include "bean/celex5_options.h"
 
 namespace celex5_ros {
-class CeleX5Configure {
+class CeleX5DdyConfigure {
 
  public:
-  explicit CeleX5Configure(std::shared_ptr<CeleX5> p_celex5_sensor,
-                           const ros::NodeHandle &nh = ros::NodeHandle("~"));
-  virtual ~CeleX5Configure();
+  explicit CeleX5DdyConfigure(std::shared_ptr<CeleX5> p_celex5_sensor,
+                              const ros::NodeHandle &nh = ros::NodeHandle("~"));
+  virtual ~CeleX5DdyConfigure();
   void UpdateCeleX5AllOptions();
   void PublishReconfigureServices();
 

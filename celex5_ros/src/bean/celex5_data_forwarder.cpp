@@ -29,7 +29,7 @@ celex5_ros::CeleX5DataForwarder::CeleX5DataForwarder(const ros::NodeHandle &nh,
   p_celex5_data_server_ = p_celex5_sensor->getSensorDataServer();
   p_celex5_data_server_->registerData(this, emDataType::CeleX_Frame_Data);
 
-  CeleX5Configure::ReadROSParam(nh_, "frame_id", this->frame_id_);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "frame_id", this->frame_id_);
 
   events_pub_ = nh_.advertise<celex5_msgs::EventVector>("events", 10);
   imu_pub_ = nh_.advertise<celex5_msgs::ImuVector>("imu_data", 10);

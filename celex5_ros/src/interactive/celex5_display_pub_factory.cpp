@@ -29,13 +29,13 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                                                  std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec,
                                                  CeleX5::EventPicType event_pic_type)
     : frame_id_("celex5_mipi"),
-      nh_(nh),
+    // nh_(nh),
       p_celex5_sensor_(std::move(p_celex5_sensor)),
       p_ddyn_rec_(std::move(p_ddyn_rec)),
       event_pic_type_(event_pic_type),
       publish_enable_(false) {
 
-  // nh_ = ros::NodeHandle(nh, topic_name);
+  nh_ = ros::NodeHandle(nh, topic_name);
   // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
   nh_.param("frame_id", frame_id_, frame_id_);
   optical_flow_pic_type_ = CeleX5::OpticalFlowPicType::Unknown_Optical_Flow_Type;
@@ -75,13 +75,13 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                                                  std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec,
                                                  CeleX5::OpticalFlowPicType optical_flow_pic_type)
     : frame_id_("celex5_mipi"),
-      nh_(nh),
+    // nh_(nh),
       p_celex5_sensor_(std::move(p_celex5_sensor)),
       p_ddyn_rec_(std::move(p_ddyn_rec)),
       optical_flow_pic_type_(optical_flow_pic_type),
       publish_enable_(false) {
 
-  // nh_ = ros::NodeHandle(nh, topic_name);
+  nh_ = ros::NodeHandle(nh, topic_name);
   nh_.param("frame_id", frame_id_, frame_id_);
   // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
   event_pic_type_ = CeleX5::EventPicType::Unknown_Event_Type;
@@ -130,13 +130,13 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
                                                  CeleX5::FullFramePicType full_frame_pic_type)
 
     : frame_id_("celex5_mipi"),
-      nh_(nh),
+    // nh_(nh),
       p_celex5_sensor_(std::move(p_celex5_sensor)),
       p_ddyn_rec_(std::move(p_ddyn_rec)),
       full_frame_pic_type_(full_frame_pic_type),
       publish_enable_(false) {
 
-  // nh_ = ros::NodeHandle(nh, topic_name);
+  nh_ = ros::NodeHandle(nh, topic_name);
   nh_.param("frame_id", frame_id_, frame_id_);
   // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
   event_pic_type_ = CeleX5::EventPicType::Unknown_Event_Type;

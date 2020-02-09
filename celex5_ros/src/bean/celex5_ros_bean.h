@@ -27,7 +27,7 @@
 
 #include "celex5/celex5datamanager.h"
 #include "celex5_options.h"
-#include "interactive/celex5_configure.h"
+#include "interactive/celex5_ddy_configure.h"
 #include "interactive/celex5_display_controller.h"
 #include "celex5_data_forwarder.h"
 
@@ -43,7 +43,7 @@ class CeleX5ROSBean {
 
   std::shared_ptr<CeleX5Options> p_celex5_options_;
   std::shared_ptr<CeleX5> p_celex5_sensor_;
-  std::shared_ptr<CeleX5Configure> p_celex5_configure_;
+  std::shared_ptr<CeleX5DdyConfigure> p_celex5_configure_;
   std::shared_ptr<CeleX5DataForwarder> p_celex5_data_forwarder_;
 
   std::shared_ptr<CeleX5DisplayController> p_celex5_display_;

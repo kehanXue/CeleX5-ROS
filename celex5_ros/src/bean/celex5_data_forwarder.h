@@ -40,7 +40,7 @@
 #include "celex5_msgs/Imu.h"
 #include "celex5_msgs/ImuVector.h"
 
-#include "interactive/celex5_configure.h"
+#include "interactive/celex5_ddy_configure.h"
 #include "bean/celex5_options.h"
 #include "bean/camera_publisher.h"
 

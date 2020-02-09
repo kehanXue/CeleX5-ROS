@@ -32,7 +32,7 @@ celex5_ros::CeleX5ROSBean::CeleX5ROSBean(const ros::NodeHandle &nh)
 
   p_celex5_sensor_ = std::make_shared<CeleX5>();
   p_celex5_configure_ =
-      std::make_shared<CeleX5Configure>(p_celex5_sensor_, nh_);
+      std::make_shared<CeleX5DdyConfigure>(p_celex5_sensor_, nh_);
 }
 
 celex5_ros::CeleX5ROSBean::~CeleX5ROSBean() = default;
@@ -42,17 +42,17 @@ void celex5_ros::CeleX5ROSBean::Run() {
    * Open CeleX5 Sensor
    */
   std::string sensor_cfg_file_dir;
-  CeleX5Configure::ReadROSParam(nh_, "sensor_cfg_file_dir", sensor_cfg_file_dir);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "sensor_cfg_file_dir", sensor_cfg_file_dir);
   p_celex5_sensor_->setSensorCfgFileDir(sensor_cfg_file_dir);
   std::string fpn_file_dir;
-  CeleX5Configure::ReadROSParam(nh_, "fpn_file_dir", fpn_file_dir);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "fpn_file_dir", fpn_file_dir);
   p_celex5_sensor_->setFpnFileDir(fpn_file_dir);
 
   /*
    * Open sensor
    */
   int device_type = CeleX5::DeviceType::Unknown_Devive;
-  CeleX5Configure::ReadROSParam(nh_, "device_type", device_type);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "device_type", device_type);
   p_celex5_sensor_->openSensor(static_cast<CeleX5::DeviceType>(device_type));
   ROS_INFO("Sensor status: %d", p_celex5_sensor_->isSensorReady());
 
@@ -82,28 +82,28 @@ void celex5_ros::CeleX5ROSBean::ReadParams() {
 
   // TODO Get default value from sensor
   int tmp_celex5_mode_param = p_celex5_options_->GetFixedMode();
-  CeleX5Configure::ReadROSParam(nh_, "fixed_mode", tmp_celex5_mode_param);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "fixed_mode", tmp_celex5_mode_param);
   p_celex5_options_->SetFixedMode(static_cast<CeleX5::CeleX5Mode>(tmp_celex5_mode_param));
-  CeleX5Configure::ReadROSParam(nh_, "loop_mode1", tmp_celex5_mode_param);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "loop_mode1", tmp_celex5_mode_param);
   p_celex5_options_->SetLoopMode1(static_cast<CeleX5::CeleX5Mode>(tmp_celex5_mode_param));
-  CeleX5Configure::ReadROSParam(nh_, "loop_mode2", tmp_celex5_mode_param);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "loop_mode2", tmp_celex5_mode_param);
   p_celex5_options_->SetLoopMode2(static_cast<CeleX5::CeleX5Mode>(tmp_celex5_mode_param));
-  CeleX5Configure::ReadROSParam(nh_, "loop_mode3", tmp_celex5_mode_param);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "loop_mode3", tmp_celex5_mode_param);
   p_celex5_options_->SetLoopMode3(static_cast<CeleX5::CeleX5Mode>(tmp_celex5_mode_param));
 
-  CeleX5Configure::ReadROSParam(nh_, "event_frame_time", p_celex5_options_->event_frame_time_);
-  CeleX5Configure::ReadROSParam(nh_, "optical_flow_frame_time", p_celex5_options_->optical_flow_frame_time_);
-  CeleX5Configure::ReadROSParam(nh_, "threshold", p_celex5_options_->threshold_);
-  CeleX5Configure::ReadROSParam(nh_, "brightness", p_celex5_options_->brightness_);
-  CeleX5Configure::ReadROSParam(nh_, "imu_enabled", p_celex5_options_->imu_enabled_);
-  CeleX5Configure::ReadROSParam(nh_, "ISO_level", p_celex5_options_->ISO_level_);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "event_frame_time", p_celex5_options_->event_frame_time_);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "optical_flow_frame_time", p_celex5_options_->optical_flow_frame_time_);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "threshold", p_celex5_options_->threshold_);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "brightness", p_celex5_options_->brightness_);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "imu_enabled", p_celex5_options_->imu_enabled_);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "ISO_level", p_celex5_options_->ISO_level_);
   // readIntParam("contrast", p_celex5_options_->contrast_);
-  CeleX5Configure::ReadROSParam(nh_, "clock_rate", p_celex5_options_->clock_rate_);
-  CeleX5Configure::ReadROSParam(nh_, "is_loop_mode_enabled", p_celex5_options_->is_loop_mode_enabled_);
-  CeleX5Configure::ReadROSParam(nh_, "event_duration_in_loop", p_celex5_options_->event_duration_in_loop_);
-  CeleX5Configure::ReadROSParam(nh_, "picture_number_in_loop", p_celex5_options_->picture_number_in_loop_);
-  CeleX5Configure::ReadROSParam(nh_, "event_FPN_file_path", p_celex5_options_->event_FPN_file_path_);
-  CeleX5Configure::ReadROSParam(nh_, "frame_FPN_file_path", p_celex5_options_->frame_FPN_file_path_);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "clock_rate", p_celex5_options_->clock_rate_);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "is_loop_mode_enabled", p_celex5_options_->is_loop_mode_enabled_);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "event_duration_in_loop", p_celex5_options_->event_duration_in_loop_);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "picture_number_in_loop", p_celex5_options_->picture_number_in_loop_);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "event_FPN_file_path", p_celex5_options_->event_FPN_file_path_);
+  CeleX5DdyConfigure::ReadROSParam(nh_, "frame_FPN_file_path", p_celex5_options_->frame_FPN_file_path_);
 
 }
 

@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <opencv-3.3.1-dev/opencv2/core/mat.hpp>
+#include <opencv2/opencv.hpp>
 #include <utility>
 #include "camera_publisher.h"
 

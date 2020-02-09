@@ -173,8 +173,8 @@ add_library(celex5_ros
         src/sdk/include/celex5/celex5datamanager.h
         src/sdk/include/celex5/celex5.h
         src/sdk/include/celex5/celex5processeddata.h
-        src/interactive/celex5_configure.cpp
-        src/interactive/celex5_configure.h
+        src/interactive/celex5_ddy_configure.cpp
+        src/interactive/celex5_ddy_configure.h
         src/bean/celex5_options.cpp
         src/bean/celex5_options.h
         src/bean/celex5_data_forwarder.cpp
