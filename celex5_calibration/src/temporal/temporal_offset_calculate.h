@@ -31,6 +31,7 @@
 #include <ddynamic_reconfigure/ddynamic_reconfigure.h>
 #include <celex5_msgs/EventVector.h>
 #include <sensor_msgs/Image.h>
+#include <cv_bridge/cv_bridge.h>
 
 #include "matplotlib-cpp/matplotlibcpp.h"
 namespace plt = matplotlibcpp;
@@ -44,6 +45,7 @@ class TemporalOffsetCalculate {
   void CalculateEventsRate(const celex5_msgs::EventVectorConstPtr &msg);
   void CalculateIntensityChanges(const sensor_msgs::ImageConstPtr &msg);
 
+  static int64_t CalculateIntensity(const cv::Mat &img);
   void AnimationPlot();
   // std::vector<cv::Point2f> FindCorners(const cv::Mat &image);
 
@@ -53,10 +55,12 @@ class TemporalOffsetCalculate {
   ros::Subscriber frame_sub_;
 
   std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec_;
-  bool plot;
+  bool is_plot_;
+  double x_length_;
 
   ros::Time init_stamp_;
   ros::Time last_events_stamp_;
+  int64_t last_intensity_;
   double last_events_rate_;
   double last_intensity_changes_;
 
