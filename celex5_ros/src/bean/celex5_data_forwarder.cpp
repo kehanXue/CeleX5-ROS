@@ -33,7 +33,7 @@ celex5_ros::CeleX5DataForwarder::CeleX5DataForwarder(const ros::NodeHandle &nh,
 
   events_pub_ = nh_.advertise<celex5_msgs::EventVector>("events", 10);
   imu_pub_ = nh_.advertise<celex5_msgs::ImuVector>("imu_data", 10);
-  p_polarity_img_pub_ = std::make_shared<CameraPublisher>("polarity_img", 1, nh_);
+  p_polarity_img_pub_ = std::make_shared<CameraPublisher>(ros::NodeHandle(nh_, "polarity_img"), 1);
 
   // binary_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_binary_img", 10);
   // denoised_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_denoised_img", 10);;
@@ -117,39 +117,40 @@ void celex5_ros::CeleX5DataForwarder::CreateRawEventsPubThread() {
       std::unique_lock<std::mutex> lck(mu_raw_events_);
       cv_raw_events_.wait(lck);
       // ROS_WARN("Received Notified 1!!!!");
-      if (p_celex5_options_->IsRawEventsEnabled() && !vec_raw_events_.empty()) {
-        /*
-         * Publish Raw Events Data
-         */
-        // clock_t time_begin = clock();
-        CeleX5::CeleX5Mode current_mode = p_celex5_sensor_->getSensorFixedMode();
+      if (events_pub_.getNumSubscribers() > 0) {
+        if (p_celex5_options_->IsRawEventsEnabled() && !vec_raw_events_.empty()) {
+          /*
+           * Publish Raw Events Data
+           */
+          // clock_t time_begin = clock();
+          CeleX5::CeleX5Mode current_mode = p_celex5_sensor_->getSensorFixedMode();
 
-        celex5_msgs::EventVectorPtr event_vector_ptr_msg =
-            boost::make_shared<celex5_msgs::EventVector>();
-        event_vector_ptr_msg->header.stamp = ros::Time::now();
-        event_vector_ptr_msg->header.frame_id = this->frame_id_;
-        event_vector_ptr_msg->height = CELEX5_MAT_ROWS;
-        event_vector_ptr_msg->width = CELEX5_MAT_COLS;
-        event_vector_ptr_msg->vector_length = vec_raw_events_.size();
-        event_vector_ptr_msg->events.reserve(vec_raw_events_.size());
-        for (auto event_i : vec_raw_events_) {
-          celex5_msgs::Event tmp_event;
-          tmp_event.x = event_i.row;
-          tmp_event.y = event_i.col;
-          if (current_mode==CeleX5::Event_Off_Pixel_Timestamp_Mode) {
-            tmp_event.brightness = 255;
-          } else if (current_mode==CeleX5::Event_In_Pixel_Timestamp_Mode) {
-            tmp_event.brightness = 255;
-            tmp_event.in_pixel_timestamp = event_i.tInPixelIncreasing;
-          } else if (current_mode==CeleX5::Event_Intensity_Mode) {
-            tmp_event.brightness = event_i.adc;
-            tmp_event.polarity = event_i.polarity;
+          celex5_msgs::EventVectorPtr event_vector_ptr_msg =
+              boost::make_shared<celex5_msgs::EventVector>();
+          event_vector_ptr_msg->header.stamp = ros::Time::now();
+          event_vector_ptr_msg->header.frame_id = this->frame_id_;
+          event_vector_ptr_msg->height = CELEX5_MAT_ROWS;
+          event_vector_ptr_msg->width = CELEX5_MAT_COLS;
+          event_vector_ptr_msg->vector_length = vec_raw_events_.size();
+          event_vector_ptr_msg->events.reserve(vec_raw_events_.size());
+          for (auto event_i : vec_raw_events_) {
+            celex5_msgs::Event tmp_event;
+            tmp_event.x = event_i.row;
+            tmp_event.y = event_i.col;
+            if (current_mode==CeleX5::Event_Off_Pixel_Timestamp_Mode) {
+              tmp_event.brightness = 255;
+            } else if (current_mode==CeleX5::Event_In_Pixel_Timestamp_Mode) {
+              tmp_event.brightness = 255;
+              tmp_event.in_pixel_timestamp = event_i.tInPixelIncreasing;
+            } else if (current_mode==CeleX5::Event_Intensity_Mode) {
+              tmp_event.brightness = event_i.adc;
+              tmp_event.polarity = event_i.polarity;
+            }
+            tmp_event.off_pixel_timestamp = event_i.tOffPixelIncreasing;
+            event_vector_ptr_msg->events.emplace_back(tmp_event);
           }
-          tmp_event.off_pixel_timestamp = event_i.tOffPixelIncreasing;
-          event_vector_ptr_msg->events.emplace_back(tmp_event);
+          events_pub_.publish(event_vector_ptr_msg);
         }
-        events_pub_.publish(event_vector_ptr_msg);
-
         // ROS_WARN("Pub raw events vector: %lf ms", 1000.0*(clock() - time_begin)/CLOCKS_PER_SEC);
         // ROS_WARN("Received Notified 11!!!!");
       }
@@ -214,33 +215,35 @@ void celex5_ros::CeleX5DataForwarder::CreateImuDataPubThread() {
       std::unique_lock<std::mutex> lck(mu_imu_data_);
       cv_imu_data_.wait(lck);
       // ROS_WARN("Received Notified 3!!!!");
-      if (p_celex5_sensor_->isIMUModuleEnabled()) {
-        std::vector<IMUData> vec_imus;
-        p_celex5_sensor_->getIMUData(vec_imus);
-        celex5_msgs::ImuVectorPtr imu_vector_ptr_msg =
-            boost::make_shared<celex5_msgs::ImuVector>();
-        imu_vector_ptr_msg->header.stamp = ros::Time::now();
-        imu_vector_ptr_msg->header.frame_id = this->frame_id_;
-        imu_vector_ptr_msg->vector_length = vec_imus.size();
-        for (auto imu_i : vec_imus) {
-          celex5_msgs::Imu tmp_imu_msg;
-          static int seq = 0;
-          tmp_imu_msg.header.seq = seq++;
-          tmp_imu_msg.header.stamp = ros::Time::now();
-          tmp_imu_msg.header.frame_id = this->frame_id_;
-          tmp_imu_msg.gyro_x = imu_i.xGYROS;
-          tmp_imu_msg.gyro_y = imu_i.yGYROS;
-          tmp_imu_msg.gyro_z = imu_i.zGYROS;
-          tmp_imu_msg.acc_x = imu_i.xACC;
-          tmp_imu_msg.acc_y = imu_i.yACC;
-          tmp_imu_msg.acc_z = imu_i.zACC;
-          tmp_imu_msg.mag_x = imu_i.xMAG;
-          tmp_imu_msg.mag_y = imu_i.yMAG;
-          tmp_imu_msg.mag_z = imu_i.zMAG;
+      if (imu_pub_.getNumSubscribers() > 0) {
+        if (p_celex5_sensor_->isIMUModuleEnabled()) {
+          std::vector<IMUData> vec_imus;
+          p_celex5_sensor_->getIMUData(vec_imus);
+          celex5_msgs::ImuVectorPtr imu_vector_ptr_msg =
+              boost::make_shared<celex5_msgs::ImuVector>();
+          imu_vector_ptr_msg->header.stamp = ros::Time::now();
+          imu_vector_ptr_msg->header.frame_id = this->frame_id_;
+          imu_vector_ptr_msg->vector_length = vec_imus.size();
+          for (auto imu_i : vec_imus) {
+            celex5_msgs::Imu tmp_imu_msg;
+            static int seq = 0;
+            tmp_imu_msg.header.seq = seq++;
+            tmp_imu_msg.header.stamp = ros::Time::now();
+            tmp_imu_msg.header.frame_id = this->frame_id_;
+            tmp_imu_msg.gyro_x = imu_i.xGYROS;
+            tmp_imu_msg.gyro_y = imu_i.yGYROS;
+            tmp_imu_msg.gyro_z = imu_i.zGYROS;
+            tmp_imu_msg.acc_x = imu_i.xACC;
+            tmp_imu_msg.acc_y = imu_i.yACC;
+            tmp_imu_msg.acc_z = imu_i.zACC;
+            tmp_imu_msg.mag_x = imu_i.xMAG;
+            tmp_imu_msg.mag_y = imu_i.yMAG;
+            tmp_imu_msg.mag_z = imu_i.zMAG;
 
-          imu_vector_ptr_msg->imus.emplace_back(tmp_imu_msg);
+            imu_vector_ptr_msg->imus.emplace_back(tmp_imu_msg);
+          }
+          imu_pub_.publish(imu_vector_ptr_msg);
         }
-        imu_pub_.publish(imu_vector_ptr_msg);
       }
       lck.unlock();
     }

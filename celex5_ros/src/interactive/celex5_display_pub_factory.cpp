@@ -37,16 +37,19 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
 
   nh_ = ros::NodeHandle(nh, topic_name);
   // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
-  nh_.param("frame_id", frame_id_, frame_id_);
+  ros::NodeHandle nh_root("~");
+  nh_root.param("frame_id", frame_id_, frame_id_);
+
   optical_flow_pic_type_ = CeleX5::OpticalFlowPicType::Unknown_Optical_Flow_Type;
   full_frame_pic_type_ = CeleX5::FullFramePicType::Unknown_Full_Frame_Type;
   p_mutex_ = std::make_shared<std::mutex>();
+  p_publisher_ = std::make_shared<CameraPublisher>(nh_, 1);
+
+  int fps = 60;
+  nh_root.param("display_fps", fps, fps);
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
-    p_publisher_ = std::make_shared<CameraPublisher>(topic_name, 1, nh_);
-    int fps = 60;
-    nh_.param("display_fps", fps, fps);
     ros::Rate loop_rate(fps);
     p_ddyn_rec_->registerVariable<int>(topic_name + "_display_fps", fps,
                                        [&loop_rate](int new_fps) {
@@ -82,21 +85,22 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
       publish_enable_(false) {
 
   nh_ = ros::NodeHandle(nh, topic_name);
-  nh_.param("frame_id", frame_id_, frame_id_);
+  ros::NodeHandle nh_root("~");
+  nh_root.param("frame_id", frame_id_, frame_id_);
   // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
   event_pic_type_ = CeleX5::EventPicType::Unknown_Event_Type;
   full_frame_pic_type_ = CeleX5::FullFramePicType::Unknown_Full_Frame_Type;
   p_mutex_ = std::make_shared<std::mutex>();
+  p_publisher_ = std::make_shared<CameraPublisher>(nh_, 1);
+
+  // ros::NodeHandle nh_color(nh_, "color");
+  std::shared_ptr<CameraPublisher> p_colored_publisher =
+      std::make_shared<CameraPublisher>(ros::NodeHandle(nh_, "color"), 1);
+  int fps = 60;
+  nh_root.param("display_fps", fps, fps);
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
-    p_publisher_ = std::make_shared<CameraPublisher>(topic_name, 1, nh_);
-
-    // ros::NodeHandle nh_color(nh_, "color");
-    std::shared_ptr<CameraPublisher> p_colored_publisher =
-        std::make_shared<CameraPublisher>("colored_" + topic_name, 1, nh_);
-    int fps = 60;
-    nh_.param("display_fps", fps, fps);
     ros::Rate loop_rate(fps);
     p_ddyn_rec_->registerVariable<int>(topic_name + "_display_fps", fps,
                                        [&loop_rate](int new_fps) {
@@ -137,21 +141,23 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
       publish_enable_(false) {
 
   nh_ = ros::NodeHandle(nh, topic_name);
-  nh_.param("frame_id", frame_id_, frame_id_);
+  ros::NodeHandle nh_root("~");
+  nh_root.param("frame_id", frame_id_, frame_id_);
   // ROS_INFO("topic_name transfer in: %s", topic_name.c_str());
   event_pic_type_ = CeleX5::EventPicType::Unknown_Event_Type;
   optical_flow_pic_type_ = CeleX5::OpticalFlowPicType::Unknown_Optical_Flow_Type;
   p_mutex_ = std::make_shared<std::mutex>();
 
+  std::string camera_cfg_path("./");
+  nh_root.param("sensor_cfg_file_dir", camera_cfg_path, camera_cfg_path);
+  std::string parameters_url = "file://" + camera_cfg_path + "celex5_frame_parameters.yaml";
+  p_publisher_ = std::make_shared<CameraPublisher>(nh_, parameters_url, 1);
+
+  int fps = 60;
+  nh_root.param("display_fps", fps, fps);
+
   publish_thread_ = std::make_shared<std::thread>([&]() {
     ROS_INFO("Register display topic name: %s", topic_name.c_str());
-
-    std::string camera_cfg_path("./");
-    nh_.param("sensor_cfg_file_dir", camera_cfg_path, camera_cfg_path);
-    std::string parameters_url = "file://" + camera_cfg_path + "celex5_frame_parameters.yaml";
-    p_publisher_ = std::make_shared<CameraPublisher>(topic_name, 1, parameters_url, nh_);
-    int fps = 60;
-    nh_.param("display_fps", fps, fps);
     ros::Rate loop_rate(fps);
     p_ddyn_rec_->registerVariable<int>(topic_name + "_display_fps", fps,
                                        [&loop_rate](int new_fps) {

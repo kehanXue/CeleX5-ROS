@@ -46,13 +46,11 @@
 namespace celex5_ros {
 class CameraPublisher {
  public:
-  CameraPublisher(std::string image_name,
-                  int buffer_length,
-                  const ros::NodeHandle &nh = ros::NodeHandle("~"));
-  CameraPublisher(std::string image_name,
-                  int buffer_length,
+  explicit CameraPublisher(const ros::NodeHandle &nh,
+                           int buffer_length = 10);
+  CameraPublisher(const ros::NodeHandle &nh,
                   std::string parameters_file_url,
-                  const ros::NodeHandle &nh = ros::NodeHandle("~"));
+                  int buffer_length = 10);
   virtual ~CameraPublisher();
   void Publish(const cv::Mat &image,
                const std::string &encoding,
@@ -60,7 +58,7 @@ class CameraPublisher {
   bool IsSubscribed();
 
  private:
-  std::string image_name_;
+  // std::string image_name_;
   int buffer_length_;
 
   std::string parameters_file_url_;

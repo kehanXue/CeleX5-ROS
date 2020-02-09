@@ -21,34 +21,31 @@
 #include <utility>
 #include "camera_publisher.h"
 
-celex5_ros::CameraPublisher::CameraPublisher(std::string image_name,
-                                             int buffer_length,
-                                             const ros::NodeHandle &nh)
-    : image_name_(std::move(image_name)),
-      buffer_length_(buffer_length),
+celex5_ros::CameraPublisher::CameraPublisher(const ros::NodeHandle &nh,
+                                             int buffer_length)
+    : buffer_length_(buffer_length),
       nh_(nh) {
 
-  image_pub_ = nh_.advertise<sensor_msgs::Image>(image_name_, buffer_length_);
-  camera_info_pub_ = nh_.advertise<sensor_msgs::CameraInfo>(image_name_ + "/camera_info", buffer_length_);
+  image_pub_ = nh_.advertise<sensor_msgs::Image>("raw_image", buffer_length_);
+  camera_info_pub_ = nh_.advertise<sensor_msgs::CameraInfo>("camera_info", buffer_length_);
 
+  ros::NodeHandle nh_root("~");
   std::string camera_cfg_path("./");
-  nh_.param("sensor_cfg_file_dir", camera_cfg_path, camera_cfg_path);
+  nh_root.param("sensor_cfg_file_dir", camera_cfg_path, camera_cfg_path);
   parameters_file_url_ = "file://" + camera_cfg_path + "celex5_events_parameters.yaml";
   p_camera_info_ =
       std::make_shared<camera_info_manager::CameraInfoManager>(nh_, "narrow_stereo",
                                                                parameters_file_url_);
 }
 
-celex5_ros::CameraPublisher::CameraPublisher(std::string image_name,
-                                             int buffer_length,
+celex5_ros::CameraPublisher::CameraPublisher(const ros::NodeHandle &nh,
                                              std::string parameters_file_url,
-                                             const ros::NodeHandle &nh)
-    : image_name_(std::move(image_name)),
-      buffer_length_(buffer_length),
+                                             int buffer_length)
+    : buffer_length_(buffer_length),
       parameters_file_url_(std::move(parameters_file_url)),
       nh_(nh) {
-  image_pub_ = nh_.advertise<sensor_msgs::Image>(image_name_, buffer_length_);
-  camera_info_pub_ = nh_.advertise<sensor_msgs::CameraInfo>(image_name_ + "/camera_info", buffer_length_);
+  image_pub_ = nh_.advertise<sensor_msgs::Image>("raw_image", buffer_length_);
+  camera_info_pub_ = nh_.advertise<sensor_msgs::CameraInfo>("camera_info", buffer_length_);
 
   p_camera_info_ =
       std::make_shared<camera_info_manager::CameraInfoManager>(nh_, "narrow_stereo",
