@@ -28,46 +28,24 @@
 
 #include <ros/ros.h>
 #include <ddynamic_reconfigure/ddynamic_reconfigure.h>
-#include <sensor_msgs/CameraInfo.h>
+#include <celex5_msgs/EventVector.h>
 
-class ExtrinsicsCalculate {
+class TemporalOffsetCalculate {
  public:
-  explicit ExtrinsicsCalculate(const ros::NodeHandle &nh = ros::NodeHandle("~"),
-                               bool show_match = false);
-  virtual ~ExtrinsicsCalculate();
+  explicit TemporalOffsetCalculate(const ros::NodeHandle &nh = ros::NodeHandle("~"),
+                                   bool show_match = false);
+  virtual ~TemporalOffsetCalculate();
   void Process(cv::Mat image1, cv::Mat image2);
 
  private:
-  void Camera1InfoCallback(const sensor_msgs::CameraInfoConstPtr &msg);
-  void Camera2InfoCallback(const sensor_msgs::CameraInfoConstPtr &msg);
 
   std::vector<cv::Point2f> FindCorners(const cv::Mat &image);
 
   ros::NodeHandle nh_;
-  ros::Subscriber camera1_info_sub_;
-  ros::Subscriber camera2_info_sub_;
   std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec_;
   bool show_match_;
 
-  int corners_col_num_;
-  int corners_row_num_;
 
-  /*
-   * Camera intrinsics matrix
-   */
-  cv::Mat K1_;
-  cv::Mat K2_;
-  /*
-   * Camera distortion coefficients
-   */
-  cv::Mat D1_;
-  cv::Mat D2_;
-
-  /*
-   * Extrinsics between cameras
-   */
-  cv::Mat R_;
-  cv::Mat t_;
 };
 
 #endif //CELEX5_CALIBRATION_SRC_EXTRINSICS_EXTRINSICS_CALCULATE_H_

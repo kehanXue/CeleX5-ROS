@@ -22,7 +22,7 @@
 #include "sync_images.h"
 
 int main(int argc, char **argv) {
-  ros::init(argc, argv, "extrinsics_calibration_node");
+  ros::init(argc, argv, "temporal_offset_calibration_node");
   ros::NodeHandle nh("~");
   SyncImages sync_images(nh);
   ros::spin();

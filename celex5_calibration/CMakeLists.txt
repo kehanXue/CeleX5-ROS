@@ -139,7 +139,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 
 add_subdirectory(src/pattern/)
-add_subdirectory(src/extrinsics/)
+add_subdirectory(src/temporal/)
 
 # include_directories(
 # include

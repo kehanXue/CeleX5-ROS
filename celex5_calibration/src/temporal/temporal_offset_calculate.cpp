@@ -18,9 +18,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "extrinsics_calculate.h"
+#include "temporal_offset_calculate.h"
 
-ExtrinsicsCalculate::ExtrinsicsCalculate(const ros::NodeHandle &nh, bool show_match)
+TemporalOffsetCalculate::TemporalOffsetCalculate(const ros::NodeHandle &nh, bool show_match)
     : nh_(nh),
       show_match_(show_match),
       corners_col_num_(8),    // default value
@@ -31,23 +31,13 @@ ExtrinsicsCalculate::ExtrinsicsCalculate(const ros::NodeHandle &nh, bool show_ma
   p_ddyn_rec_ = std::make_shared<ddynamic_reconfigure::DDynamicReconfigure>(nh_);
   p_ddyn_rec_->registerVariable<bool>("show_match", &show_match_, "Show corners matching");
   p_ddyn_rec_->publishServicesTopics();
+}
 
-  std::string camera1_info_topic("/camera1/camera_info");
-  nh_.param("camera1_info_topic", camera1_info_topic, camera1_info_topic);
-  std::string camera2_info_topic("/camera2/camera_info");
-  nh_.param("camera2_info_topic", camera2_info_topic, camera2_info_topic);
-  camera1_info_sub_ =
-      nh_.subscribe<sensor_msgs::CameraInfo>(camera1_info_topic, 10, &ExtrinsicsCalculate::Camera1InfoCallback, this);
-  camera2_info_sub_ =
-      nh_.subscribe<sensor_msgs::CameraInfo>(camera2_info_topic, 10, &ExtrinsicsCalculate::Camera2InfoCallback, this);
+TemporalOffsetCalculate::~TemporalOffsetCalculate() {
 
 }
 
-ExtrinsicsCalculate::~ExtrinsicsCalculate() {
-
-}
-
-void ExtrinsicsCalculate::Process(cv::Mat image1, cv::Mat image2) {
+void TemporalOffsetCalculate::Process(cv::Mat image1, cv::Mat image2) {
   if (!K1_.empty() && !K2_.empty() && !D1_.empty() && !D2_.empty()) {
     auto image1_corners = FindCorners(image1);
     auto image2_corners = FindCorners(image2);
@@ -58,7 +48,7 @@ void ExtrinsicsCalculate::Process(cv::Mat image1, cv::Mat image2) {
   }
 }
 
-std::vector<cv::Point2f> ExtrinsicsCalculate::FindCorners(const cv::Mat &image) {
+std::vector<cv::Point2f> TemporalOffsetCalculate::FindCorners(const cv::Mat &image) {
   std::vector<cv::Point2f> corners;
   corners.reserve(corners_row_num_ * corners_col_num_);
   bool found = cv::findChessboardCorners(image,
@@ -74,28 +64,5 @@ std::vector<cv::Point2f> ExtrinsicsCalculate::FindCorners(const cv::Mat &image) 
   );
   cv::cornerSubPix(image, corners, cv::Size(5, 5), cv::Size(-1, -1), criteria);
   return corners;
-}
-
-void ExtrinsicsCalculate::Camera1InfoCallback(const sensor_msgs::CameraInfoConstPtr &msg) {
-  if (K1_.empty()) {
-    auto msg_k = msg->K;
-    K1_ = cv::Mat(3, 3, CV_64F, msg_k.elems);
-  }
-  if (D2_.empty()) {
-    auto msg_d = msg->D;
-    // TODO
-    D1_ = cv::Mat(msg_d);
-  }
-}
-
-void ExtrinsicsCalculate::Camera2InfoCallback(const sensor_msgs::CameraInfoConstPtr &msg) {
-  if (K2_.empty()) {
-    auto msg_k = msg->K;
-    K2_ = cv::Mat(3, 3, CV_64F, msg_k.elems);
-  }
-  if (D2_.empty()) {
-    auto msg_d = msg->D;
-    D2_ = cv::Mat(msg_d);
-  }
 }
 

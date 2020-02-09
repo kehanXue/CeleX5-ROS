@@ -31,8 +31,8 @@ find_package(catkin REQUIRED COMPONENTS
         roscpp
         sensor_msgs
         cv_bridge
-	ddynamic_reconfigure
-        )
+        ddynamic_reconfigure
+        celex5_msgs)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
@@ -159,10 +159,13 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(extrinsics_calibration_node
+add_executable(temporal_offset_calibration_node
         sync_images.h
-        sync_images.cpp extrinsics_calibration_node.cpp extrinsics_calculate.cpp extrinsics_calculate.h)
-target_link_libraries(extrinsics_calibration_node
+        sync_images.cpp
+        temporal_offset_calibration_node.cpp
+        temporal_offset_calculate.cpp
+        temporal_offset_calculate.h)
+target_link_libraries(temporal_offset_calibration_node
         ${OpenCV_LIBS}
         ${catkin_LIBRARIES}
         )
