@@ -42,10 +42,13 @@ class TemporalOffsetCalculate {
   virtual ~TemporalOffsetCalculate();
 
  private:
-  void CalculateEventsRate(const celex5_msgs::EventVectorConstPtr &msg);
-  void CalculateIntensityChanges(const sensor_msgs::ImageConstPtr &msg);
+  void EventsCallback(const celex5_msgs::EventVectorConstPtr &msg);
+  void FrameCallback(const sensor_msgs::ImageConstPtr &msg);
 
-  static int64_t CalculateIntensity(const cv::Mat &img);
+  /*
+   * Return the intensity changes between frame2 and frame1
+   */
+  static int64_t CalculateIntensityChanges(const cv::Mat &frame1, const cv::Mat &frame2);
   void AnimationPlot();
   // std::vector<cv::Point2f> FindCorners(const cv::Mat &image);
 
@@ -60,7 +63,7 @@ class TemporalOffsetCalculate {
 
   ros::Time init_stamp_;
   ros::Time last_events_stamp_;
-  int64_t last_intensity_;
+  cv::Mat last_frame_;
   double last_events_rate_;
   double last_intensity_changes_;
 

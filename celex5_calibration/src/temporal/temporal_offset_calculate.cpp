@@ -41,8 +41,7 @@
 TemporalOffsetCalculate::TemporalOffsetCalculate(const ros::NodeHandle &nh)
     : nh_(nh),
       is_plot_(true),
-      x_length_(20),
-      last_intensity_(-1) {
+      x_length_(20) {
 
   init_stamp_ = ros::Time::now();
   last_events_stamp_ = init_stamp_;
@@ -51,12 +50,12 @@ TemporalOffsetCalculate::TemporalOffsetCalculate(const ros::NodeHandle &nh)
   std::string events_topic("/events");
   nh_.param("events_topic", events_topic, events_topic);
   events_sub_ = nh_.subscribe<celex5_msgs::EventVector>(events_topic, 1,
-                                                        &TemporalOffsetCalculate::CalculateEventsRate,
+                                                        &TemporalOffsetCalculate::EventsCallback,
                                                         this);
   std::string frame_topic("/frame");
   nh_.param("frame_topic", frame_topic, frame_topic);
   frame_sub_ = nh_.subscribe<sensor_msgs::Image>(frame_topic, 1,
-                                                 &TemporalOffsetCalculate::CalculateIntensityChanges,
+                                                 &TemporalOffsetCalculate::FrameCallback,
                                                  this);
 
   p_ddyn_rec_ = std::make_shared<ddynamic_reconfigure::DDynamicReconfigure>(nh_);
@@ -69,38 +68,40 @@ TemporalOffsetCalculate::~TemporalOffsetCalculate() {
 
 }
 
-void TemporalOffsetCalculate::CalculateEventsRate(const celex5_msgs::EventVectorConstPtr &msg) {
+void TemporalOffsetCalculate::EventsCallback(const celex5_msgs::EventVectorConstPtr &msg) {
   // ROS_WARN("Get callback!");
   vec_events_rate_stamps_.emplace_back((msg->header.stamp - init_stamp_).toSec());
   ros::Duration duration = msg->header.stamp - last_events_stamp_;
-  double events_rate = (msg->events.size() / duration.toSec());
+  double events_rate = std::log((msg->events.size() / duration.toSec()));
   vec_events_rate_history_.emplace_back(events_rate);
   AnimationPlot();
   last_events_stamp_ = msg->header.stamp;
 }
 
-void TemporalOffsetCalculate::CalculateIntensityChanges(const sensor_msgs::ImageConstPtr &msg) {
+void TemporalOffsetCalculate::FrameCallback(const sensor_msgs::ImageConstPtr &msg) {
   cv::Mat current_frame = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8)->image; // TODO encoding
   cv::cvtColor(current_frame, current_frame, cv::COLOR_RGB2GRAY);
-  if (last_intensity_ == -1) {
+  if (last_frame_.empty()) {
     // Didn't initial
-    last_intensity_ = CalculateIntensity(current_frame);
+    last_frame_ = current_frame;
     return;
   } else {
-    int64_t current_intensity = CalculateIntensity(current_frame);
-    int64_t intensity_changes = std::abs(current_intensity - last_intensity_);
+    int64_t intensity_changes = std::log(CalculateIntensityChanges(last_frame_, current_frame));
     vec_intensity_changes_stamps_.emplace_back((msg->header.stamp - init_stamp_).toSec());
     vec_intensity_changes_history_.emplace_back(intensity_changes);
     AnimationPlot();
-    last_intensity_ = current_intensity;
+    last_frame_ = current_frame;
   }
 }
 
-int64_t TemporalOffsetCalculate::CalculateIntensity(const cv::Mat &img) {
+int64_t TemporalOffsetCalculate::CalculateIntensityChanges(const cv::Mat &frame1, const cv::Mat &frame2) {
   int64_t intensity = 0;
-  for (int i = 0; i < img.rows; ++i) {
-    for (int j = 0; j < img.cols; ++j) {
-      intensity += static_cast<int64_t>(img.at<uchar>(i, j));
+  if (frame1.rows != frame2.rows || frame1.cols != frame2.cols) {
+    return -1;
+  }
+  for (int i = 0; i < frame2.rows; ++i) {
+    for (int j = 0; j < frame2.cols; ++j) {
+      intensity += static_cast<int64_t>(std::abs(frame2.at<uchar>(i, j) - frame1.at<uchar>(i, j)));
     }
   }
   return intensity;
