@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 2.8.3)
-project(celex5_calibration)
+project(event_registration)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++14)
@@ -30,14 +30,27 @@ find_package(catkin REQUIRED COMPONENTS
         message_filters
         roscpp
         sensor_msgs
+        cv_bridge
         ddynamic_reconfigure
-        )
+        celex5_msgs)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIR})
+
+find_package(PCL REQUIRED COMPONENT common io)
+include_directories(${PCL_INCLUDE_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+
 find_package(OpenCV 3 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${catkin_INCLUDE_DIRS})
+
+# For matplotlib-cpp
+#find_package(Python2 COMPONENTS Development NumPy)
+find_package(PythonLibs 2.7)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -124,12 +137,12 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-        #  INCLUDE_DIRS include
-        #  LIBRARIES celex5_calibration
-        CATKIN_DEPENDS message_filters roscpp sensor_msgs
-        #  DEPENDS system_lib
-)
+# catkin_package(
+#  INCLUDE_DIRS include
+#  LIBRARIES celex5_calibration
+# CATKIN_DEPENDS message_filters roscpp sensor_msgs
+#  DEPENDS system_lib
+# )
 
 ###########
 ## Build ##
@@ -138,14 +151,11 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 
-add_subdirectory(src/pattern/)
-add_subdirectory(src/temporal/)
-add_subdirectory(src/registration/)
 
-# include_directories(
-# include
-#   ${catkin_INCLUDE_DIRS}
-# )
+include_directories(
+        ../../third_party/
+        ${catkin_INCLUDE_DIRS}
+)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -160,8 +170,19 @@ add_subdirectory(src/registration/)
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/celex5_calibration_node.cpp)
-
+add_executable(event_registration_node
+        event_registration_node.cpp
+        event_registration.h
+        event_registration.cpp)
+#target_include_directories(temporal_offset_calibration_node PRIVATE ${Python2_INCLUDE_DIRS} ${Python2_NumPy_INCLUDE_DIRS})
+target_include_directories(event_registration_node PRIVATE ${PYTHON_INCLUDE_DIRS})
+target_link_libraries(event_registration_node
+        ${OpenCV_LIBS}
+        ${catkin_LIBRARIES}
+        ${PYTHON_LIBRARIES}
+        ${PCL_LIBRARIES})
+#        Python2::Python
+#        Python2::NumPy)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use

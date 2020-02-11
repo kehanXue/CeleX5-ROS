@@ -7,6 +7,7 @@
     <include file="$(find zed_wrapper)/launch/zed.launch"/>
     <include file="$(find celex5_ros)/launch/celex5_ros_node.launch"/>
 
+    <!--
     <node pkg="celex5_calibration"
           name="temporal_offset_calibration_node"
           type="temporal_offset_calibration_node"
@@ -16,4 +17,5 @@
         <param name="events_topic" type="string" value="$(arg events_topic)"/>
         <param name="store_dir" type="string" value="$(arg store_dir)"/>
     </node>
+    -->
 </launch>
