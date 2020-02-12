@@ -2,23 +2,25 @@
 
 # CeleX5-ROS
 
-> The ROS package for CeleX™ CeleX5-MIPI Dynamic Vision Sensor.
+> The ROS packages for CeleX™ CeleX5-MIPI Dynamic Vision Sensor.
 
-- [Overview](#overview)
-- [Features](#features)
-- [Build and Run](#build-and-run)
-- [Running Demo](#running-demo)
-- [Known Issues](#known-issues)
+This repository provides several functional packages and examples of CeleX5-MIPI Event-based Camera under ROS, including:
 
-## Overview
+- [`celex5_ros`](celex5_ros): provides a more perfect driver under ROS of CeleX5-MIPI Event-based Camera.
+- [`celex5_msgs`](celex5_msgs): ROS message types for CeleX5-MIPI.
+- [`celex5_calibration`](celex5_calibration): provides tools and tutorials related to the calibration of CeleX5-MIPI, based on events data.
+
+[Introduction](#introduction)
+
+[Overview](#overview)
+
+[Build and Run](#build-and-run)
+
+[Known Issues](#known-issues)
+
+# Introduction
 
 <img src="assets/242069421.jpg" height="300" alt="CeleX5-MIPI"/>
-
-This repository provides a complete ROS example of the [CeleX5-MP](http://www.celepixel.com/#/Samples) series [Event-based Camera](https://en.wikipedia.org/wiki/Event_camera)). You can freely configure and output multiple channels of data (raw event data, IMU data, grayscale frames, optical flow information, etc.) according to your needs, and provide the `rqt_reconfigure` panel to support dynamic parameter configuration.
-
-*Currently only tested on CeleX5-MIPI products. Other series of CeleX5 are not tested because I have no such equipments.*
-
-<img src="assets/Screenshot from 2020-01-22 21-16-52.png" style="zoom:80%;" />
 
 CeleX™ is a family of smart image sensor specially designed for machine vision. Each pixel in CeleX™ sensor can individually monitor the relative change in light intensity and report an event if it reaches a certain threshold. Asynchronous row and column arbitration circuits process the pixel requests and make sure only one request is granted at a time in fairly manner when they received multiple simultaneous requests. The output of the sensor is not a frame, but a stream of asynchronous digital events. The speed of the sensor is not limited by any traditional concept such as exposure time and frame rate. It can detect fast motion which is traditionally captured by expensive, high speed cameras running at thousands of frames per second, but with drastic reduced amount of data.
 
@@ -29,31 +31,25 @@ CeleX-5 is a multifunctional smart image sensor with **1Mega-pixels**(1280*800) 
 1. The official SDK version has been updated to v2.0, however the version supported by its ROS-Sample remains at v1.6.
 2. The official ROS-Sample is just a simple example. It only outputs an image in a working mode. It does not provide a comprehensive and convenient parameter configuration function and interface.
 
-Therefore, I have developed a more comprehensive CeleX5-ROS package v1.0 in the past week.
+***Therefore, in order to make more convenient use of the resources provided by ROS, I developed the content in this repository.***
+
+# Overview
+
+This repository provides several functional packages and examples of CeleX5-MIPI Event-based Camera under ROS, including:
+
+- [`celex5_ros`](celex5_ros): A more perfect driver under ROS of CeleX5-MIPI Event-based Camera. You can freely configure and output multiple channels of data (raw event data, IMU data, grayscale frames, optical flow information, etc.) according to your needs, and provide the `rqt_reconfigure` panel to support dynamic parameter configuration. [More details](celex5_ros)
+
+  <img src="assets/Screenshot from 2020-01-22 21-16-52.png" width="800" />
+
+  *Currently only tested on CeleX5-MIPI products. Other series of CeleX5 are not tested because I have no such equipments.*
+
+- [`celex5_msgs`](celex5_msgs): ROS message types for CeleX5-MIPI.
+
+- [`celex5_calibration`](celex5_calibration): provides tools and tutorials related to the calibration of CeleX5-MIPI, based on events data. Including calibration board generation (currently only support the blinking checkerboard, other types to be added), intrinsics calibration, extrinsics calibration with another traditional frame camera (using [Kalibr](https://github.com/ethz-asl/kalibr)), synchronous collection and publishing of image data required for calibration, time stamp alignment with traditional camera (*TODO*, existing problems) and other tools. [More details](celex5_calibration)
+
+  <img src="assets/Screenshot from 2020-02-12 21-02-32.png" width="600" />
 
 *It is recommended that you read the concept section of the [CeleX_SDK_Getting_Started_Guide](https://github.com/CelePixel/CeleX5-MIPI/blob/master/Documentation/CeleX_SDK_Getting_Started_Guide_EN.pdf) and [CeleX5_SDK_Reference](https://github.com/CelePixel/CeleX5-MIPI/blob/master/Documentation/CeleX5_SDK_Reference_EN.pdf) documentation provided by CeleX carefully before using it, and have a general understanding of basic terminology.*
-
-## Features
-
-1. Based on the dynamic parameter reconfiguration mechanism provided by `ddynamic_reconfigure`, this ROS sample provides the interface interface of CeleX5 parameters configuration, covering almost all parameters. You can also freely configure the data you want to output and its fps.
-
-   <img src="assets/Screenshot from 2020-01-22 21-22-20.png" style="zoom:80%;" />
-
-2. Currently supports five working modes of CeleX5-MIPI:
-
-   | Sensor Mode                    | Data Types Output by SDK                                     |
-   | ------------------------------ | ------------------------------------------------------------ |
-   | Full-Picture Mode              | Full Pic Buffer/Mat (traditional grayscale image frames)     |
-   | Event Off-Pixel Timestamp Mode | Event Binary Pic Buffer/Mat<br/>Event Denoised Pic Buffer/Mat<br/>Event Count Pic Buffer/Mat<br/>Event Vector<row, col, off-pixel timestamp> |
-   | Event In-Pixel Timestamp Mode  | Event Optical-flow Pic Buffer/Mat<br/>Event Binary Pic Buffer/Mat<br/>Event Vector<row, col, in-pixel timestamp, off-pixel<br/>timestamp> |
-   | Event Intensity Mode           | Event Binary Pic Buffer/Mat<br/>Event Gray Pic Buffer/Mat<br/>Event Count Pic Buffer/Mat<br/>Event Accumulated Pic Buffer/Mat<br/>Event Superimposed Pic Buffer/Mat<br/>Event Vector<row, col, brightness, polarity, off-pixel<br/>timestamp> |
-   | Optical-Flow Mode              | Event Optical-flow Pic Buffer/Mat<br/>Event Optical-flow Direction Pic Buffer/Mat<br/>Event Optical-flow Speed Pic Buffer/Mat<br/>Event Binary Pic Buffer/Mat |
-
-3. Support **loop_mode** mode, which can switch between three modes.
-
-4. The source code of the official SDK was added to the project (so there is no need to separately compile the official SDK in advance and put it in the specified path), and fixed the problem of the fixed path to load the camera cfg file (cfg_mp/cfg_mp_wire) in the official SDK, and kept the previous SDK version compatible.
-
-5. (The provided `nodelet` version can make the implementation achieve zero-copy consumption in the case of large amount of data. But there are still bugs, see the end of the article.)
 
 ## Build and Run
 
@@ -63,81 +59,117 @@ Therefore, I have developed a more comprehensive CeleX5-ROS package v1.0 in the 
    mkdir -p ~/celex_ws/src
    cd ~/celex_ws/src
    git clone git@github.com:kehanXue/CeleX5-ROS.git
+   git submodule update --init --recursive
    # Or with http: `git clone https://github.com/kehanXue/CeleX5-ROS.git`
    cd ..
    rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
    catkin_make # Or use `catkin build`
    ```
 
-2. Run
+   If the building process reports the errors of which dependent libraries are missing, install them.
+
+2. Run `celex5_ros`. [More details](celex5_ros)
 
    First plug the sensor into your computer.
-   
+
    ```bash
    source ~/celex_ws/devel/setup.bash # Or source setup.zsh when you use zsh
    roslaunch celex5_ros celex5_ros_node.launch
    # In a new Terminal
    rosrun rqt_reconfigure rqt_reconfigure # Open rqt_reconfigure to config
    ```
-   
+
    If the program runs without error, you have run successfully. Use `rostopic list` to see published topics, and use` rivz` or `image_view` to subscribe to corresponding image topics to see published images. Whether to publish data to an image topic is determined by both the whether display parameter configuration and the sensor current working mode.
-   
+
    ```bash
-   $ rostopic list 
-   /celex5_mipi/display/accumulated_img
-   /celex5_mipi/display/binary_img
-   /celex5_mipi/display/colored_optical_flow_direction_img
-   /celex5_mipi/display/colored_optical_flow_img
-   /celex5_mipi/display/colored_optical_flow_speed_img
-   /celex5_mipi/display/count_img
-   /celex5_mipi/display/denoised_binary_img
-   /celex5_mipi/display/full_frame_img
-   /celex5_mipi/display/gray_img
-   /celex5_mipi/display/in_pixel_img
-   /celex5_mipi/display/optical_flow_direction_img
-   /celex5_mipi/display/optical_flow_img
-   /celex5_mipi/display/optical_flow_speed_img
+   $ rostopic list
+   /celex5_mipi/display/accumulated_img/camera_info
+   /celex5_mipi/display/accumulated_img/raw_image
+   /celex5_mipi/display/binary_img/camera_info
+   /celex5_mipi/display/binary_img/raw_image
+   /celex5_mipi/display/count_img/camera_info
+   /celex5_mipi/display/count_img/raw_image
+   /celex5_mipi/display/denoised_binary_img/camera_info
+   /celex5_mipi/display/denoised_binary_img/raw_image
+   /celex5_mipi/display/full_frame_img/camera_info
+   /celex5_mipi/display/full_frame_img/raw_image
+   /celex5_mipi/display/gray_img/camera_info
+   /celex5_mipi/display/gray_img/raw_image
+   /celex5_mipi/display/in_pixel_img/camera_info
+   /celex5_mipi/display/in_pixel_img/raw_image
+   /celex5_mipi/display/optical_flow_direction_img/camera_info
+   /celex5_mipi/display/optical_flow_direction_img/raw_image
+   /celex5_mipi/display/optical_flow_img/camera_info
+   /celex5_mipi/display/optical_flow_img/raw_image
+   /celex5_mipi/display/optical_flow_speed_img/camera_info
+   /celex5_mipi/display/optical_flow_speed_img/raw_image
    /celex5_mipi/display/parameter_descriptions
    /celex5_mipi/display/parameter_updates
-   /celex5_mipi/display/superimposed_img
+   /celex5_mipi/display/superimposed_img/camera_info
+   /celex5_mipi/display/superimposed_img/raw_image
    /celex5_mipi/events
    /celex5_mipi/imu_data
-   /celex5_mipi/polarity_img
+   /celex5_mipi/polarity_img/camera_info
+   /celex5_mipi/polarity_img/raw_image
    /celex5_mipi/sensor/parameter_descriptions
    /celex5_mipi/sensor/parameter_updates
    /rosout
    /rosout_agg
    ```
-   
+
    Topic of raw events data: `/celex5_mipi/events`
-   
-   Topic of imu data: `/celex5_mipi/imu_data` . *Note that the ROS message type of imu topic is different from the standard IMU message type (sensor_msgs/Imu) in ROS due to the way of obtaining the raw imu data of CeleX5*
-   
+
+   Topic of imu data: `/celex5_mipi/imu_data` . *Note that the ROS message type of imu topic is different from the standard IMU message type (sensor_msgs/Imu) in ROS due to the way of obtaining the raw imu data of CeleX5.*
+
    View an image via `image_view`:
-   
+
    ```bash
-   rosrun image_view image_view image:=/celex5_mipi/display_binary_img
+   rosrun image_view image_view image:=/celex5_mipi/display/binary_img/raw_image
    ```
 
-## Running Demo
+3. Run `celex5_calibration`. [More details](celex5_calibration)
 
-After successfully running through the above steps, it was used by configuring parameters in `rqt_reconfigure`.
+   A series of methods and tools for camera parameter calibration based on events data are provided.
 
-1. Obtain the **Polarized Event Frame** and **Superimposed Frame** (superimposes event binary picture onto event accumulated picture) in the **Event Intensity Mode**: 
+   - Pattern generator (blinking chessboard). [More details](celex5_calibration/src/pattern)
 
-   <img src="assets/Screenshot from 2020-01-31 23-57-10.png" style="zoom:100%;" />
-   
-2. The **Full-frame Optical-flow Frame,  the Speed Frame and Direction Frame** (each pixel calculated on the optical flow raw frame) when in **Optical-flow Mode**.
+     Run:
 
-   <img src="assets/Screenshot from 2020-01-22 21-20-36.png" style="zoom:80%;" />
+     ```bash
+     rosrun celex5_ros pattern_generator_node
+     # In a new Terminal
+     rosrun rqt_reconfigure rqt_reconfigure #  Open rqt_reconfigure to config
+     ```
 
-3. Work in loop mode, loop in three working modes (**Full-Picture Mode, Event Off-Pixel Timestamp Mode, Optical-flow Mode**). Pictures from left to right, top to bottom: original **Binary Event Frame, Optical-flow Frame and Traditional Image Gray Frame)**:
+   - Intrinsics calibration based on [camera_calibration](http://wiki.ros.org/camera_calibration/Tutorials) toolkit in ROS. (if you want to calibrate the external parameters of other cameras, this tool in ROS only supports the same resolution...) 
 
-   <img src="assets/Screenshot from 2020-01-22 21-16-52.png" style="zoom:80%;" />
+     Install:
+
+     ```bash
+     sudo apt install ros-$ROS_DISTRO-camera-calibration
+     ```
+
+     The detailed tutorials: [link](celex5_calibration/src/intrinsics_extrinsics/pkg_camera_calibration)
+
+   - Based on [Kalibr](https://github.com/ethz-asl/kalibr) toolkit, which supports both intrinsics calibration and extrinsics calibration with another (traditional or event-based) cameras, in different resolutions. Event data based method. 
+
+     The detailed tutorials: [link](celex5_calibration/src/intrinsics_extrinsics/kalibr)
+
+     Also provides a series of tools to collect calibration data of CeleX5-MIPI Camera.
+
+   - Time stamp calibration with another camera.
+
+     *TODO*, existing problems. [link](celex5_calibration/src/temporal)
 
 ## Known Issues
 
-1. The implementation of the [Nodelet](http://wiki.ros.org/nodelet) interface still has problems (the ros node version has no problem). During the process of loading the camera's parameter file through the nodelet, **parsed xml files will be garbled**. I haven't found the problem for a long time. If you provide suggestions, I will be very grateful.
-2. Regarding the `Multi_Read_Optical_Flow_Mode` mode in the document, no relevant interface was found in the SDK. 
-3. The function of generating FPN has not been added yet, please still use the official GUI Demo provided by CeleX™ to generate FPN (Demo running under Linux may report `Segmentation fault (core dumped)` errors directly. It is more stable under Windows).
-4. The function of recording bin files use CeleX™ SDK is not provided for now, but under ROS we can use ROS bag for recording.
+**celex5_ros**
+
+- The implementation of the [Nodelet](http://wiki.ros.org/nodelet) interface still has problems (the ros node version has no problem). During the process of loading the camera's parameter file through the nodelet, **parsed xml files will be garbled**. I haven't found the problem for a long time. If you provide suggestions, I will be very grateful.
+- Regarding the `Multi_Read_Optical_Flow_Mode` mode in the document, no relevant interface was found in the SDK. 
+- The function of generating FPN has not been added yet, please still use the official GUI Demo provided by CeleX™ to generate FPN (The GUI Demo running under Linux may report `Segmentation fault (core dumped)` errors directly. It is more stable under Windows).
+- The function of recording bin files use CeleX™ SDK is not provided for now, but under ROS we can use ROS bag for recording.
+
+**celex5_calibration**
+
+- The time stamp calibration with another camera.
