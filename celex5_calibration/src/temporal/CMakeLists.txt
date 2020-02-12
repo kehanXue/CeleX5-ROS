@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 2.8.3)
-project(celex5_extrinsics_calibration)
+project(celex5_temporal_offset_calibration)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++14)
@@ -164,8 +164,6 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(temporal_offset_calibration_node
-        sync_images.h
-        sync_images.cpp
         temporal_offset_calibration_node.cpp
         temporal_offset_calculate.cpp
         temporal_offset_calculate.h)

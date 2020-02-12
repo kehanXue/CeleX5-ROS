@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <launch>
     <arg name="frame_topic" default="/zed/zed_node/left/image_rect_color"/>
-    <arg name="events_topic" default="/celex5_mipi/events"/>
+    <arg name="events_topic" default="/celex5_mipi/display/binary_img/raw_image"/>
     <arg name="store_dir" default="$(find celex5_calibration)/output/"/>
 
     <include file="$(find zed_wrapper)/launch/zed.launch"/>
@@ -9,8 +9,8 @@
 
     <!--    &lt;!&ndash;-->
     <node pkg="celex5_calibration"
-          name="temporal_offset_calibration_node"
-          type="temporal_offset_calibration_node"
+          name="extrinsics_calibration_node"
+          type="extrinsics_calibration_node"
           output="screen"
           required="true">
         <param name="frame_topic" type="string" value="$(arg frame_topic)"/>

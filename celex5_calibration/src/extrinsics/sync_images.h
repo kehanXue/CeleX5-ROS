@@ -31,6 +31,7 @@
 #include <message_filters/sync_policies/approximate_time.h>
 #include <sensor_msgs/Image.h>
 #include <cv_bridge/cv_bridge.h>
+#include <ddynamic_reconfigure/ddynamic_reconfigure.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -50,6 +51,8 @@ class SyncImages {
   std::shared_ptr<MfImageSub> p_frame_sync_sub_;
   std::shared_ptr<MfImageSub> p_events_sync_sub_;
 
+  std::shared_ptr<ddynamic_reconfigure::DDynamicReconfigure> p_ddyn_rec_;
+  bool save_;
   // ros::Subscriber frame_sub_;
   // ros::Subscriber events_sub_;
 

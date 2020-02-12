@@ -19,11 +19,11 @@
  */
 
 #include <ros/ros.h>
-#include "temporal_offset_calculate.h"
+#include "sync_images.h"
 
 int main(int argc, char **argv) {
-  ros::init(argc, argv, "temporal_offset_calibration_node");
+  ros::init(argc, argv, "extrinsics_calibration_node");
   ros::NodeHandle nh("~");
-  TemporalOffsetCalculate temporal_offset_calculate(nh);
+  SyncImages sync_images(nh);
   ros::spin();
 }
