@@ -146,7 +146,7 @@ find_package(PythonLibs 2.7)
 
 
 include_directories(
-        ../../third_party/
+        ../../../third_party
         ${catkin_INCLUDE_DIRS}
 )
 

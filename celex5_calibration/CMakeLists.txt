@@ -141,7 +141,7 @@ catkin_package(
 add_subdirectory(src/pattern/)
 add_subdirectory(src/temporal/)
 add_subdirectory(src/registration/)
-add_subdirectory(src/extrinsics/)
+add_subdirectory(src/intrinsics_extrinsics/kalibr)
 
 # include_directories(
 # include
