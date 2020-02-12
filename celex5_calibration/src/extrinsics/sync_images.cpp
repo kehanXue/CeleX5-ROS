@@ -30,6 +30,7 @@ SyncImages::SyncImages(const ros::NodeHandle &nh)
    * Create a new clean directory to store images
    */
   nh_.param("store_dir", store_dir_, store_dir_);
+  // TODO Fix bugs, doesn't work.
   // if (!boost::filesystem::is_empty(store_dir_)) {
   //   boost::filesystem::remove_all(store_dir_);
   // }

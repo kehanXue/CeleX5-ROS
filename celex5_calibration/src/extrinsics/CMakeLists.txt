@@ -163,16 +163,24 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(extrinsics_calibration_node
+add_executable(store_sync_images_node
         sync_images.h
         sync_images.cpp
-        extrinsics_calibration_node.cpp)
+        store_sync_images_node.cpp)
 #target_include_directories(temporal_offset_calibration_node PRIVATE ${Python2_INCLUDE_DIRS} ${Python2_NumPy_INCLUDE_DIRS})
-target_include_directories(extrinsics_calibration_node PRIVATE ${PYTHON_INCLUDE_DIRS})
-target_link_libraries(extrinsics_calibration_node
+target_include_directories(store_sync_images_node PRIVATE ${PYTHON_INCLUDE_DIRS})
+target_link_libraries(store_sync_images_node
         ${OpenCV_LIBS}
         ${catkin_LIBRARIES}
         ${PYTHON_LIBRARIES})
+
+add_executable(pub_stored_sync_images_node
+        pub_stored_sync_images_node.cpp
+        pub_stored_sync_images.h
+        pub_stored_sync_images.cpp)
+target_link_libraries(pub_stored_sync_images_node
+        ${OpenCV_LIBS}
+        ${catkin_LIBRARIES})
 #        Python2::Python
 #        Python2::NumPy)
 ## Rename C++ executable without prefix

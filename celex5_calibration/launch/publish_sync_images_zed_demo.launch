@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<launch>
+    <arg name="camera1" default="frame"/>
+    <arg name="camera2" default="events"/>
+    <arg name="camera1_dir" default="$(find celex5_calibration)/output/$(arg camera1)/"/>
+    <arg name="camera2_dir" default="$(find celex5_calibration)/output/$(arg camera2)/"/>
+    <arg name="image1_topic_name" default="/$(arg camera1)/raw_image"/>
+    <arg name="image2_topic_name" default="/$(arg camera2)/raw_image"/>
+
+
+    <!--    &lt;!&ndash;-->
+    <node pkg="celex5_calibration"
+          name="pub_stored_sync_images_node"
+          type="pub_stored_sync_images_node"
+          output="screen"
+          required="true">
+        <param name="camera1_dir" type="string" value="$(arg camera1_dir)"/>
+        <param name="camera2_dir" type="string" value="$(arg camera2_dir)"/>
+        <param name="image1_topic_name" type="string" value="$(arg image1_topic_name)"/>
+        <param name="image2_topic_name" type="string" value="$(arg image2_topic_name)"/>
+    </node>
+    <!--    &ndash;&gt;-->
+</launch>
