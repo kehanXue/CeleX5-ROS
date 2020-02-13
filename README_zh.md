@@ -10,6 +10,8 @@
 - `celex5_msgs`：为CeleX5-MIPI相机定制的ROS消息类型。
 - `celex5_calibration`：提供了有关于`celex5_calibration`基于Events数据进行标定相关的工具和教程。
 
+***本仓库代码主要遵从[Google C++ 编程风格](https://google.github.io/styleguide/cppguide.html)***
+
 [介绍](#介绍)
 
 [概要](#概要)
