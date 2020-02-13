@@ -10,6 +10,8 @@ This repository provides several functional packages and examples of CeleX5-MIPI
 - [`celex5_msgs`](celex5_msgs): ROS message types for CeleX5-MIPI.
 - [`celex5_calibration`](celex5_calibration): provides tools and tutorials related to the calibration of CeleX5-MIPI, based on events data.
 
+***The code in this repository mainly follows the [Google C++ Style](https://google.github.io/styleguide/cppguide.html).***
+
 [Introduction](#introduction)
 
 [Overview](#overview)
