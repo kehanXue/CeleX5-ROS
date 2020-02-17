@@ -22,6 +22,9 @@
 #define CELEX5_CALIBRATION_SRC_REGISTRATION_EVENT_REGISTRATION_H_
 
 #include <boost/thread.hpp>
+#include <thread>
+#include <condition_variable>
+#include <mutex>
 
 #include <ros/ros.h>
 #include <message_filters/subscriber.h>
@@ -38,7 +41,7 @@
 
 class EventRegistration {
  public:
-  EventRegistration(const ros::NodeHandle &nh);
+  explicit EventRegistration(const ros::NodeHandle &nh);
   virtual ~EventRegistration();
 
  private:
@@ -60,6 +63,8 @@ class EventRegistration {
   typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> SyncPolicy;
   std::shared_ptr<message_filters::Synchronizer<SyncPolicy>> p_sync_;
 
+  cv::Mat rgb_frame_;
+  cv::Mat depth_frame_;
   cv::Mat rgb_on_events_frame_;
 
   Eigen::Isometry3d T_;
@@ -69,6 +74,10 @@ class EventRegistration {
   Eigen::Matrix3d events_K_;
   cv::Mat events_D_;
   bool events_info_initialed;
+
+  std::shared_ptr<std::thread> p_thread_process_;
+  std::condition_variable cv_new_frame_;
+  std::mutex mu_new_frame_;
 };
 
 #endif //CELEX5_CALIBRATION_SRC_REGISTRATION_EVENT_REGISTRATION_H_
