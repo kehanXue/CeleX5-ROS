@@ -24,6 +24,14 @@
 int main(int argc, char **argv) {
   ros::init(argc, argv, "event_registration_node");
   ros::NodeHandle nh("~");
+
+  // TicToc t_start;
+  // ros::Time start = ros::Time::now();
+  // for (int i = 0; i < 2280 * 1242; ++i) {
+  //   double b = 1.2 * 3;
+  // }
+  // std::cout << (ros::Time::now() - start).toSec() << std::endl;
+  // std::cout << t_start.toc() << std::endl;
   EventRegistration event_registration(nh);
   ros::spin();
 }

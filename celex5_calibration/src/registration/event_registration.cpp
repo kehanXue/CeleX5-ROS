@@ -84,46 +84,41 @@ EventRegistration::EventRegistration(const ros::NodeHandle &nh)
 
         rgb_on_events_frame_ = cv::Mat(800, 1280, CV_8UC3, cv::Scalar::all(0));
 
-        Eigen::Matrix3d rgb_K_inverse = rgb_K_.inverse();
-        std::cout << rgb_K_inverse << std::endl;
-        // for (int v = 0; v < depth_frame_.rows; ++v) {
-        //   for (int u = 0; u < depth_frame_.cols; ++u) {
-        int cnt = 0;
-        for (int v = 0; v < depth_frame_.rows; v += 5) {
-          for (int u = 0; u < depth_frame_.cols; u += 5) {
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> pixel_data(3, depth_frame_.rows * depth_frame_.cols);
+        int index = 0;
+        for (int v = 0; v < depth_frame_.rows; ++v) {
+          for (int u = 0; u < depth_frame_.cols; ++u) {
+            pixel_data(0, index) = static_cast<double>(u) * depth_frame_.at<float>(v, u);
+            pixel_data(1, index) = static_cast<double>(v) * depth_frame_.at<float>(v, u);
+            pixel_data(2, index) = static_cast<double>(depth_frame_.at<float>(v, u));
+            index++;
+          }
+        }
 
-            ros::Time start_time = ros::Time::now();
+        pixel_data = events_K_ * T_ * (rgb_K_.colPivHouseholderQr().solve(pixel_data));
 
-            auto depth = depth_frame_.at<float>(v, u);
-            if (depth == 0) {
-              return;
+        index = 0;
+        for (int v = 0; v < depth_frame_.rows; ++v) {
+          for (int u = 0; u < depth_frame_.cols; ++u) {
+            if (pixel_data(2, index) == 0) {
+              index++;
+              continue;
             }
 
-            // auto depth = static_cast<float>(depth_frame_.at<float>(v, u));
-            Eigen::Vector3d points_in_rgb_world =
-                // static_cast<double>(depth) * rgb_K_.colPivHouseholderQr().solve(Eigen::Vector3d(u, v, 1));
-                static_cast<double>(depth) * rgb_K_inverse * Eigen::Vector3d(u, v, 1);
-            Eigen::Vector3d points_in_events_world = T_ * points_in_rgb_world;
-            Eigen::Vector3d uv_in_events = static_cast<double>(1 / depth) * events_K_ * points_in_events_world;
-            if (uv_in_events[2] == 0) {
-              return;
-            }
-            uv_in_events = uv_in_events / uv_in_events[2];
-            std::cout << "[u, v, 1] in Event Camera:" << std::endl << uv_in_events << std::endl << std::endl;
-            std::cout << "Pixel count: " << cnt++ << std::endl;
-            int u_in_events = std::ceil(uv_in_events[0]);
-            int v_in_events = std::ceil(uv_in_events[1]);
+            /*
+             * Normalization
+             */
+            int v_in_events = std::ceil(pixel_data(1, index) / pixel_data(2, index));
+            int u_in_events = std::ceil(pixel_data(0, index) / pixel_data(2, index));
+
             if ((v_in_events < rgb_on_events_frame_.rows && v_in_events >= 0) &&
                 (u_in_events < rgb_on_events_frame_.cols && u_in_events >= 0)) {
               rgb_on_events_frame_.at<cv::Vec3b>(v_in_events, u_in_events) = rgb_frame_.at<cv::Vec3b>(v, u);
-              // rgb_on_events_frame_.at<cv::Vec3b>(u_in_events, v_in_events)[1] = rgb_frame_.at<cv::Vec3b>(u, v)[1];
-              // rgb_on_events_frame_.at<cv::Vec3b>(u_in_events, v_in_events)[2] = rgb_frame_.at<cv::Vec3b>(u, v)[2];
             }
-
-            std::cout << "Time cost: " << (ros::Time::now() - start_time).toSec() << " s" << std::endl;
-            std::cout << "--------------------------" << std::endl;
+            index++;
           }
         }
+
         cv::imshow("Convert: ", rgb_on_events_frame_);
         cv::waitKey(1);
       }
@@ -141,7 +136,6 @@ EventRegistration::~EventRegistration() {
 
 void EventRegistration::SyncImagesCallback(const sensor_msgs::ImageConstPtr &depth_msg,
                                            const sensor_msgs::ImageConstPtr &rgb_msg) {
-  ROS_WARN("!!!Get here");
   if (rgb_info_initialed && events_info_initialed) {
     /*
      * Get depth values

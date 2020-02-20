@@ -36,6 +36,7 @@
 #include <cv_bridge/cv_bridge.h>
 
 #include <Eigen/Geometry>
+#include <Eigen/Dense>
 
 #include <opencv2/opencv.hpp>
 

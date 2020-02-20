@@ -173,7 +173,8 @@ include_directories(
 add_executable(event_registration_node
         event_registration_node.cpp
         event_registration.h
-        event_registration.cpp)
+        event_registration.cpp
+        )
 #target_include_directories(temporal_offset_calibration_node PRIVATE ${Python2_INCLUDE_DIRS} ${Python2_NumPy_INCLUDE_DIRS})
 target_include_directories(event_registration_node PRIVATE ${PYTHON_INCLUDE_DIRS})
 target_link_libraries(event_registration_node
