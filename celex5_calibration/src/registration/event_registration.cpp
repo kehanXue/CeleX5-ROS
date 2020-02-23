@@ -68,11 +68,11 @@ EventRegistration::EventRegistration(const ros::NodeHandle &nh)
                                                          this);
 
   T_ = Eigen::Isometry3d::Identity();
-  // Eigen::Matrix3d R;
-  // R << 10, 1, 1,
-  //     1, 1, 1,
-  //     1, 1, 1;
-  // T_.rotate(R);
+  Eigen::Matrix3d R;
+  R << 0.9998723854537899, -0.0077667289193917135, 0.013960326960080705,
+      0.007148637873527468, 0.9990150840929704, 0.043792222269031116,
+      -0.01428669953113176, -0.04368683642242523, 0.9989431167688675;
+  T_.rotate(Eigen::AngleAxisd(R));
   T_.pretranslate(Eigen::Vector3d(-0.06014965, 0.04751369, 0.01298155));
 
   p_thread_process_ = std::make_shared<std::thread>([&]() {
@@ -81,8 +81,6 @@ EventRegistration::EventRegistration(const ros::NodeHandle &nh)
       cv_new_frame_.wait(lck);
 
       if (rgb_info_initialed && events_info_initialed) {
-
-        rgb_on_events_frame_ = cv::Mat(800, 1280, CV_8UC3, cv::Scalar::all(0));
 
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> pixel_data(3, depth_frame_.rows * depth_frame_.cols);
         int index = 0;
@@ -97,6 +95,8 @@ EventRegistration::EventRegistration(const ros::NodeHandle &nh)
 
         pixel_data = events_K_ * T_ * (rgb_K_.colPivHouseholderQr().solve(pixel_data));
 
+        mu_align_events_.lock();
+        rgb_on_events_frame_ = cv::Mat(800, 1280, CV_8UC3, cv::Scalar::all(0));
         index = 0;
         for (int v = 0; v < depth_frame_.rows; ++v) {
           for (int u = 0; u < depth_frame_.cols; ++u) {
@@ -121,6 +121,7 @@ EventRegistration::EventRegistration(const ros::NodeHandle &nh)
 
         cv::imshow("Convert: ", rgb_on_events_frame_);
         cv::waitKey(1);
+        mu_align_events_.unlock();
       }
 
       lck.unlock();
@@ -159,7 +160,20 @@ void EventRegistration::SyncImagesCallback(const sensor_msgs::ImageConstPtr &dep
 }
 
 void EventRegistration::EventsCallback(const celex5_msgs::EventVectorConstPtr &event_msg) {
-
+  usleep(3000);
+  if (mu_align_events_.try_lock()) {
+    if (!rgb_on_events_frame_.empty() && rgb_info_initialed && events_info_initialed) {
+      ROS_INFO("Event vector length: %d", event_msg->vector_length);
+      for (const auto &event : event_msg->events) {
+        rgb_on_events_frame_.at<cv::Vec3b>(event.x, event.y)[0] = 255;
+        rgb_on_events_frame_.at<cv::Vec3b>(event.x, event.y)[1] = 255;
+        rgb_on_events_frame_.at<cv::Vec3b>(event.x, event.y)[2] = 255;
+      }
+      cv::imshow("Events on frame", rgb_on_events_frame_);
+      cv::waitKey(1);
+    }
+    mu_align_events_.unlock();
+  }
 }
 
 void EventRegistration::RgbCameraInfoCallback(const sensor_msgs::CameraInfoConstPtr &msg) {
