@@ -79,7 +79,6 @@ class EventRegistration {
   std::shared_ptr<std::thread> p_thread_process_;
   std::condition_variable cv_new_frame_;
   std::mutex mu_new_frame_;
-  std::mutex mu_align_events_;
 };
 
 #endif //CELEX5_CALIBRATION_SRC_REGISTRATION_EVENT_REGISTRATION_H_

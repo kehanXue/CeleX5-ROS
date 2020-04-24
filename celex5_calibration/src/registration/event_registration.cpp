@@ -74,6 +74,7 @@ EventRegistration::EventRegistration(const ros::NodeHandle &nh)
       -0.01428669953113176, -0.04368683642242523, 0.9989431167688675;
   T_.rotate(Eigen::AngleAxisd(R));
   T_.pretranslate(Eigen::Vector3d(-0.06014965, 0.04751369, 0.01298155));
+  // T_.pretranslate(Eigen::Vector3d(0.06014965, -0.04751369, -0.01298155));
 
   p_thread_process_ = std::make_shared<std::thread>([&]() {
     while (ros::ok()) {
@@ -95,7 +96,6 @@ EventRegistration::EventRegistration(const ros::NodeHandle &nh)
 
         pixel_data = events_K_ * T_ * (rgb_K_.colPivHouseholderQr().solve(pixel_data));
 
-        mu_align_events_.lock();
         rgb_on_events_frame_ = cv::Mat(800, 1280, CV_8UC3, cv::Scalar::all(0));
         index = 0;
         for (int v = 0; v < depth_frame_.rows; ++v) {
@@ -119,9 +119,8 @@ EventRegistration::EventRegistration(const ros::NodeHandle &nh)
           }
         }
 
-        cv::imshow("Convert: ", rgb_on_events_frame_);
-        cv::waitKey(1);
-        mu_align_events_.unlock();
+        // cv::imshow("Convert: ", rgb_on_events_frame_);
+        // cv::waitKey(1);
       }
 
       lck.unlock();
@@ -160,19 +159,16 @@ void EventRegistration::SyncImagesCallback(const sensor_msgs::ImageConstPtr &dep
 }
 
 void EventRegistration::EventsCallback(const celex5_msgs::EventVectorConstPtr &event_msg) {
-  usleep(3000);
-  if (mu_align_events_.try_lock()) {
-    if (!rgb_on_events_frame_.empty() && rgb_info_initialed && events_info_initialed) {
-      ROS_INFO("Event vector length: %d", event_msg->vector_length);
-      for (const auto &event : event_msg->events) {
-        rgb_on_events_frame_.at<cv::Vec3b>(event.x, event.y)[0] = 255;
-        rgb_on_events_frame_.at<cv::Vec3b>(event.x, event.y)[1] = 255;
-        rgb_on_events_frame_.at<cv::Vec3b>(event.x, event.y)[2] = 255;
-      }
-      cv::imshow("Events on frame", rgb_on_events_frame_);
-      cv::waitKey(1);
+  if (!rgb_on_events_frame_.empty() && rgb_info_initialed && events_info_initialed) {
+    cv::Mat frame = rgb_on_events_frame_.clone();
+    for (const auto &event : event_msg->events) {
+      auto *p = frame.ptr<cv::Vec3b>(frame.rows - 1 - event.x);
+      p[event.y][0] = 0;
+      p[event.y][1] = 0;
+      p[event.y][2] = 255;
     }
-    mu_align_events_.unlock();
+    cv::imshow("Events on frame", frame);
+    cv::waitKey(1);
   }
 }
 
@@ -181,16 +177,23 @@ void EventRegistration::RgbCameraInfoCallback(const sensor_msgs::CameraInfoConst
     rgb_K_ << msg->K.at(0), msg->K.at(1), msg->K.at(2),
         msg->K.at(3), msg->K.at(4), msg->K.at(5),
         msg->K.at(6), msg->K.at(7), msg->K.at(8);
+
+    // rgb_K_ << 1437.8958223832353, 0., 1181.7885268260493,
+    //     0., 1437.3087636208852, 675.0761478882741,
+    //     0., 0., 1.;
     rgb_info_initialed = true;
   }
 }
 
 void EventRegistration::EventsCameraInfoCallback(const sensor_msgs::CameraInfoConstPtr &msg) {
   if (!events_info_initialed) {
-    events_K_ << msg->K.at(0), msg->K.at(1), msg->K.at(2),
-        msg->K.at(3), msg->K.at(4), msg->K.at(5),
-        msg->K.at(6), msg->K.at(7), msg->K.at(8);
+    // events_K_ << msg->K.at(0), msg->K.at(1), msg->K.at(2),
+    //     msg->K.at(3), msg->K.at(4), msg->K.at(5),
+    //     msg->K.at(6), msg->K.at(7), msg->K.at(8);
 
+    events_K_ << 1707.9980790098505, 0., 631.895926240894,
+        0., 1705.2747370661336, 413.56095397845604,
+        0., 0., 1.;
     events_info_initialed = true;
   }
 }

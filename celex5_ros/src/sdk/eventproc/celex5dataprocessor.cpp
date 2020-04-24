@@ -418,15 +418,15 @@ void CeleX5DataProcessor::processMIPIData(uint8_t* pData, uint32_t dataSize, std
 	{
 		if (m_iMIPIDataFormat == 0)// Format0 (CSR_73 = 0), Package Size: 1024*200*1.5 = 307200 Byte
 		{
-			parseEventDataFormat0(pData, dataSize);
+			parseEventDataFormat0(pData, dataSize, time_stamp_end);
 		}
 		else if (m_iMIPIDataFormat == 1)// Format1 (CSR_73 = 1), Package Size: 1024*200*1.75 = 358400 Byte
 		{
-			parseEventDataFormat1(pData, dataSize);
+			parseEventDataFormat1(pData, dataSize, time_stamp_end);
 		}
 		else if (m_iMIPIDataFormat == 2)// Format2 (CSR_73 = 2), Package Size: 1024*200*1.75 = 358400 Byte
 		{
-			parseEventDataFormat2(pData, dataSize);
+			parseEventDataFormat2(pData, dataSize, time_stamp_end);
 		}
 	}
 	m_lLastPackageTimestamp = time_stamp_end;
@@ -723,7 +723,7 @@ void CeleX5DataProcessor::processFullPicData(uint8_t* pData, int dataSize, std::
 *  @output  :
 *  @return  :
 */
-void CeleX5DataProcessor::parseEventDataFormat0(uint8_t* pData, int dataSize)
+void CeleX5DataProcessor::parseEventDataFormat0(uint8_t* pData, int dataSize, std::time_t timestampEnd)
 {
 	//cout << __FUNCTION__ << ": dataSize = " << dataSize << endl;
 	if (dataSize != 307201)
@@ -806,7 +806,7 @@ void CeleX5DataProcessor::parseEventDataFormat0(uint8_t* pData, int dataSize)
 *  @output  :
 *  @return  :
 */
-void CeleX5DataProcessor::parseEventDataFormat1(uint8_t* pData, int dataSize)
+void CeleX5DataProcessor::parseEventDataFormat1(uint8_t* pData, int dataSize, std::time_t timestampEnd)
 {
 	if (m_bLoopModeEnabled)
 	{
@@ -966,13 +966,7 @@ void CeleX5DataProcessor::parseEventDataFormat1(uint8_t* pData, int dataSize)
 	{
 		if (dataSize < 357001) //the last package of event data
 		{
-			m_uiPixelCount = 0;
-			m_uiRowCount = 0;
-			m_uiEventRowCycleCount = 0;
-			m_uiEventTCounter = 0;
 			m_uiEventFrameNo++;
-
-			m_vecEventData.clear();
 
 			if (m_bIMUModuleEnabled)
 			{
@@ -980,14 +974,19 @@ void CeleX5DataProcessor::parseEventDataFormat1(uint8_t* pData, int dataSize)
 			}
 			if (m_bFrameModuleEnabled)
 			{
-				createImage(m_lLastPackageTimestamp);
+				createImage(timestampEnd);
 			}
 			else
 			{
 				m_pCX5ProcessedData->setSensorMode(m_emCurrentSensorMode);
 			}
 			m_pCX5Server->notify(CeleX5DataManager::CeleX_Frame_Data);
-			//cout << "m_uiEventTCounter = " << m_uiEventTCounter << endl;
+
+			m_uiPixelCount = 0;
+			m_uiRowCount = 0;
+			m_uiEventRowCycleCount = 0;
+			m_uiEventTCounter = 0;
+			m_vecEventData.clear();
 		}
 	}
 }
@@ -1000,7 +999,7 @@ void CeleX5DataProcessor::parseEventDataFormat1(uint8_t* pData, int dataSize)
 *  @output  :
 *  @return  :
 */
-void CeleX5DataProcessor::parseEventDataFormat2(uint8_t* pData, int dataSize)
+void CeleX5DataProcessor::parseEventDataFormat2(uint8_t* pData, int dataSize, std::time_t timestampEnd)
 {
 	//cout << __FUNCTION__ << ": dataSize = " << dataSize << endl;
 	if (!m_bLoopModeEnabled)
@@ -1212,28 +1211,26 @@ void CeleX5DataProcessor::parseEventDataFormat2(uint8_t* pData, int dataSize)
 	{
 		if (dataSize < 357001) //the last package of event data
 		{
-			m_uiPixelCount = 0;
-			m_uiRowCount = 0;
-			m_uiEventRowCycleCount = 0;
-			m_uiEventTCounter = 0;
 			m_uiEventFrameNo++;
-
-			m_vecEventData.clear();
-
 			if (m_bIMUModuleEnabled)
 			{
 				parseIMUData(m_lLastPackageTimestamp);
 			}
 			if (m_bFrameModuleEnabled)
 			{
-				createImage(m_lLastPackageTimestamp);
+				createImage(timestampEnd);
 			}
 			else
 			{
 				m_pCX5ProcessedData->setSensorMode(m_emCurrentSensorMode);
 			}
 			m_pCX5Server->notify(CeleX5DataManager::CeleX_Frame_Data);
-			//cout << "m_uiEventTCounter = " << m_uiEventTCounter << endl;
+
+			m_uiPixelCount = 0;
+			m_uiRowCount = 0;
+			m_uiEventRowCycleCount = 0;
+			m_uiEventTCounter = 0;
+			m_vecEventData.clear();
 		}
 	}
 
@@ -1376,10 +1373,6 @@ void CeleX5DataProcessor::checkIfShowImage()
 	}
 	if (bShowImage)
 	{
-		m_uiPixelCount = 0;
-		m_uiRowCount = 0;
-		m_uiEventRowCycleCount = 0;
-		m_uiEventTCounter = 0;
 		m_uiEventFrameNo++;
 
 		if (0 == m_lLastPackageTimestamp)
@@ -1454,6 +1447,11 @@ void CeleX5DataProcessor::checkIfShowImage()
 		{
 			m_vecEventData.clear();
 		}
+        //
+		m_uiPixelCount = 0;
+		m_uiRowCount = 0;
+		m_uiEventRowCycleCount = 0;
+		m_uiEventTCounter = 0;
 	}
 }
 
@@ -2555,6 +2553,11 @@ void CeleX5DataProcessor::resetTimestamp()
 uint32_t CeleX5DataProcessor::getEventRate()
 {
 	return m_uiEventNumberEPS;
+}
+
+uint32_t CeleX5DataProcessor::getEventRatePerFrame()
+{
+	return m_uiPixelCount;
 }
 
 /*

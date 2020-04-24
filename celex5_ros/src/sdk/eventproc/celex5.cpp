@@ -62,7 +62,7 @@ CeleX5::CeleX5()
 	, m_arrayBrightness{ 95, 150, 190, 200 }
 	, m_uiAutoISPRefreshTime(80)
 	, m_uiISOLevel(2)
-	, m_uiOpticalFlowFrameTime(30)
+	, m_uiOpticalFlowFrameTime(20)
 	, m_bClockAutoChanged(false)
 	, m_uiISOLevelCount(4)
 	, m_iRotateType(0)
@@ -2346,6 +2346,11 @@ uint32_t CeleX5::getFullFrameFPS()
 uint32_t CeleX5::getEventRate()
 {
 	return m_pDataProcessor->getEventRate();
+}
+
+uint32_t CeleX5::getEventRatePerFrame()
+{
+	return m_pDataProcessor->getEventRatePerFrame();;
 }
 
 /*
