@@ -89,6 +89,7 @@ class CeleX5DataForwarder : public CeleX5DataManager {
   CX5SensorDataServer *p_celex5_data_server_;
 
   ros::Publisher events_pub_;
+  ros::Publisher celex_imu_pub_;
   ros::Publisher imu_pub_;
 
   std::shared_ptr<celex5_ros::CameraPublisher> p_polarity_img_pub_;
