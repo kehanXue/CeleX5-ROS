@@ -34,7 +34,7 @@ celex5_ros::CeleX5DataForwarder::CeleX5DataForwarder(const ros::NodeHandle &nh,
 
   events_pub_ = nh_.advertise<celex5_msgs::EventVector>("events", 10);
   celex_imu_pub_ = nh_.advertise<celex5_msgs::ImuVector>("celex_imu", 10);
-  imu_pub_ = nh_.advertise<celex5_msgs::ImuVector>("imu", 10);
+  imu_pub_ = nh_.advertise<sensor_msgs::Imu>("imu", 10);
   p_polarity_img_pub_ = std::make_shared<CameraPublisher>(ros::NodeHandle(nh_, "polarity_img"), 1);
 
   // binary_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_binary_img", 10);

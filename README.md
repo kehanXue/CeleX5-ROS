@@ -20,7 +20,9 @@ This repository provides several functional packages and examples of CeleX5-MIPI
 
 [Known Issues](#known-issues)
 
-# Introduction
+[(Q&A)](#q&a)
+
+## Introduction
 
 <img src="assets/242069421.jpg" height="300" alt="CeleX5-MIPI"/>
 
@@ -35,7 +37,7 @@ CeleX-5 is a multifunctional smart image sensor with **1Mega-pixels**(1280*800) 
 
 ***Therefore, in order to make more convenient use of the resources provided by ROS, I developed the content in this repository.***
 
-# Overview
+## Overview
 
 This repository provides several functional packages and examples of CeleX5-MIPI Event-based Camera under ROS, including:
 
@@ -70,7 +72,15 @@ This repository provides several functional packages and examples of CeleX5-MIPI
 
    If the building process reports the errors of which dependent libraries are missing, install them.
 
-2. Run `celex5_ros`. [More details](celex5_ros)
+2. Create the udev rules to solve the permission denied problem when read/write from a usb device:
+
+   ```shell
+cd ~/celex_ws/src/CeleX5-ROS/celex5_ros/scripts
+   chmod +x ./create_udev_rules.sh
+   ./create_udev_rules.sh
+   ```
+   
+3. Run `celex5_ros`. [More details](celex5_ros)
 
    First plug the sensor into your computer.
 
@@ -129,7 +139,7 @@ This repository provides several functional packages and examples of CeleX5-MIPI
    rosrun image_view image_view image:=/celex5_mipi/display/binary_img/raw_image
    ```
 
-3. Run `celex5_calibration`. [More details](celex5_calibration)
+4. Run `celex5_calibration`. [More details](celex5_calibration)
 
    A series of methods and tools for camera parameter calibration based on events data are provided.
 
@@ -175,3 +185,31 @@ This repository provides several functional packages and examples of CeleX5-MIPI
 **celex5_calibration**
 
 - The time stamp calibration with another camera.
+
+## Q&A
+
+- Why the sensor is connected and the program run looks well, but I can't get the data from the sensor?
+
+  Please check the permission of the usb device. In [Build and Run](#build-and-run) section 2, you can create the udev rules for CeleX sensor to solve the permission problem.
+
+  You can export a Linux environment variable to get the debug information of `libusb`:
+
+  ```shell
+  export LIBUSB_DEBUG=1
+  ```
+
+  then in the same terminal, launch the celex_ros:
+
+  ```shell
+  roslaunch celex5_ros celex5_ros_node.launch
+  ```
+
+  you may see some error from `libusb` output. Such as:
+
+  ```
+  libusb: error [_get_usbfs_fd] libusb couldn't open USB device /dev/bus/usb/****: Permission denied
+  libusb: error [_get_usbfs_fd] libusb requires write access to USB device nodes.
+  ```
+
+  The you can use the scripts in `celex_ros/scripts` to create the udev rules to solve the permission problem.
+

@@ -45,7 +45,7 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
   p_mutex_ = std::make_shared<std::mutex>();
   p_publisher_ = std::make_shared<CameraPublisher>(nh_, 1);
 
-  int fps = 60;
+  int fps = 100;
   nh_root.param("display_fps", fps, fps);
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
@@ -96,7 +96,7 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
   // ros::NodeHandle nh_color(nh_, "color");
   std::shared_ptr<CameraPublisher> p_colored_publisher =
       std::make_shared<CameraPublisher>(ros::NodeHandle(nh_, "color"), 1);
-  int fps = 60;
+  int fps = 100;
   nh_root.param("display_fps", fps, fps);
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
@@ -153,7 +153,7 @@ CeleX5DisplayPubFactory::CeleX5DisplayPubFactory(const ros::NodeHandle &nh,
   std::string parameters_url = "file://" + camera_cfg_path + "celex5_frame_parameters.yaml";
   p_publisher_ = std::make_shared<CameraPublisher>(nh_, parameters_url, 1);
 
-  int fps = 60;
+  int fps = 100;
   nh_root.param("display_fps", fps, fps);
 
   publish_thread_ = std::make_shared<std::thread>([&]() {
