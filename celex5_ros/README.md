@@ -66,7 +66,15 @@ Therefore, I have developed a more comprehensive CeleX5-ROS package.
    catkin_make # Or use `catkin build`
    ```
 
-2. Run
+2. Create the udev rules to solve the permission denied problem when read/write from a usb device:
+
+   ```shell
+   cd ~/celex_ws/src/CeleX5-ROS/celex5_ros/scripts
+   chmod +x ./create_udev_rules.sh
+   ./create_udev_rules.sh
+   ```
+
+3. Run
 
    First plug the sensor into your computer.
    
