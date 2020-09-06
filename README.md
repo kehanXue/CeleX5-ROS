@@ -20,7 +20,7 @@ This repository provides several functional packages and examples of CeleX5-MIPI
 
 [Known Issues](#known-issues)
 
-[(Q&A)](#qa)
+[Q&A](#qa)
 
 ## Introduction
 
