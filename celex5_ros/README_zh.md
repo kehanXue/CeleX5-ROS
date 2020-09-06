@@ -66,7 +66,15 @@ CeleX-5 是一款多功能智能图像传感器，具有一百万像素（分辨
    catkin_make # Or use `catkin build`
    ```
 
-2. 运行
+2. 创建udev规则以来解决设备读写权限问题
+
+   ```shell
+   cd ~/celex_ws/src/CeleX5-ROS/celex5_ros/scripts
+   chmod +x ./create_udev_rules.sh
+   ./create_udev_rules.sh
+   ```
+
+3. 运行
 
    首先将相机连接到电脑上。
    
