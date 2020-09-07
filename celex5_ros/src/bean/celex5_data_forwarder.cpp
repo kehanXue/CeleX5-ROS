@@ -19,6 +19,7 @@
 
 #include "celex5_data_forwarder.h"
 #include "sensor_msgs/Imu.h"
+#include "dvs_msgs/EventArray.h"
 
 celex5_ros::CeleX5DataForwarder::CeleX5DataForwarder(const ros::NodeHandle &nh,
                                                      const std::shared_ptr<CeleX5> &p_celex5_sensor)
@@ -32,11 +33,11 @@ celex5_ros::CeleX5DataForwarder::CeleX5DataForwarder(const ros::NodeHandle &nh,
 
   CeleX5DdyConfigure::ReadROSParam(nh_, "frame_id", this->frame_id_);
 
-  events_pub_ = nh_.advertise<celex5_msgs::EventVector>("events", 10);
+  events_pub_ = nh_.advertise<celex5_msgs::EventVector>("celex_events", 10);
   celex_imu_pub_ = nh_.advertise<celex5_msgs::ImuVector>("celex_imu", 10);
   imu_pub_ = nh_.advertise<sensor_msgs::Imu>("imu", 10);
+  dvs_events_pub_ = nh_.advertise<dvs_msgs::EventArray>("events", 10);
   p_polarity_img_pub_ = std::make_shared<CameraPublisher>(ros::NodeHandle(nh_, "polarity_img"), 1);
-
   // binary_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_binary_img", 10);
   // denoised_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_denoised_img", 10);;
   // count_img_pub_ = nh_.advertise<sensor_msgs::Image>("event_count_img", 10);;
@@ -119,23 +120,35 @@ void celex5_ros::CeleX5DataForwarder::CreateRawEventsPubThread() {
       std::unique_lock<std::mutex> lck(mu_raw_events_);
       cv_raw_events_.wait(lck);
       // ROS_WARN("Received Notified 1!!!!");
-      if (events_pub_.getNumSubscribers() > 0) {
-        if (p_celex5_options_->IsRawEventsEnabled() && !vec_raw_events_.empty()) {
-          /*
-           * Publish Raw Events Data
-           */
-          // clock_t time_begin = clock();
-          CeleX5::CeleX5Mode current_mode = p_celex5_sensor_->getSensorFixedMode();
 
-          celex5_msgs::EventVectorPtr event_vector_ptr_msg =
-              boost::make_shared<celex5_msgs::EventVector>();
+      if (p_celex5_options_->IsRawEventsEnabled() && !vec_raw_events_.empty()) {
+        /*
+         * Publish Raw Events Data
+         */
+        // clock_t time_begin = clock();
+        CeleX5::CeleX5Mode current_mode = p_celex5_sensor_->getSensorFixedMode();
+
+        celex5_msgs::EventVectorPtr event_vector_ptr_msg =
+            boost::make_shared<celex5_msgs::EventVector>();
+        if (events_pub_.getNumSubscribers() > 0) {
           event_vector_ptr_msg->header.stamp = ros::Time::now();
           event_vector_ptr_msg->header.frame_id = this->frame_id_;
           event_vector_ptr_msg->height = CELEX5_MAT_ROWS;
           event_vector_ptr_msg->width = CELEX5_MAT_COLS;
           event_vector_ptr_msg->vector_length = vec_raw_events_.size();
           event_vector_ptr_msg->events.reserve(vec_raw_events_.size());
-          for (auto event_i : vec_raw_events_) {
+        }
+
+        dvs_msgs::EventArray dvs_event_array;
+        dvs_event_array.header.stamp = ros::Time::now();
+        dvs_event_array.header.frame_id = this->frame_id_;
+        dvs_event_array.events.reserve(vec_raw_events_.size());
+        dvs_event_array.height = CELEX5_MAT_ROWS;
+        dvs_event_array.width = CELEX5_MAT_COLS;
+
+        for (auto event_i : vec_raw_events_) {
+
+          if (events_pub_.getNumSubscribers() > 0) {
             celex5_msgs::Event tmp_event;
             tmp_event.x = event_i.row;
             tmp_event.y = event_i.col;
@@ -151,11 +164,29 @@ void celex5_ros::CeleX5DataForwarder::CreateRawEventsPubThread() {
             tmp_event.off_pixel_timestamp = event_i.tOffPixelIncreasing;
             event_vector_ptr_msg->events.emplace_back(tmp_event);
           }
+
+          dvs_msgs::Event dvs_event;
+          dvs_event.ts = ros::Time::now();
+          dvs_event.x = event_i.row;
+          dvs_event.y = event_i.col;
+          if (current_mode == CeleX5::Event_Intensity_Mode) {
+            if (event_i.polarity == -1) {
+              dvs_event.polarity = false;
+            } else {
+              dvs_event.polarity = true;
+            }
+          }
+          dvs_event_array.events.emplace_back(dvs_event);
+        }
+        dvs_events_pub_.publish(dvs_event_array);
+
+        if (events_pub_.getNumSubscribers() > 0) {
           events_pub_.publish(event_vector_ptr_msg);
         }
-        // ROS_WARN("Pub raw events vector: %lf ms", 1000.0*(clock() - time_begin)/CLOCKS_PER_SEC);
-        // ROS_WARN("Received Notified 11!!!!");
       }
+      // ROS_WARN("Pub raw events vector: %lf ms", 1000.0*(clock() - time_begin)/CLOCKS_PER_SEC);
+      // ROS_WARN("Received Notified 11!!!!");
+      // }
       lck.unlock();
     }
   });

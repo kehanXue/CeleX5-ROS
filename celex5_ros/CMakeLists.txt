@@ -35,6 +35,7 @@ find_package(catkin REQUIRED COMPONENTS
         celex5_msgs
         sensor_msgs
         camera_info_manager
+        dvs_msgs
         )
 
 ## System dependencies are found with CMake's conventions
